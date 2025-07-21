@@ -1,0 +1,65 @@
+ARG GOVERSION=latest
+FROM --platform=${BUILDPLATFORM} docker.io/library/golang:${GOVERSION} AS build
+
+ARG SKAFFOLD_GO_GCFLAGS=""
+
+WORKDIR /app
+
+COPY go.mod go.sum ./
+RUN --mount=type=cache,target=/root/.cache/go-build \
+    go mod download
+COPY . .
+
+# BUILD_DATE changes ofter so move this section down to allow for caching
+ARG TARGETOS \
+    TARGETARCH \
+    TARGETVARIANT \
+    VERSION \
+    GIT_COMMIT \
+    GIT_TREE_STATE \
+    BUILD_DATE
+
+RUN --mount=type=cache,target=/root/.cache/go-build \
+    --mount=type=cache,target=/go/pkg/mod \
+    --mount=type=cache,target=/app/tmp,id=app-tmp-${TARGETARCH}-${TARGETVARIANT},sharing=locked \
+    make build-talesctl \
+      "OS=${TARGETOS}" \
+      "ARCH=${TARGETARCH}" \
+      "VERSION=${VERSION}" \
+      "GIT_COMMIT=${GIT_COMMIT}" \
+      "GIT_TREE_STATE=${GIT_TREE_STATE}" \
+      "BUILD_DATE=${BUILD_DATE}"
+RUN mkdir /rootfs \
+ && cp "/app/bin/talesctl-${VERSION}-${TARGETOS}-${TARGETARCH}" /rootfs/talesctl \
+ && ln -s /talesctl /rootfs/opencastctl
+
+
+FROM gcr.io/distroless/static:latest
+LABEL org.opencontainers.image.base.name="gcr.io/distroless/static:latest"
+
+ENV GOTRACEBACK=all
+
+ARG TARGETOS \
+    TARGETARCH \
+    VERSION \
+    GIT_COMMIT \
+    BUILD_DATE
+
+LABEL maintainer="shio solutions GmbH <dev@shio.solutions>" \
+      org.opencontainers.image.created="${BUILD_DATE}" \
+      org.opencontainers.image.authors="shio solutions GmbH <dev@shio.solutions>" \
+      org.opencontainers.image.url="ghcr.io/tales-media/talesctl" \
+      org.opencontainers.image.documentation="https://github.com/tales-media/cli" \
+      org.opencontainers.image.source="https://github.com/tales-media/cli" \
+      org.opencontainers.image.version="${VERSION}" \
+      org.opencontainers.image.revision="${GIT_COMMIT}" \
+      org.opencontainers.image.vendor="shio solutions GmbH" \
+      org.opencontainers.image.licenses="Apache-2.0" \
+      org.opencontainers.image.title="talesctl" \
+      org.opencontainers.image.description="tales.media and Opencast CLI"
+
+WORKDIR /
+COPY --from=build /rootfs /
+USER 65532:65532
+
+CMD [ "/talesctl" ]

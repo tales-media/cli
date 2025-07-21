@@ -1,0 +1,62 @@
+/*
+Copyright 2025 shio solutions GmbH
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+package cli
+
+import (
+	"fmt"
+	"maps"
+	"slices"
+	"strings"
+
+	"github.com/spf13/pflag"
+)
+
+type mapValue[T any] struct {
+	key     string
+	Default T
+	Map     map[string]T
+}
+
+var _ pflag.Value = &mapValue[any]{}
+
+func (v *mapValue[T]) String() string {
+	return fmt.Sprintf("%v", v.Value())
+}
+
+func (v *mapValue[T]) Value() T {
+	if val, ok := v.Map[v.key]; ok {
+		return val
+	}
+	return v.Default
+}
+
+func (v *mapValue[T]) Set(s string) error {
+	if _, ok := v.Map[strings.ToLower(s)]; ok {
+		v.key = s
+		return nil
+	}
+	return fmt.Errorf("unknown option")
+}
+
+func (v *mapValue[T]) Type() string {
+	return "string"
+}
+
+func (v *mapValue[T]) Usage(s string) string {
+	keys := slices.Collect(maps.Keys(v.Map))
+	return s + " ( " + strings.Join(keys, " | ") + " )"
+}
