@@ -35,28 +35,28 @@ var printTmpl = template.Must(template.New("print").Parse(`{{.Name}}:
 // package of the Kubernetes project.
 type Info struct {
 	// Name of the versioned object.
-	Name string `table:"Name,wideonly" json:"name,omitempty" yaml:"name,omitempty"`
+	Name string `human:"Name,wideonly" json:"name,omitempty" yaml:"name,omitempty"`
 
 	// Version number.
-	Version string `table:"Version" json:"version,omitempty" yaml:"version,omitempty"`
+	Version string `human:"Version" json:"version,omitempty" yaml:"version,omitempty"`
 
 	// GitCommit SHA.
-	GitCommit string `table:"GitCommit,wideonly" json:"gitCommit,omitempty" yaml:"gitCommit,omitempty"`
+	GitCommit string `human:"GitCommit,wideonly" json:"gitCommit,omitempty" yaml:"gitCommit,omitempty"`
 
 	// GitTreeState is either "clean" or "dirty".
-	GitTreeState string `table:"GitTreeState,wideonly" json:"gitTreeState,omitempty" yaml:"gitTreeState,omitempty"`
+	GitTreeState string `human:"GitTreeState,wideonly" json:"gitTreeState,omitempty" yaml:"gitTreeState,omitempty"`
 
 	// BuildDate of the binary.
-	BuildDate string `table:"BuildDate,wideonly" json:"buildDate,omitempty" yaml:"buildDate,omitempty"`
+	BuildDate string `human:"BuildDate,wideonly" json:"buildDate,omitempty" yaml:"buildDate,omitempty"`
 
 	// GoVersion of the binary.
-	GoVersion string `table:"GoVersion,wideonly" json:"goVersion,omitempty" yaml:"goVersion,omitempty"`
+	GoVersion string `human:"GoVersion,wideonly" json:"goVersion,omitempty" yaml:"goVersion,omitempty"`
 
 	// Compiler used for the binary.
-	Compiler string `table:"Compiler,wideonly" json:"compiler,omitempty" yaml:"compiler,omitempty"`
+	Compiler string `human:"Compiler,wideonly" json:"compiler,omitempty" yaml:"compiler,omitempty"`
 
 	// Platform the binary is compiled for.
-	Platform string `table:"Platform,wideonly" json:"platform,omitempty" yaml:"platform,omitempty"`
+	Platform string `human:"Platform,wideonly" json:"platform,omitempty" yaml:"platform,omitempty"`
 }
 
 // String returns a formatted version string.

@@ -63,7 +63,7 @@ func mustSelect[K comparable, V any](a K, m map[K]V) V {
 type Output int
 
 const (
-	TableOutput Output = iota
+	HumanOutput Output = iota
 	WideOutput
 	JSONOutput
 	YAMLOutput
@@ -72,9 +72,9 @@ const (
 
 func OutputValue() *mapValue[Output] {
 	return &mapValue[Output]{
-		Default: TableOutput,
+		Default: HumanOutput,
 		Map: map[string]Output{
-			"table": TableOutput,
+			"human": HumanOutput,
 			"wide":  WideOutput,
 			"json":  JSONOutput,
 			"yaml":  YAMLOutput,

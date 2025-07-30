@@ -25,8 +25,8 @@ import (
 	"github.com/jedib0t/go-pretty/v6/table"
 )
 
-const TableStructTagKey = "table"
-const TableStructTagWideOnlyOption = "wideonly"
+const HumanStructTagKey = "human"
+const HumanStructTagWideOnlyOption = "wideonly"
 
 var TableStyle = table.Style{
 	Name: "talesctl",
@@ -58,13 +58,13 @@ var TableStyle = table.Style{
 	Title:   table.TitleOptionsDefault,
 }
 
-type Table struct {
+type Human struct {
 	Wide bool
 }
 
-var _ Formatter = &Table{}
+var _ Formatter = &Human{}
 
-func (f *Table) List(w io.Writer, list any) error {
+func (f *Human) List(w io.Writer, list any) error {
 	listVal := reflect.ValueOf(list)
 	listType := listVal.Type()
 	if listType.Kind() != reflect.Slice {
@@ -90,9 +90,9 @@ func (f *Table) List(w io.Writer, list any) error {
 			reflect.String:
 
 			fieldName := fieldStructType.Name
-			headerName, fieldOptions := ParseStructTag(fieldStructType, TableStructTagKey)
+			headerName, fieldOptions := ParseStructTag(fieldStructType, HumanStructTagKey)
 
-			if !f.Wide && fieldOptions.Contains(TableStructTagWideOnlyOption) {
+			if !f.Wide && fieldOptions.Contains(HumanStructTagWideOnlyOption) {
 				continue
 			}
 
@@ -123,11 +123,11 @@ func (f *Table) List(w io.Writer, list any) error {
 	return nil
 }
 
-func (f *Table) Object(w io.Writer, obj any) error {
+func (f *Human) Object(w io.Writer, obj any) error {
 	return f.writeValue(w, reflect.ValueOf(obj), "")
 }
 
-func (f *Table) writeValue(w io.Writer, val reflect.Value, prefix string) error {
+func (f *Human) writeValue(w io.Writer, val reflect.Value, prefix string) error {
 	valType := val.Type()
 	switch valType.Kind() {
 	case reflect.Bool,
@@ -150,9 +150,9 @@ func (f *Table) writeValue(w io.Writer, val reflect.Value, prefix string) error 
 
 		for i := 0; i < valType.NumField(); i++ {
 			fieldStructType := valType.Field(i)
-			fieldName, fieldOptions := ParseStructTag(fieldStructType, TableStructTagKey)
+			fieldName, fieldOptions := ParseStructTag(fieldStructType, HumanStructTagKey)
 
-			if !f.Wide && fieldOptions.Contains(TableStructTagWideOnlyOption) {
+			if !f.Wide && fieldOptions.Contains(HumanStructTagWideOnlyOption) {
 				continue
 			}
 
@@ -195,7 +195,27 @@ func (f *Table) writeValue(w io.Writer, val reflect.Value, prefix string) error 
 		return nil
 
 	case reflect.Map:
-		panic("TODO: implement")
+		// TODO: improve this implementation
+		p2 := prefix + "  "
+		if prefix != "" {
+			if _, err := fmt.Fprintln(w); err != nil {
+				return err
+			}
+		}
+
+		for _, mapKey := range val.MapKeys() {
+			mapVal := val.MapIndex(mapKey)
+			if _, err := fmt.Fprintf(w, "%s%s: ", prefix, mapKey); err != nil {
+				return err
+			}
+			if err := f.writeValue(w, mapVal, p2); err != nil {
+				return err
+			}
+			if _, err := fmt.Fprintln(w); err != nil {
+				return err
+			}
+		}
+		return nil
 
 	case reflect.Interface, reflect.Pointer:
 		// TODO: guard against loops

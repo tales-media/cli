@@ -55,10 +55,10 @@ func detectFormatter(cmd *cobra.Command) formatter.Formatter {
 	switch output.Value() {
 	default:
 		fallthrough
-	case TableOutput:
-		return &formatter.Table{}
+	case HumanOutput:
+		return &formatter.Human{}
 	case WideOutput:
-		return &formatter.Table{Wide: true}
+		return &formatter.Human{Wide: true}
 	case JSONOutput:
 		return &formatter.JSON{}
 	case YAMLOutput:
