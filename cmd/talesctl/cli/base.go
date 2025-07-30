@@ -21,10 +21,13 @@ import (
 	"reflect"
 
 	"github.com/spf13/cobra"
+
 	"github.com/tales-media/cli/internal/talesctl/formatter"
+	extapiclientv1 "github.com/tales-media/cli/pkg/opencast/apis/external-api/v1.11/client"
+	oc "github.com/tales-media/cli/pkg/opencast/client"
 )
 
-func baseCommand(use, short string, valueFunc func(cmd *cobra.Command, args []string) (any, error)) *cobra.Command {
+func baseCommand(use, short string, valueFunc func(*cobra.Command, []string) (any, error)) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                   use,
 		Short:                 short,
@@ -48,6 +51,23 @@ func baseCommand(use, short string, valueFunc func(cmd *cobra.Command, args []st
 		},
 	}
 	return cmd
+}
+
+func occCommand(use, short string, occValueFunc func(*cobra.Command, []string, oc.Client) (any, error)) *cobra.Command {
+	return baseCommand(use, short, func(cmd *cobra.Command, args []string) (any, error) {
+		c, err := GetOpencastClient()
+		if err != nil {
+			return nil, err
+		}
+		return occValueFunc(cmd, args, c)
+	})
+}
+
+func extAPICommand(use, short string, extAPIClientValueFunc func(*cobra.Command, []string, extapiclientv1.Client) (any, error)) *cobra.Command {
+	return occCommand(use, short, func(cmd *cobra.Command, args []string, occ oc.Client) (any, error) {
+		extAPI := extapiclientv1.New(occ)
+		return extAPIClientValueFunc(cmd, args, extAPI)
+	})
 }
 
 func detectFormatter(cmd *cobra.Command) formatter.Formatter {

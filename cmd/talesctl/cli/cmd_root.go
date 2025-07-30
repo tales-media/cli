@@ -54,6 +54,7 @@ func New(cfg *Config) *cobra.Command {
 
 	// commands
 	cmd.AddCommand(
+		infoCommand(cfg),
 		versionCommand(cfg),
 	)
 
