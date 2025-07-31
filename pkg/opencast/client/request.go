@@ -53,7 +53,7 @@ func NewRequest(ctx context.Context, method, service, path string, body Body, op
 		Header:  make(http.Header),
 		Body:    body,
 	}
-	if err := applyOpts(req, opts); err != nil {
+	if err := req.ApplyOptions(opts...); err != nil {
 		return nil, err
 	}
 	return req, nil

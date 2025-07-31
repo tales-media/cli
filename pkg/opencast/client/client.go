@@ -47,7 +47,7 @@ func New(sm ServiceMapper, opts ...ClientOpts) (Client, error) {
 			WithHeader("User-Agent", UserAgent),
 		},
 	}
-	if err := applyOpts(c, opts); err != nil {
+	if err := c.ApplyOptions(opts...); err != nil {
 		return nil, err
 	}
 	return c, nil
@@ -58,7 +58,7 @@ func (c *client) ApplyOptions(opts ...ClientOpts) error {
 }
 
 func (c *client) Do(req *Request) (*Response, error) {
-	if err := applyOpts(req, c.reqOpts); err != nil {
+	if err := req.ApplyOptions(c.reqOpts...); err != nil {
 		return nil, err
 	}
 
