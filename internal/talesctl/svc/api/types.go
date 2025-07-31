@@ -28,7 +28,7 @@ type Me struct {
 	Email    string   `human:"E-Mail" json:"email" yaml:"email"`
 	UserRole string   `human:"User Role,wideonly" json:"userRole" yaml:"userRole"`
 	Provider string   `human:"Provider,wideonly" json:"provider" yaml:"provider"`
-	Roles    []string `human:"roles" json:"roles" yaml:"roles"`
+	Roles    []string `human:"Roles" json:"roles" yaml:"roles"`
 }
 
 type Organization struct {
