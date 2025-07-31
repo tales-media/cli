@@ -81,6 +81,17 @@ func (f *Human) List(w io.Writer, list any) error {
 	for i := 0; i < itemType.NumField(); i++ {
 		fieldStructType := itemType.Field(i)
 
+		if !fieldStructType.IsExported() {
+			continue
+		}
+
+		fieldName := fieldStructType.Name
+		headerName, fieldOptions := ParseStructTag(fieldStructType, HumanStructTagKey)
+
+		if !f.Wide && fieldOptions.Contains(HumanStructTagWideOnlyOption) {
+			continue
+		}
+
 		switch fieldStructType.Type.Kind() {
 		case reflect.Bool,
 			reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64,
@@ -88,18 +99,13 @@ func (f *Human) List(w io.Writer, list any) error {
 			reflect.Float32, reflect.Float64,
 			reflect.Complex64, reflect.Complex128,
 			reflect.String:
-
-			fieldName := fieldStructType.Name
-			headerName, fieldOptions := ParseStructTag(fieldStructType, HumanStructTagKey)
-
-			if !f.Wide && fieldOptions.Contains(HumanStructTagWideOnlyOption) {
-				continue
-			}
-
 			fieldNames = append(fieldNames, fieldName)
 			header = append(header, headerName)
 		default:
-			continue
+			if _, ok := fieldStructType.Type.MethodByName("String"); ok {
+				fieldNames = append(fieldNames, fieldName)
+				header = append(header, headerName)
+			}
 		}
 	}
 
@@ -129,6 +135,14 @@ func (f *Human) Object(w io.Writer, obj any) error {
 
 func (f *Human) writeValue(w io.Writer, val reflect.Value, prefix string) error {
 	valType := val.Type()
+
+	// use String() method if available
+	if _, ok := valType.MethodByName("String"); ok {
+		_, err := fmt.Fprintf(w, "%v", val.Interface())
+		return err
+	}
+
+	// custom print logic
 	switch valType.Kind() {
 	case reflect.Bool,
 		reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64,
@@ -150,12 +164,11 @@ func (f *Human) writeValue(w io.Writer, val reflect.Value, prefix string) error 
 
 		for i := 0; i < valType.NumField(); i++ {
 			fieldStructType := valType.Field(i)
-			fieldName, fieldOptions := ParseStructTag(fieldStructType, HumanStructTagKey)
-
-			if !f.Wide && fieldOptions.Contains(HumanStructTagWideOnlyOption) {
+			if !fieldStructType.IsExported() {
 				continue
 			}
 
+			fieldName, _ := ParseStructTag(fieldStructType, HumanStructTagKey)
 			fieldVal := val.Field(i)
 
 			if _, err := fmt.Fprintf(w, "%s%s: ", prefix, fieldName); err != nil {
