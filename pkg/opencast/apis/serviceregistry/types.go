@@ -51,7 +51,7 @@ type Service struct {
 type ServiceState string
 
 const (
-	NormalServiceState  = "NORMAL"
-	WarningServiceState = "WARNING"
-	ErrorServiceState   = "ERROR"
+	NormalServiceState  = ServiceState("NORMAL")
+	WarningServiceState = ServiceState("WARNING")
+	ErrorServiceState   = ServiceState("ERROR")
 )
