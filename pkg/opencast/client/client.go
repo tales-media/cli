@@ -21,8 +21,12 @@ import (
 	"time"
 )
 
-type Client interface {
+type Doer interface {
 	Do(*Request) (*Response, error)
+}
+
+type Client interface {
+	Doer
 }
 
 type client struct {

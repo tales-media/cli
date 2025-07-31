@@ -16,7 +16,10 @@ limitations under the License.
 
 package client
 
-import "errors"
+import (
+	"errors"
+	"net/http"
+)
 
 var (
 	UnexpectedStatusCodeErr = errors.New("UnexpectedStatusCode")
@@ -31,22 +34,38 @@ func applyOpts[T any](obj T, opts []func(T) error) error {
 	return nil
 }
 
-func GenericAutoDecodedCall[T any](reqFunc func() (*Request, error), doFunc func(*Request) (*Response, error)) (*T, *Response, error) {
+func GenericAutoDecodedDo[T any](do Doer, reqFunc func() (*Request, error)) (T, *Response, error) {
+	var data T
+
+	// build request
 	req, err := reqFunc()
 	if err != nil {
-		return nil, nil, err
+		return data, nil, err
 	}
-	resp, err := doFunc(req)
+
+	// send request
+	resp, err := do.Do(req)
 	if err != nil {
-		return nil, nil, err
+		return data, nil, err
 	}
 	if resp.StatusCode < 200 || 300 <= resp.StatusCode {
-		return nil, resp, UnexpectedStatusCodeErr
+		return data, resp, responseErr(resp)
 	}
-	data := new(T)
-	err = resp.Decode(data, AutoDecoder)
+
+	// decode response
+	decData := new(T)
+	err = resp.Decode(decData, AutoDecoder)
 	if err != nil {
-		return nil, resp, err
+		return data, resp, err
 	}
+	data = *decData
 	return data, resp, nil
+}
+
+func responseErr(resp *Response) error {
+	if 400 <= resp.StatusCode {
+		st := http.StatusText(resp.StatusCode)
+		return errors.New(st)
+	}
+	return UnexpectedStatusCodeErr
 }

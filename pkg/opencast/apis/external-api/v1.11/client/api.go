@@ -82,9 +82,9 @@ func (c *client) Do(req *oc.Request) (*oc.Response, error) {
 }
 
 func (c *client) GetAPI(ctx context.Context, opts ...oc.RequestOpts) (*extapiv1.API, *oc.Response, error) {
-	return oc.GenericAutoDecodedCall[extapiv1.API](
+	return oc.GenericAutoDecodedDo[*extapiv1.API](
+		c,
 		func() (*oc.Request, error) { return c.GetAPIRequest(ctx, opts...) },
-		c.Do,
 	)
 }
 
@@ -100,9 +100,9 @@ func (c *client) GetAPIRequest(ctx context.Context, opts ...oc.RequestOpts) (*oc
 }
 
 func (c *client) GetAPIVersion(ctx context.Context, opts ...oc.RequestOpts) (*extapiv1.APIVersion, *oc.Response, error) {
-	return oc.GenericAutoDecodedCall[extapiv1.APIVersion](
+	return oc.GenericAutoDecodedDo[*extapiv1.APIVersion](
+		c,
 		func() (*oc.Request, error) { return c.GetAPIVersionRequest(ctx, opts...) },
-		c.Do,
 	)
 }
 
@@ -118,9 +118,9 @@ func (c *client) GetAPIVersionRequest(ctx context.Context, opts ...oc.RequestOpt
 }
 
 func (c *client) GetAPIVersionDefault(ctx context.Context, opts ...oc.RequestOpts) (*extapiv1.APIVersion, *oc.Response, error) {
-	return oc.GenericAutoDecodedCall[extapiv1.APIVersion](
+	return oc.GenericAutoDecodedDo[*extapiv1.APIVersion](
+		c,
 		func() (*oc.Request, error) { return c.GetAPIVersionDefaultRequest(ctx, opts...) },
-		c.Do,
 	)
 }
 

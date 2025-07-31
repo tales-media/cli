@@ -25,9 +25,9 @@ import (
 )
 
 func (c *client) GetInfoOrganization(ctx context.Context, opts ...oc.RequestOpts) (*extapiv1.Organization, *oc.Response, error) {
-	return oc.GenericAutoDecodedCall[extapiv1.Organization](
+	return oc.GenericAutoDecodedDo[*extapiv1.Organization](
+		c,
 		func() (*oc.Request, error) { return c.GetInfoOrganizationRequest(ctx, opts...) },
-		c.Do,
 	)
 }
 
@@ -43,9 +43,9 @@ func (c *client) GetInfoOrganizationRequest(ctx context.Context, opts ...oc.Requ
 }
 
 func (c *client) GetInfoOrganizationProperties(ctx context.Context, opts ...oc.RequestOpts) (*extapiv1.OrganizationProperties, *oc.Response, error) {
-	return oc.GenericAutoDecodedCall[extapiv1.OrganizationProperties](
+	return oc.GenericAutoDecodedDo[*extapiv1.OrganizationProperties](
+		c,
 		func() (*oc.Request, error) { return c.GetInfoOrganizationPropertiesRequest(ctx, opts...) },
-		c.Do,
 	)
 }
 
@@ -61,9 +61,9 @@ func (c *client) GetInfoOrganizationPropertiesRequest(ctx context.Context, opts 
 }
 
 func (c *client) GetInfoOrganizationPropertiesEngageUIURL(ctx context.Context, opts ...oc.RequestOpts) (*extapiv1.OrganizationProperties, *oc.Response, error) {
-	return oc.GenericAutoDecodedCall[extapiv1.OrganizationProperties](
+	return oc.GenericAutoDecodedDo[*extapiv1.OrganizationProperties](
+		c,
 		func() (*oc.Request, error) { return c.GetInfoOrganizationPropertiesEngageUIURLRequest(ctx, opts...) },
-		c.Do,
 	)
 }
 
@@ -79,9 +79,9 @@ func (c *client) GetInfoOrganizationPropertiesEngageUIURLRequest(ctx context.Con
 }
 
 func (c *client) GetInfoMe(ctx context.Context, opts ...oc.RequestOpts) (*extapiv1.Me, *oc.Response, error) {
-	return oc.GenericAutoDecodedCall[extapiv1.Me](
+	return oc.GenericAutoDecodedDo[*extapiv1.Me](
+		c,
 		func() (*oc.Request, error) { return c.GetInfoMeRequest(ctx, opts...) },
-		c.Do,
 	)
 }
 
@@ -96,10 +96,10 @@ func (c *client) GetInfoMeRequest(ctx context.Context, opts ...oc.RequestOpts) (
 	)
 }
 
-func (c *client) GetInfoMeRoles(ctx context.Context, opts ...oc.RequestOpts) (*extapiv1.StringList, *oc.Response, error) {
-	return oc.GenericAutoDecodedCall[extapiv1.StringList](
+func (c *client) GetInfoMeRoles(ctx context.Context, opts ...oc.RequestOpts) (extapiv1.StringList, *oc.Response, error) {
+	return oc.GenericAutoDecodedDo[extapiv1.StringList](
+		c,
 		func() (*oc.Request, error) { return c.GetInfoMeRolesRequest(ctx, opts...) },
-		c.Do,
 	)
 }
 

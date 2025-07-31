@@ -104,7 +104,8 @@ func (m *dynamicServiceMapper) resolveService(svc string) (dynamicServiceItem, e
 
 	item := dynamicServiceItem{}
 
-	availableSvc, _, err := GenericAutoDecodedCall[serviceregistry.AvailableServicesResponse](
+	availableSvc, _, err := GenericAutoDecodedDo[*serviceregistry.AvailableServicesResponse](
+		m.occ,
 		func() (*Request, error) {
 			return NewRequest(
 				context.Background(),
@@ -115,7 +116,6 @@ func (m *dynamicServiceMapper) resolveService(svc string) (dynamicServiceItem, e
 				WithQuery("serviceType", svc),
 			)
 		},
-		m.occ.Do,
 	)
 	if err != nil {
 		return item, err
