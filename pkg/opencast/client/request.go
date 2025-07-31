@@ -60,7 +60,12 @@ func NewRequest(ctx context.Context, method, service, path string, body Body, op
 }
 
 func (req *Request) ApplyOptions(opts ...RequestOpts) error {
-	return applyOpts(req, opts)
+	for _, opt := range opts {
+		if err := opt.Apply(req); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (req *Request) URL(sm ServiceMapper) (*url.URL, error) {
@@ -110,20 +115,26 @@ func (req *Request) HTTPRequest(sm ServiceMapper) (*http.Request, error) {
 	return httpReq, nil
 }
 
-type RequestOpts = func(*Request) error
+type RequestOpts interface {
+	Apply(*Request) error
+}
+
+type RequestOptsFunc func(*Request) error
+
+func (f RequestOptsFunc) Apply(r *Request) error { return f(r) }
 
 func WithQuery(key, value string) RequestOpts {
-	return func(req *Request) error {
+	return RequestOptsFunc(func(req *Request) error {
 		req.Query.Set(key, value)
 		return nil
-	}
+	})
 }
 
 func WithHeader(key, value string) RequestOpts {
-	return func(req *Request) error {
+	return RequestOptsFunc(func(req *Request) error {
 		req.Header.Set(key, value)
 		return nil
-	}
+	})
 }
 
 func WithBasicAuth(username, password string) RequestOpts {

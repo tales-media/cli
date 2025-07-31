@@ -54,7 +54,12 @@ func New(sm ServiceMapper, opts ...ClientOpts) (Client, error) {
 }
 
 func (c *client) ApplyOptions(opts ...ClientOpts) error {
-	return applyOpts(c, opts)
+	for _, opt := range opts {
+		if err := opt.Apply(c); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (c *client) Do(req *Request) (*Response, error) {
@@ -79,20 +84,26 @@ func (c *client) Do(req *Request) (*Response, error) {
 	return resp, nil
 }
 
-type ClientOpts = func(*client) error
+type ClientOpts interface {
+	Apply(*client) error
+}
+
+type ClientOptsFunc func(*client) error
+
+func (f ClientOptsFunc) Apply(c *client) error { return f(c) }
 
 func WithHTTPClient(h http.Client) ClientOpts {
-	return func(c *client) error {
+	return ClientOptsFunc(func(c *client) error {
 		c.http = h
 		return nil
-	}
+	})
 }
 
 func WithRequestOptions(opts ...RequestOpts) ClientOpts {
-	return func(c *client) error {
+	return ClientOptsFunc(func(c *client) error {
 		c.reqOpts = opts
 		return nil
-	}
+	})
 }
 
 // TODO: add WithBackoff

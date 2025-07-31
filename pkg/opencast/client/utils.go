@@ -25,15 +25,6 @@ var (
 	UnexpectedStatusCodeErr = errors.New("UnexpectedStatusCode")
 )
 
-func applyOpts[T any](obj T, opts []func(T) error) error {
-	for _, f := range opts {
-		if err := f(obj); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
 func Paginate[T any](do Doer, paginateReqFunc func(i int) (*Request, error), pageFunc func(page []T, resp *Response) bool) error {
 	cont := true
 	for i := 0; cont; i++ {
