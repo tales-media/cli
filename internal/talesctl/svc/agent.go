@@ -50,8 +50,10 @@ func (svc *opencastAgent) List(ctx context.Context) ([]api.Agent, error) {
 		func(i int) (*oc.Request, error) {
 			return svc.extAPI.ListAgentRequest(
 				ctx,
-				extapiclientv1.WithLimit(PageSize),
-				extapiclientv1.WithOffset(i*PageSize),
+				extapiclientv1.WithPagination{
+					Limit:  PageSize,
+					Offset: i * PageSize,
+				},
 			)
 		},
 		oc.CollectAllPages(&ocAgents),
