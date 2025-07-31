@@ -33,31 +33,31 @@ type Client interface {
 
 	// API
 
-	GetAPI(context.Context, ...oc.RequestOpts) (*extapiv1.API, *oc.Response, error)
-	GetAPIRequest(context.Context, ...oc.RequestOpts) (*oc.Request, error)
+	GetAPI(ctx context.Context, opts ...oc.RequestOpts) (*extapiv1.API, *oc.Response, error)
+	GetAPIRequest(ctx context.Context, opts ...oc.RequestOpts) (*oc.Request, error)
 
-	GetAPIVersion(context.Context, ...oc.RequestOpts) (*extapiv1.APIVersion, *oc.Response, error)
-	GetAPIVersionRequest(context.Context, ...oc.RequestOpts) (*oc.Request, error)
+	GetAPIVersion(ctx context.Context, opts ...oc.RequestOpts) (*extapiv1.APIVersion, *oc.Response, error)
+	GetAPIVersionRequest(ctx context.Context, opts ...oc.RequestOpts) (*oc.Request, error)
 
-	GetAPIVersionDefault(context.Context, ...oc.RequestOpts) (*extapiv1.APIVersion, *oc.Response, error)
-	GetAPIVersionDefaultRequest(context.Context, ...oc.RequestOpts) (*oc.Request, error)
+	GetAPIVersionDefault(ctx context.Context, opts ...oc.RequestOpts) (*extapiv1.APIVersion, *oc.Response, error)
+	GetAPIVersionDefaultRequest(ctx context.Context, opts ...oc.RequestOpts) (*oc.Request, error)
 
 	// Info
 
-	GetInfoOrganization(context.Context, ...oc.RequestOpts) (*extapiv1.Organization, *oc.Response, error)
-	GetInfoOrganizationRequest(context.Context, ...oc.RequestOpts) (*oc.Request, error)
+	GetInfoOrganization(ctx context.Context, opts ...oc.RequestOpts) (*extapiv1.Organization, *oc.Response, error)
+	GetInfoOrganizationRequest(ctx context.Context, opts ...oc.RequestOpts) (*oc.Request, error)
 
-	GetInfoOrganizationProperties(context.Context, ...oc.RequestOpts) (*extapiv1.OrganizationProperties, *oc.Response, error)
-	GetInfoOrganizationPropertiesRequest(context.Context, ...oc.RequestOpts) (*oc.Request, error)
+	GetInfoOrganizationProperties(ctx context.Context, opts ...oc.RequestOpts) (*extapiv1.OrganizationProperties, *oc.Response, error)
+	GetInfoOrganizationPropertiesRequest(ctx context.Context, opts ...oc.RequestOpts) (*oc.Request, error)
 
-	GetInfoOrganizationPropertiesEngageUIURL(context.Context, ...oc.RequestOpts) (*extapiv1.OrganizationProperties, *oc.Response, error)
-	GetInfoOrganizationPropertiesEngageUIURLRequest(context.Context, ...oc.RequestOpts) (*oc.Request, error)
+	GetInfoOrganizationPropertiesEngageUIURL(ctx context.Context, opts ...oc.RequestOpts) (*extapiv1.OrganizationProperties, *oc.Response, error)
+	GetInfoOrganizationPropertiesEngageUIURLRequest(ctx context.Context, opts ...oc.RequestOpts) (*oc.Request, error)
 
-	GetInfoMe(context.Context, ...oc.RequestOpts) (*extapiv1.Me, *oc.Response, error)
-	GetInfoMeRequest(context.Context, ...oc.RequestOpts) (*oc.Request, error)
+	GetInfoMe(ctx context.Context, opts ...oc.RequestOpts) (*extapiv1.Me, *oc.Response, error)
+	GetInfoMeRequest(ctx context.Context, opts ...oc.RequestOpts) (*oc.Request, error)
 
-	GetInfoMeRoles(context.Context, ...oc.RequestOpts) (*extapiv1.StringList, *oc.Response, error)
-	GetInfoMeRolesRequest(context.Context, ...oc.RequestOpts) (*oc.Request, error)
+	GetInfoMeRoles(ctx context.Context, opts ...oc.RequestOpts) (extapiv1.StringList, *oc.Response, error)
+	GetInfoMeRolesRequest(ctx context.Context, opts ...oc.RequestOpts) (*oc.Request, error)
 }
 
 type client struct {
