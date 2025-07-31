@@ -21,6 +21,9 @@ import (
 	"time"
 )
 
+const Version = "1.0"
+const UserAgent = "OpencastGoClient/" + Version
+
 type Doer interface {
 	Do(*Request) (*Response, error)
 }
@@ -40,6 +43,9 @@ var _ Client = &client{}
 func New(sm ServiceMapper, opts ...ClientOpts) (Client, error) {
 	c := &client{
 		sm: sm,
+		reqOpts: []RequestOpts{
+			WithHeader("User-Agent", UserAgent),
+		},
 	}
 	if err := applyOpts(c, opts); err != nil {
 		return nil, err
