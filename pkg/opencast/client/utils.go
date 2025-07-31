@@ -34,6 +34,31 @@ func applyOpts[T any](obj T, opts []func(T) error) error {
 	return nil
 }
 
+func Paginate[T any](do Doer, paginateReqFunc func(i int) (*Request, error), pageFunc func(page []T, resp *Response) bool) error {
+	cont := true
+	for i := 0; cont; i++ {
+		page, resp, err := GenericAutoDecodedDo[[]T](
+			do,
+			func() (*Request, error) { return paginateReqFunc(i) },
+		)
+		if err != nil {
+			return err
+		}
+		cont = pageFunc(page, resp)
+	}
+	return nil
+}
+
+func CollectAllPages[T any](list *[]T) func(page []T, resp *Response) bool {
+	return func(page []T, resp *Response) bool {
+		if len(page) == 0 {
+			return false
+		}
+		*list = append(*list, page...)
+		return true
+	}
+}
+
 func GenericAutoDecodedDo[T any](do Doer, reqFunc func() (*Request, error)) (T, *Response, error) {
 	var data T
 
