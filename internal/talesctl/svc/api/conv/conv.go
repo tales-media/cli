@@ -21,6 +21,43 @@ import (
 	extapiv1 "github.com/tales-media/cli/pkg/opencast/apis/external-api/v1.11"
 )
 
+func Map[F, T any](ocList []F, mapper func(F) T) []T {
+	list := make([]T, 0, len(ocList))
+	for _, item := range ocList {
+		list = append(list, mapper(item))
+	}
+	return list
+}
+
+func OCAPIToAPIInfo(ocAPI extapiv1.API, ocVersion extapiv1.APIVersion) api.APIInfo {
+	return api.APIInfo{
+		URL:               ocAPI.URL,
+		DefaultVersion:    ocAPI.Version,
+		SupportedVersions: ocVersion.Versions,
+	}
+}
+
+func OCMeToMe(ocMe extapiv1.Me, roles extapiv1.StringList) api.Me {
+	return api.Me{
+		Username: ocMe.Username,
+		Name:     ocMe.Name,
+		Email:    ocMe.Email,
+		UserRole: ocMe.UserRole,
+		Provider: ocMe.Provider,
+		Roles:    roles,
+	}
+}
+
+func OCOrganizationToOrganization(ocOrganization extapiv1.Organization, ocProperties extapiv1.OrganizationProperties) api.Organization {
+	return api.Organization{
+		ID:            ocOrganization.ID,
+		Name:          ocOrganization.Name,
+		AdminRole:     ocOrganization.AdminRole,
+		AnonymousRole: ocOrganization.AnonymousRole,
+		Properties:    ocProperties,
+	}
+}
+
 func OCAgentToAgent(ocAgent extapiv1.Agent) api.Agent {
 	return api.Agent{
 		Name:       ocAgent.AgentID,
@@ -29,12 +66,4 @@ func OCAgentToAgent(ocAgent extapiv1.Agent) api.Agent {
 		Status:     api.AgentStatus(ocAgent.Status),
 		Inputs:     ocAgent.Inputs,
 	}
-}
-
-func Map[F, T any](ocList []F, mapper func(F) T) []T {
-	list := make([]T, 0, len(ocList))
-	for _, item := range ocList {
-		list = append(list, mapper(item))
-	}
-	return list
 }

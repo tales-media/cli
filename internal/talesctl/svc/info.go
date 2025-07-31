@@ -20,6 +20,7 @@ import (
 	"context"
 
 	"github.com/tales-media/cli/internal/talesctl/svc/api"
+	"github.com/tales-media/cli/internal/talesctl/svc/api/conv"
 	extapiclientv1 "github.com/tales-media/cli/pkg/opencast/apis/external-api/v1.11/client"
 )
 
@@ -46,58 +47,35 @@ func (svc *opencastInfo) API(ctx context.Context) (api.APIInfo, error) {
 	if err != nil {
 		return api.APIInfo{}, err
 	}
-
-	ver, _, err := svc.extAPI.GetAPIVersion(ctx)
+	ocVersion, _, err := svc.extAPI.GetAPIVersion(ctx)
 	if err != nil {
 		return api.APIInfo{}, err
 	}
-
-	return api.APIInfo{
-		URL:               ocAPI.URL,
-		DefaultVersion:    ocAPI.Version,
-		SupportedVersions: ver.Versions,
-	}, nil
+	return conv.OCAPIToAPIInfo(*ocAPI, *ocVersion), nil
 }
 
 func (svc *opencastInfo) Me(ctx context.Context) (api.Me, error) {
-	me, _, err := svc.extAPI.GetInfoMe(ctx)
+	ocMe, _, err := svc.extAPI.GetInfoMe(ctx)
 	if err != nil {
 		return api.Me{}, err
 	}
-
 	roles, _, err := svc.extAPI.GetInfoMeRoles(ctx)
 	if err != nil {
 		return api.Me{}, err
 	}
-
-	return api.Me{
-		Username: me.Username,
-		Name:     me.Name,
-		Email:    me.Email,
-		UserRole: me.UserRole,
-		Provider: me.Provider,
-		Roles:    *roles,
-	}, nil
+	return conv.OCMeToMe(*ocMe, roles), nil
 }
 
 func (svc *opencastInfo) Organization(ctx context.Context) (api.Organization, error) {
-	org, _, err := svc.extAPI.GetInfoOrganization(ctx)
+	ocOrganization, _, err := svc.extAPI.GetInfoOrganization(ctx)
 	if err != nil {
 		return api.Organization{}, err
 	}
-
 	orgProperties, _, err := svc.extAPI.GetInfoOrganizationProperties(ctx)
 	if err != nil {
 		return api.Organization{}, err
 	}
-
-	return api.Organization{
-		ID:            org.ID,
-		Name:          org.Name,
-		AdminRole:     org.AdminRole,
-		AnonymousRole: org.AnonymousRole,
-		Properties:    *orgProperties,
-	}, nil
+	return conv.OCOrganizationToOrganization(*ocOrganization, *orgProperties), nil
 }
 
 type talesInfo = opencastInfo
