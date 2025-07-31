@@ -16,6 +16,8 @@ limitations under the License.
 
 package api
 
+import "time"
+
 type APIInfo struct {
 	URL               string   `human:"URL" json:"url" yaml:"url"`
 	DefaultVersion    string   `human:"Default Version" json:"defaultVersion" yaml:"defaultVersion"`
@@ -38,3 +40,23 @@ type Organization struct {
 	AnonymousRole string            `human:"Anonymous Role" json:"anonymousRole" yaml:"anonymousRole"`
 	Properties    map[string]string `human:"Properties,wideonly" json:"properties" yaml:"properties"`
 }
+
+type Agent struct {
+	Name       string      `human:"Name" json:"name" yaml:"name"`
+	URL        string      `human:"URL" json:"url" yaml:"url"`
+	LastUpdate time.Time   `human:"Last Update" json:"lastUpdate" yaml:"update"`
+	Status     AgentStatus `human:"Status" json:"status" yaml:"status"`
+	Inputs     []string    `human:"Inputs" json:"inputs" yaml:"inputs"`
+}
+
+type AgentStatus string
+
+const (
+	UnknownAgentStatus      = AgentStatus("unknown")
+	IdleAgentStatus         = AgentStatus("idle")
+	CapturingAgentStatus    = AgentStatus("capturing")
+	UploadingAgentStatus    = AgentStatus("uploading")
+	ShuttingDownAgentStatus = AgentStatus("shutting_down")
+	OfflineAgentStatus      = AgentStatus("offline")
+	ErrorAgentStatus        = AgentStatus("error")
+)

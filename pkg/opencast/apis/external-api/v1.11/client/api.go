@@ -58,6 +58,14 @@ type Client interface {
 
 	GetInfoMeRoles(ctx context.Context, opts ...oc.RequestOpts) (extapiv1.StringList, *oc.Response, error)
 	GetInfoMeRolesRequest(ctx context.Context, opts ...oc.RequestOpts) (*oc.Request, error)
+
+	// Agents
+
+	ListAgent(ctx context.Context, opts ...oc.RequestOpts) ([]extapiv1.Agent, *oc.Response, error)
+	ListAgentRequest(ctx context.Context, opts ...oc.RequestOpts) (*oc.Request, error)
+
+	GetAgent(ctx context.Context, id string, opts ...oc.RequestOpts) (*extapiv1.Agent, *oc.Response, error)
+	GetAgentRequest(ctx context.Context, id string, opts ...oc.RequestOpts) (*oc.Request, error)
 }
 
 type client struct {

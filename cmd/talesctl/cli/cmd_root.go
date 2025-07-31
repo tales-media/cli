@@ -54,6 +54,7 @@ func New(cfg *Config) *cobra.Command {
 
 	// commands
 	cmd.AddCommand(
+		agentCommand(cfg),
 		infoCommand(cfg),
 		versionCommand(cfg),
 	)

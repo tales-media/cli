@@ -16,6 +16,8 @@ limitations under the License.
 
 package v1_11
 
+import "time"
+
 const Version = "v1.11.0"
 
 const (
@@ -60,3 +62,23 @@ type Me struct {
 }
 
 type StringList []string
+
+type Agent struct {
+	AgentID string      `json:"agent_id"`
+	Inputs  []string    `json:"inputs"`
+	Update  time.Time   `json:"update"`
+	URL     string      `json:"url"`
+	Status  AgentStatus `json:"status"`
+}
+
+type AgentStatus string
+
+const (
+	UnknownAgentStatus      = AgentStatus("unknown")
+	IdleAgentStatus         = AgentStatus("idle")
+	CapturingAgentStatus    = AgentStatus("capturing")
+	UploadingAgentStatus    = AgentStatus("uploading")
+	ShuttingDownAgentStatus = AgentStatus("shutting_down")
+	OfflineAgentStatus      = AgentStatus("offline")
+	ErrorAgentStatus        = AgentStatus("error")
+)
