@@ -22,7 +22,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/tales-media/cli/internal/talesctl/formatter"
+	"github.com/tales-media/cli/internal/pkg/formatter"
 	extapiclientv1 "github.com/tales-media/cli/pkg/opencast/apis/external-api/v1.11/client"
 	oc "github.com/tales-media/cli/pkg/opencast/client"
 )
