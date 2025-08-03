@@ -21,7 +21,7 @@ import "time"
 type APIInfo struct {
 	URL               string   `human:"URL" json:"url" yaml:"url"`
 	DefaultVersion    string   `human:"Default Version" json:"defaultVersion" yaml:"defaultVersion"`
-	SupportedVersions []string `human:"Supported Versions" json:"supportedVersions" yaml:"supportedVersions"`
+	SupportedVersions []string `human:"Supported Versions,wideonly" json:"supportedVersions" yaml:"supportedVersions"`
 }
 
 type Me struct {
@@ -30,7 +30,7 @@ type Me struct {
 	Email    string   `human:"E-Mail" json:"email" yaml:"email"`
 	UserRole string   `human:"User Role,wideonly" json:"userRole" yaml:"userRole"`
 	Provider string   `human:"Provider,wideonly" json:"provider" yaml:"provider"`
-	Roles    []string `human:"Roles" json:"roles" yaml:"roles"`
+	Roles    []string `human:"Roles,wideonly" json:"roles" yaml:"roles"`
 }
 
 type Organization struct {
@@ -46,7 +46,7 @@ type Agent struct {
 	URL        string      `human:"URL" json:"url" yaml:"url"`
 	LastUpdate time.Time   `human:"Last Update" json:"lastUpdate" yaml:"update"`
 	Status     AgentStatus `human:"Status" json:"status" yaml:"status"`
-	Inputs     []string    `human:"Inputs" json:"inputs" yaml:"inputs"`
+	Inputs     []string    `human:"Inputs,wideonly" json:"inputs" yaml:"inputs"`
 }
 
 type AgentStatus string
