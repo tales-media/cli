@@ -28,6 +28,8 @@ type WithPagination struct {
 	Offset int
 }
 
+var _ oc.RequestOpts = WithPagination{}
+
 func (opt WithPagination) Apply(r *oc.Request) error {
 	return r.ApplyOptions(
 		oc.WithQuery("limit", strconv.Itoa(opt.Limit)),
@@ -36,6 +38,8 @@ func (opt WithPagination) Apply(r *oc.Request) error {
 }
 
 type WithFilter map[FilterKey]string
+
+var _ oc.RequestOpts = WithFilter{}
 
 type FilterKey string
 
@@ -100,6 +104,8 @@ func (opt WithSort) Apply(r *oc.Request) error {
 	return r.ApplyOptions(oc.WithQuery("sort", sb.String()))
 }
 
+var _ oc.RequestOpts = WithSort{}
+
 type Sort struct {
 	By        SortKey
 	Direction SortDirection
@@ -113,7 +119,3 @@ const (
 	Ascending  = SortDirection("ASC")
 	Descending = SortDirection("DESC")
 )
-
-func init() {
-	_ = WithSort{{By: "name", Direction: Ascending}}
-}
