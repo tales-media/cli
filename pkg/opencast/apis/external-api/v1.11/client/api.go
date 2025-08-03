@@ -66,6 +66,14 @@ type Client interface {
 
 	GetAgent(ctx context.Context, id string, opts ...oc.RequestOpts) (*extapiv1.Agent, *oc.Response, error)
 	GetAgentRequest(ctx context.Context, id string, opts ...oc.RequestOpts) (*oc.Request, error)
+
+	// Workflow Definitions
+
+	ListWorkflowDefinition(ctx context.Context, opts ...oc.RequestOpts) ([]extapiv1.WorkflowDefinition, *oc.Response, error)
+	ListWorkflowDefinitionRequest(ctx context.Context, opts ...oc.RequestOpts) (*oc.Request, error)
+
+	GetWorkflowDefinition(ctx context.Context, id string, opts ...oc.RequestOpts) (*extapiv1.WorkflowDefinition, *oc.Response, error)
+	GetWorkflowDefinitionRequest(ctx context.Context, id string, opts ...oc.RequestOpts) (*oc.Request, error)
 }
 
 type client struct {

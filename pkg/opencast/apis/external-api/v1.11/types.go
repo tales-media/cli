@@ -82,3 +82,33 @@ const (
 	OfflineAgentStatus      = AgentStatus("offline")
 	ErrorAgentStatus        = AgentStatus("error")
 )
+
+type WorkflowDefinition struct {
+	Identifier             string                `json:"identifier"`
+	Title                  string                `json:"title"`
+	Description            string                `json:"description"`
+	Tags                   []string              `json:"tags"`
+	ConfigurationPanel     string                `json:"configuration_panel"`
+	ConfigurationPanelJSON string                `json:"configuration_panel_json"`
+	Operations             []OperationDefinition `json:"operations"`
+}
+
+type OperationDefinition struct {
+	Operation            string            `json:"operation"`
+	Description          string            `json:"description"`
+	Configuration        map[string]string `json:"configuration"`
+	If                   string            `json:"if"`
+	Unless               string            `json:"unless"`
+	FailWorkflowOnError  bool              `json:"fail_workflow_on_error"`
+	ErrorHandlerWorkflow string            `json:"error_handler_workflow"`
+	RetryStrategy        RetryStrategy     `json:"retry_strategy"`
+	MaxAttempts          int               `json:"max_attempts"`
+}
+
+type RetryStrategy string
+
+const (
+	NoneRetryStrategy  = RetryStrategy("none")
+	RetryRetryStrategy = RetryStrategy("retry")
+	HoldRetryStrategy  = RetryStrategy("hold")
+)

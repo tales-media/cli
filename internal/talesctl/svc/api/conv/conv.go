@@ -67,3 +67,29 @@ func OCAgentToAgent(ocAgent extapiv1.Agent) api.Agent {
 		Inputs:     ocAgent.Inputs,
 	}
 }
+
+func OCWorkflowDefinitionToWorkflowDefinition(ocWorkflowDefinition extapiv1.WorkflowDefinition) api.WorkflowDefinition {
+	return api.WorkflowDefinition{
+		ID:                     ocWorkflowDefinition.Identifier,
+		Title:                  ocWorkflowDefinition.Title,
+		Description:            ocWorkflowDefinition.Description,
+		Tags:                   ocWorkflowDefinition.Tags,
+		ConfigurationPanel:     ocWorkflowDefinition.ConfigurationPanel,
+		ConfigurationPanelJSON: ocWorkflowDefinition.ConfigurationPanelJSON,
+		Operations:             Map(ocWorkflowDefinition.Operations, OCOperationDefinitionToOperationDefinition),
+	}
+}
+
+func OCOperationDefinitionToOperationDefinition(ocOperationDefinition extapiv1.OperationDefinition) api.OperationDefinition {
+	return api.OperationDefinition{
+		Operation:            ocOperationDefinition.Operation,
+		Description:          ocOperationDefinition.Description,
+		Configuration:        ocOperationDefinition.Configuration,
+		If:                   ocOperationDefinition.If,
+		Unless:               ocOperationDefinition.Unless,
+		FailWorkflowOnError:  ocOperationDefinition.FailWorkflowOnError,
+		ErrorHandlerWorkflow: ocOperationDefinition.ErrorHandlerWorkflow,
+		RetryStrategy:        api.RetryStrategy(ocOperationDefinition.RetryStrategy),
+		MaxAttempts:          ocOperationDefinition.MaxAttempts,
+	}
+}

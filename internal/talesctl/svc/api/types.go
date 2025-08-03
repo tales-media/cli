@@ -60,3 +60,33 @@ const (
 	OfflineAgentStatus      = AgentStatus("offline")
 	ErrorAgentStatus        = AgentStatus("error")
 )
+
+type WorkflowDefinition struct {
+	ID                     string                `human:"ID" json:"id" yaml:"id"`
+	Title                  string                `human:"Title" json:"title" yaml:"title"`
+	Description            string                `human:"Description,wideonly" json:"description" yaml:"description"`
+	Tags                   []string              `human:"Tags,wideonly" json:"tags" yaml:"tags"`
+	ConfigurationPanel     string                `human:"Configuration Panel,wideonly" json:"configuration_panel" yaml:"configuration_panel"`
+	ConfigurationPanelJSON string                `human:"Configuration Panel JSON,wideonly" json:"configuration_panel_json" yaml:"configuration_panel_json"`
+	Operations             []OperationDefinition `human:"Operations,wideonly" json:"operations" yaml:"operations"`
+}
+
+type OperationDefinition struct {
+	Operation            string            `human:"Operation" json:"operation" yaml:"operation"`
+	Description          string            `human:"Description" json:"description" yaml:"description"`
+	Configuration        map[string]string `human:"Configuration,wideonly" json:"configuration" yaml:"configuration"`
+	If                   string            `human:"If,wideonly" json:"if" yaml:"if"`
+	Unless               string            `human:"Unless,wideonly" json:"unless" yaml:"unless"`
+	FailWorkflowOnError  bool              `human:"Fail Workflow On Error,wideonly" json:"fail_workflow_on_error" yaml:"fail_workflow_on_error"`
+	ErrorHandlerWorkflow string            `human:"Error Handler Workflow,wideonly" json:"error_handler_workflow" yaml:"error_handler_workflow"`
+	RetryStrategy        RetryStrategy     `human:"Retry Strategy,wideonly" json:"retry_strategy" yaml:"retry_strategy"`
+	MaxAttempts          int               `human:"Max Attempts,wideonly" json:"max_attempts" yaml:"max_attempts"`
+}
+
+type RetryStrategy string
+
+const (
+	NoneRetryStrategy  = RetryStrategy("none")
+	RetryRetryStrategy = RetryStrategy("retry")
+	HoldRetryStrategy  = RetryStrategy("hold")
+)
