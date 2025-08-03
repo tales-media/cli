@@ -42,12 +42,17 @@ func agentListCommand(cfg *Config) *cobra.Command {
 		"list",
 		"List Capture Agents",
 		func(cmd *cobra.Command, args []string, extAPI extapiclientv1.Client) (any, error) {
-			var s svc.Agent
+			var (
+				s   svc.Agent
+				req svc.AgentListRequest
+			)
+
 			mustSelect(cfg.AliasType, map[AliasType]func(){
 				OpencastAlias: func() { s = svc.NewOpencastAgent(extAPI) },
 				TalesAlias:    func() { s = svc.NewTalesAgent(extAPI) },
 			})()
-			return s.List(cmd.Context())
+
+			return s.List(cmd.Context(), req)
 		},
 	)
 }
@@ -57,13 +62,19 @@ func agentGetCommand(cfg *Config) *cobra.Command {
 		"get [name]",
 		"Get a Capture Agent",
 		func(cmd *cobra.Command, args []string, extAPI extapiclientv1.Client) (any, error) {
-			var s svc.Agent
-			name := args[0]
+			var (
+				s   svc.Agent
+				req svc.AgentGetRequest
+			)
+
 			mustSelect(cfg.AliasType, map[AliasType]func(){
 				OpencastAlias: func() { s = svc.NewOpencastAgent(extAPI) },
 				TalesAlias:    func() { s = svc.NewTalesAgent(extAPI) },
 			})()
-			return s.Get(cmd.Context(), name)
+
+			req.Name = args[0]
+
+			return s.Get(cmd.Context(), req)
 		},
 	)
 	cmd.Args = cobra.ExactArgs(1)

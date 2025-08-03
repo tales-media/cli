@@ -27,8 +27,15 @@ import (
 )
 
 type Agent interface {
-	List(context.Context) ([]api.Agent, error)
-	Get(context.Context, string) (api.Agent, error)
+	List(context.Context, AgentListRequest) ([]api.Agent, error)
+	Get(context.Context, AgentGetRequest) (api.Agent, error)
+}
+
+type AgentListRequest struct {
+}
+
+type AgentGetRequest struct {
+	Name string
 }
 
 type opencastAgent struct {
@@ -43,7 +50,7 @@ func NewOpencastAgent(extAPI extapiclientv1.Client) Agent {
 	}
 }
 
-func (svc *opencastAgent) List(ctx context.Context) ([]api.Agent, error) {
+func (svc *opencastAgent) List(ctx context.Context, req AgentListRequest) ([]api.Agent, error) {
 	var ocAgents []extapiv1.Agent
 	err := oc.Paginate(
 		svc.extAPI,
@@ -65,8 +72,8 @@ func (svc *opencastAgent) List(ctx context.Context) ([]api.Agent, error) {
 	return agents, nil
 }
 
-func (svc *opencastAgent) Get(ctx context.Context, name string) (api.Agent, error) {
-	ocAgent, _, err := svc.extAPI.GetAgent(ctx, name)
+func (svc *opencastAgent) Get(ctx context.Context, req AgentGetRequest) (api.Agent, error) {
+	ocAgent, _, err := svc.extAPI.GetAgent(ctx, req.Name)
 	if err != nil {
 		return api.Agent{}, err
 	}
