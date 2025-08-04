@@ -38,6 +38,11 @@ func baseCommand(use, short string, valueFunc func(*cobra.Command, []string) (an
 			if err != nil {
 				return err
 			}
+
+			if val == nil {
+				return nil
+			}
+
 			formatter := detectFormatter(cmd)
 			valType := reflect.TypeOf(val)
 			switch valType.Kind() {
