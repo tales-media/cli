@@ -42,9 +42,9 @@ func New(cfg *Config) *cobra.Command {
 	cmd.SetArgs(cfg.Args)
 
 	// global flags
-	cmd.PersistentFlags().String(ContextFlag, "", "The name of the Opencast context to use")
+	cmd.PersistentFlags().String(ContextFlag, "", "the name of the Opencast context to use")
 	outputValue := OutputValue()
-	cmd.PersistentFlags().VarP(outputValue, OutputFlag, OutputFlagShort, outputValue.Usage("The output format"))
+	cmd.PersistentFlags().VarP(outputValue, OutputFlag, OutputFlagShort, outputValue.Usage("the output format"))
 
 	// commands
 

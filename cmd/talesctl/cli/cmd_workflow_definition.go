@@ -66,9 +66,9 @@ func workflowDefinitionListCommand(cfg *Config) *cobra.Command {
 			return s.List(cmd.Context(), req)
 		},
 	)
-	cmd.Flags().String(TagFlag, "", "Only include workflow definitions with this tag")
-	cmd.Flags().Bool(IncludeOperationsFlag, false, "Include list of workflow operations in output")
-	cmd.Flags().Bool(IncludeConfigurationPanelFlag, false, "Include configuration panel in output")
+	cmd.Flags().String(TagFlag, "", "only include workflow definitions with this tag")
+	cmd.Flags().Bool(IncludeOperationsFlag, false, "include list of workflow operations in output")
+	cmd.Flags().Bool(IncludeConfigurationPanelFlag, false, "include configuration panel in output")
 	return cmd
 }
 
@@ -100,7 +100,7 @@ func workflowDefinitionGetCommand(cfg *Config) *cobra.Command {
 		},
 	)
 	cmd.Args = cobra.ExactArgs(1)
-	cmd.Flags().Bool(IncludeOperationsFlag, false, "Include list of workflow operations in output")
-	cmd.Flags().Bool(IncludeConfigurationPanelFlag, false, "Include configuration panel in output")
+	cmd.Flags().Bool(IncludeOperationsFlag, false, "include list of workflow operations in output")
+	cmd.Flags().Bool(IncludeConfigurationPanelFlag, false, "include configuration panel in output")
 	return cmd
 }
