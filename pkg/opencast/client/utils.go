@@ -50,25 +50,32 @@ func CollectAllPages[T any](list *[]T) func(page []T, resp *Response) bool {
 	}
 }
 
+func GenericDo(do Doer, reqFunc func() (*Request, error)) (*Response, error) {
+	req, err := reqFunc()
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := do.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode < 200 || 300 <= resp.StatusCode {
+		return resp, responseErr(resp)
+	}
+
+	return resp, nil
+}
+
 func GenericAutoDecodedDo[T any](do Doer, reqFunc func() (*Request, error)) (T, *Response, error) {
 	var data T
 
-	// build request
-	req, err := reqFunc()
+	resp, err := GenericDo(do, reqFunc)
 	if err != nil {
 		return data, nil, err
 	}
 
-	// send request
-	resp, err := do.Do(req)
-	if err != nil {
-		return data, nil, err
-	}
-	if resp.StatusCode < 200 || 300 <= resp.StatusCode {
-		return data, resp, responseErr(resp)
-	}
-
-	// decode response
 	decData := new(T)
 	err = resp.Decode(decData, AutoDecoder)
 	if err != nil {
