@@ -34,6 +34,10 @@ const (
 	WorkflowInstancesServiceType   = "org.opencastproject.external.workflows.instances"
 )
 
+type Properties map[string]string
+
+type DateTime = time.Time
+
 type API struct {
 	Version string `json:"version,omitempty"`
 	URL     string `json:"url,omitempty"`
@@ -51,8 +55,6 @@ type Organization struct {
 	AnonymousRole string `json:"anonymousRole"`
 }
 
-type OrganizationProperties map[string]string
-
 type Me struct {
 	Username string `json:"username"`
 	Name     string `json:"name"`
@@ -66,7 +68,7 @@ type StringList []string
 type Agent struct {
 	AgentID string      `json:"agent_id"`
 	Inputs  []string    `json:"inputs"`
-	Update  time.Time   `json:"update"`
+	Update  DateTime    `json:"update"`
 	URL     string      `json:"url"`
 	Status  AgentStatus `json:"status"`
 }

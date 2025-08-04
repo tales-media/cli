@@ -48,7 +48,7 @@ func OCMeToMe(ocMe extapiv1.Me, roles extapiv1.StringList) api.Me {
 	}
 }
 
-func OCOrganizationToOrganization(ocOrganization extapiv1.Organization, ocProperties extapiv1.OrganizationProperties) api.Organization {
+func OCOrganizationToOrganization(ocOrganization extapiv1.Organization, ocProperties extapiv1.Properties) api.Organization {
 	return api.Organization{
 		ID:            ocOrganization.ID,
 		Name:          ocOrganization.Name,

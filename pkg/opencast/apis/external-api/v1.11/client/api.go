@@ -47,10 +47,10 @@ type Client interface {
 	GetInfoOrganization(ctx context.Context, opts ...oc.RequestOpts) (*extapiv1.Organization, *oc.Response, error)
 	GetInfoOrganizationRequest(ctx context.Context, opts ...oc.RequestOpts) (*oc.Request, error)
 
-	GetInfoOrganizationProperties(ctx context.Context, opts ...oc.RequestOpts) (*extapiv1.OrganizationProperties, *oc.Response, error)
+	GetInfoOrganizationProperties(ctx context.Context, opts ...oc.RequestOpts) (*extapiv1.Properties, *oc.Response, error)
 	GetInfoOrganizationPropertiesRequest(ctx context.Context, opts ...oc.RequestOpts) (*oc.Request, error)
 
-	GetInfoOrganizationPropertiesEngageUIURL(ctx context.Context, opts ...oc.RequestOpts) (*extapiv1.OrganizationProperties, *oc.Response, error)
+	GetInfoOrganizationPropertiesEngageUIURL(ctx context.Context, opts ...oc.RequestOpts) (*extapiv1.Properties, *oc.Response, error)
 	GetInfoOrganizationPropertiesEngageUIURLRequest(ctx context.Context, opts ...oc.RequestOpts) (*oc.Request, error)
 
 	GetInfoMe(ctx context.Context, opts ...oc.RequestOpts) (*extapiv1.Me, *oc.Response, error)
