@@ -29,6 +29,7 @@ func workflowDefinitionCommand(cfg *Config) *cobra.Command {
 		TraverseChildren:      true,
 		DisableFlagsInUseLine: true,
 	}
+	cmd.GroupID = ResourcesGroup.ID
 	cmd.AddCommand(
 		workflowDefinitionListCommand(cfg),
 		workflowDefinitionGetCommand(cfg),

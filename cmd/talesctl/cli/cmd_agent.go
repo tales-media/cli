@@ -30,6 +30,7 @@ func agentCommand(cfg *Config) *cobra.Command {
 		TraverseChildren:      true,
 		DisableFlagsInUseLine: true,
 	}
+	cmd.GroupID = ResourcesGroup.ID
 	cmd.AddCommand(
 		agentListCommand(cfg),
 		agentGetCommand(cfg),

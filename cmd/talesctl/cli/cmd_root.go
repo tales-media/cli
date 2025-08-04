@@ -47,6 +47,13 @@ func New(cfg *Config) *cobra.Command {
 	cmd.PersistentFlags().VarP(outputValue, OutputFlag, OutputFlagShort, outputValue.Usage("The output format"))
 
 	// commands
+
+	cmd.AddGroup(
+		ManagementGroup,
+		ResourcesGroup,
+		AdminGroup,
+	)
+
 	cmd.AddCommand(
 		agentCommand(cfg),
 		workflowDefinitionCommand(cfg),
