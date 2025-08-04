@@ -19,7 +19,10 @@ package client
 import (
 	"bytes"
 	"io"
+	"mime/multipart"
 	"net/http"
+	"net/textproto"
+	"net/url"
 	"strings"
 	"sync"
 )
@@ -151,4 +154,154 @@ func (b *encoderBody) Encode() error {
 
 func (b *encoderBody) ContentType() string {
 	return b.ct
+}
+
+type formBody struct {
+	f    url.Values
+	enc  *string
+	once sync.Once
+}
+
+var _ Body = &formBody{}
+
+func NewFormBody() *formBody {
+	return &formBody{
+		f: make(url.Values),
+	}
+}
+
+func (b *formBody) GetField(key string) string {
+	return b.f.Get(key)
+}
+
+func (b *formBody) SetField(key, value string) {
+	if b.enc != nil {
+		panic("formBody: setting field to already encoded form")
+	}
+	b.f.Set(key, value)
+}
+
+func (b *formBody) AddField(key, value string) {
+	if b.enc != nil {
+		panic("formBody: adding field to already encoded form")
+	}
+	b.f.Add(key, value)
+}
+
+func (b *formBody) DeleteField(key string) {
+	if b.enc != nil {
+		panic("formBody: deleting field form already encoded form")
+	}
+	b.f.Del(key)
+}
+
+func (b *formBody) HasField(key string) bool {
+	return b.f.Has(key)
+}
+
+func (b *formBody) Encode() error {
+	b.once.Do(func() {
+		s := b.f.Encode()
+		b.enc = &s
+	})
+	return nil
+}
+
+func (b *formBody) Len() int64 {
+	_ = b.Encode()
+	return int64(len(*b.enc))
+}
+
+func (b *formBody) Reader() (io.ReadCloser, error) {
+	if err := b.Encode(); err != nil {
+		return nil, err
+	}
+	sr := strings.NewReader(*b.enc)
+	return io.NopCloser(sr), nil
+}
+
+func (b *formBody) ContentType() string {
+	return "application/x-www-form-urlencoded"
+}
+
+type multipartBody struct {
+	buf    *bytes.Buffer
+	mw     *multipart.Writer
+	once   sync.Once
+	closed bool
+}
+
+var _ Body = &multipartBody{}
+
+func NewMultipartBody() *multipartBody {
+	buf := &bytes.Buffer{}
+	return &multipartBody{
+		buf: buf,
+		mw:  multipart.NewWriter(buf),
+	}
+}
+
+func (b *multipartBody) CreatePart(header textproto.MIMEHeader) (io.Writer, error) {
+	if b.closed {
+		panic("multipartBody: creating part in closed multipart form")
+	}
+	return b.mw.CreatePart(header)
+}
+
+func (b *multipartBody) CreateFormFile(fieldname, filename string) (io.Writer, error) {
+	if b.closed {
+		panic("multipartBody: creating part in closed multipart form")
+	}
+	return b.mw.CreateFormFile(fieldname, filename)
+}
+
+func (b *multipartBody) CreateFormField(fieldname string) (io.Writer, error) {
+	if b.closed {
+		panic("multipartBody: creating part in closed multipart form")
+	}
+	return b.mw.CreateFormField(fieldname)
+}
+
+func (b *multipartBody) WriteField(fieldname string, value []byte) error {
+	if b.closed {
+		panic("multipartBody: creating part in closed multipart form")
+	}
+	p, err := b.mw.CreateFormField(fieldname)
+	if err != nil {
+		return err
+	}
+	_, err = p.Write(value)
+	return err
+}
+
+func (b *multipartBody) WriteStringField(fieldname, value string) error {
+	if b.closed {
+		panic("multipartBody: creating part in closed multipart form")
+	}
+	return b.mw.WriteField(fieldname, value)
+}
+
+func (b *multipartBody) Close() (err error) {
+	b.once.Do(func() {
+		b.closed = true
+		err = b.mw.Close()
+	})
+	return
+}
+
+func (b *multipartBody) Len() int64 {
+	_ = b.Close()
+	return int64(b.buf.Len())
+}
+
+func (b *multipartBody) Reader() (io.ReadCloser, error) {
+	if err := b.Close(); err != nil {
+		return nil, err
+	}
+	r := bytes.NewReader(b.buf.Bytes())
+	return io.NopCloser(r), nil
+}
+
+func (b *multipartBody) ContentType() string {
+	return b.mw.FormDataContentType()
 }
