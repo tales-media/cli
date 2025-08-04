@@ -20,12 +20,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const (
-	ContextFlag     = "context"
-	OutputFlag      = "output"
-	OutputFlagShort = "o"
-)
-
 func New(cfg *Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use: cfg.Alias,

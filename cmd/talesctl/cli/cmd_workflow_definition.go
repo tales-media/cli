@@ -22,12 +22,6 @@ import (
 	extapiclientv1 "github.com/tales-media/cli/pkg/opencast/apis/external-api/v1.11/client"
 )
 
-const (
-	TagFlag                       = "tag"
-	IncludeOperationsFlag         = "include-operations"
-	IncludeConfigurationPanelFlag = "include-configuration-panel"
-)
-
 func workflowDefinitionCommand(cfg *Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                   "workflow-definition",
