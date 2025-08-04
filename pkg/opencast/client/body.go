@@ -25,6 +25,8 @@ import (
 	"net/url"
 	"strings"
 	"sync"
+
+	"k8s.io/utils/ptr"
 )
 
 type Body interface {
@@ -201,8 +203,7 @@ func (b *formBody) HasField(key string) bool {
 
 func (b *formBody) Encode() error {
 	b.once.Do(func() {
-		s := b.f.Encode()
-		b.enc = &s
+		b.enc = ptr.To(b.f.Encode())
 	})
 	return nil
 }
