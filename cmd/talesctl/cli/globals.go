@@ -31,6 +31,7 @@ const (
 	TagFlag                       = "tag"
 	ConfigFlag                    = "config"
 	ConfigFlagShort               = "c"
+	StateFlag                     = "state"
 	IncludeOperationsFlag         = "include-operations"
 	IncludeConfigurationFlag      = "include-configuration"
 	IncludeConfigurationPanelFlag = "include-configuration-panel"

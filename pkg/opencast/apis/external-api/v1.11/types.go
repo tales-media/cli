@@ -85,6 +85,68 @@ const (
 	ErrorAgentStatus        = AgentStatus("error")
 )
 
+type WorkflowInstance struct {
+	Identifier                   int64               `json:"identifier"`
+	Title                        string              `json:"title"`
+	Description                  string              `json:"description"`
+	WorkflowDefinitionIdentifier string              `json:"workflow_definition_identifier"`
+	EventIdentifier              string              `json:"event_identifier"`
+	Creator                      string              `json:"creator"`
+	State                        WorkflowState       `json:"state"`
+	Operations                   []OperationInstance `json:"operations"`
+	Configuration                Properties          `json:"configuration"`
+}
+
+type WorkflowState string
+
+const (
+	InstantiatedWorkflowState = WorkflowState("instantiated")
+	RunningWorkflowState      = WorkflowState("running")
+	StoppedWorkflowState      = WorkflowState("stopped")
+	PausedWorkflowState       = WorkflowState("paused")
+	SucceededWorkflowState    = WorkflowState("succeeded")
+	FailedWorkflowState       = WorkflowState("failed")
+	FailingWorkflowState      = WorkflowState("failing")
+)
+
+type OperationInstance struct {
+	Identifier           int64                  `json:"identifier"`
+	Operation            string                 `json:"operation"`
+	Description          string                 `json:"description"`
+	State                WorkflowOperationState `json:"state"`
+	TimeInQueue          int64                  `json:"time_in_queue"`
+	Host                 string                 `json:"host"`
+	If                   string                 `json:"if"`
+	FailWorkflowOnError  bool                   `json:"fail_workflow_on_error"`
+	ErrorHandlerWorkflow string                 `json:"error_handler_workflow"`
+	RetryStrategy        WorkflowRetryStrategy  `json:"retry_strategy"`
+	MaxAttempts          int                    `json:"max_attempts"`
+	FailedAttempts       int                    `json:"failed_attempts"`
+	Configuration        Properties             `json:"configuration"`
+	Start                DateTime               `json:"start"`
+	Completion           DateTime               `json:"completion"`
+}
+
+type WorkflowOperationState string
+
+const (
+	InstantiatedWorkflowOperationState = WorkflowOperationState("instantiated")
+	RunningWorkflowOperationState      = WorkflowOperationState("running")
+	PausedWorkflowOperationState       = WorkflowOperationState("paused")
+	SucceededWorkflowOperationState    = WorkflowOperationState("succeeded")
+	FailedWorkflowOperationState       = WorkflowOperationState("failed")
+	SkippedWorkflowOperationState      = WorkflowOperationState("skipped")
+	RetryWorkflowOperationState        = WorkflowOperationState("retry")
+)
+
+type WorkflowRetryStrategy string
+
+const (
+	NoneWorkflowRetryStrategy  = WorkflowRetryStrategy("none")
+	RetryWorkflowRetryStrategy = WorkflowRetryStrategy("retry")
+	HoldWorkflowRetryStrategy  = WorkflowRetryStrategy("hold")
+)
+
 type WorkflowDefinition struct {
 	Identifier             string                `json:"identifier"`
 	Title                  string                `json:"title"`
@@ -96,21 +158,13 @@ type WorkflowDefinition struct {
 }
 
 type OperationDefinition struct {
-	Operation            string            `json:"operation"`
-	Description          string            `json:"description"`
-	Configuration        map[string]string `json:"configuration"`
-	If                   string            `json:"if"`
-	Unless               string            `json:"unless"`
-	FailWorkflowOnError  bool              `json:"fail_workflow_on_error"`
-	ErrorHandlerWorkflow string            `json:"error_handler_workflow"`
-	RetryStrategy        RetryStrategy     `json:"retry_strategy"`
-	MaxAttempts          int               `json:"max_attempts"`
+	Operation            string                `json:"operation"`
+	Description          string                `json:"description"`
+	Configuration        Properties            `json:"configuration"`
+	If                   string                `json:"if"`
+	Unless               string                `json:"unless"`
+	FailWorkflowOnError  bool                  `json:"fail_workflow_on_error"`
+	ErrorHandlerWorkflow string                `json:"error_handler_workflow"`
+	RetryStrategy        WorkflowRetryStrategy `json:"retry_strategy"`
+	MaxAttempts          int                   `json:"max_attempts"`
 }
-
-type RetryStrategy string
-
-const (
-	NoneRetryStrategy  = RetryStrategy("none")
-	RetryRetryStrategy = RetryStrategy("retry")
-	HoldRetryStrategy  = RetryStrategy("hold")
-)

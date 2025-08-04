@@ -61,32 +61,86 @@ const (
 	ErrorAgentStatus        = AgentStatus("error")
 )
 
+type Workflow struct {
+	ID                   int64             `human:"ID" json:"id" yaml:"id"`
+	Title                string            `human:"Title" json:"title" yaml:"title"`
+	Description          string            `human:"Description,wideonly" json:"description" yaml:"description"`
+	WorkflowDefinitionID string            `human:"Workflow Definition ID" json:"workflowDefinitionId" yaml:"workflowDefinitionId"`
+	EventID              string            `human:"Event ID" json:"eventId" yaml:"eventId"`
+	Creator              string            `human:"Creator" json:"creator" yaml:"creator"`
+	State                WorkflowState     `human:"State" json:"state" yaml:"state"`
+	Operations           []Operation       `human:"Operations,wideonly" json:"operations" yaml:"operations"`
+	Configuration        map[string]string `human:"Configuration,wideonly" json:"configuration" yaml:"configuration"`
+}
+
+type WorkflowState string
+
+const (
+	InstantiatedWorkflowState = WorkflowState("instantiated")
+	RunningWorkflowState      = WorkflowState("running")
+	StoppedWorkflowState      = WorkflowState("stopped")
+	PausedWorkflowState       = WorkflowState("paused")
+	SucceededWorkflowState    = WorkflowState("succeeded")
+	FailedWorkflowState       = WorkflowState("failed")
+	FailingWorkflowState      = WorkflowState("failing")
+)
+
+type Operation struct {
+	ID                   int64                  `human:"ID" json:"id" yaml:"id"`
+	Operation            string                 `human:"Operation" json:"operation" yaml:"operation"`
+	Description          string                 `human:"Description" json:"description" yaml:"description"`
+	State                WorkflowOperationState `human:"State" json:"state" yaml:"state"`
+	TimeInQueue          int64                  `human:"Time In Queue,wideonly" json:"timeInQueue" yaml:"timeInQueue"`
+	Host                 string                 `human:"Host,wideonly" json:"host" yaml:"host"`
+	If                   string                 `human:"If,wideonly" json:"if" yaml:"if"`
+	FailWorkflowOnError  bool                   `human:"Fail Workflow On Error,wideonly" json:"failWorkflowOnError" yaml:"failWorkflowOnError"`
+	ErrorHandlerWorkflow string                 `human:"Error Handler Workflow,wideonly" json:"errorHandlerWorkflow" yaml:"errorHandlerWorkflow"`
+	RetryStrategy        WorkflowRetryStrategy  `human:"Retry Strategy,wideonly" json:"retryStrategy" yaml:"retryStrategy"`
+	MaxAttempts          int                    `human:"Max Attempts,wideonly" json:"maxAttempts" yaml:"maxAttempts"`
+	FailedAttempts       int                    `human:"Failed Attempts,wideonly" json:"failedAttempts" yaml:"failedAttempts"`
+	Configuration        map[string]string      `human:"Configuration,wideonly" json:"configuration" yaml:"configuration"`
+	Start                time.Time              `human:"Start" json:"start" yaml:"start"`
+	Completion           time.Time              `human:"Completion" json:"completion" yaml:"completion"`
+}
+
+type WorkflowOperationState string
+
+const (
+	InstantiatedWorkflowOperationState = WorkflowOperationState("instantiated")
+	RunningWorkflowOperationState      = WorkflowOperationState("running")
+	PausedWorkflowOperationState       = WorkflowOperationState("paused")
+	SucceededWorkflowOperationState    = WorkflowOperationState("succeeded")
+	FailedWorkflowOperationState       = WorkflowOperationState("failed")
+	SkippedWorkflowOperationState      = WorkflowOperationState("skipped")
+	RetryWorkflowOperationState        = WorkflowOperationState("retry")
+)
+
+type WorkflowRetryStrategy string
+
+const (
+	NoneWorkflowRetryStrategy  = WorkflowRetryStrategy("none")
+	RetryWorkflowRetryStrategy = WorkflowRetryStrategy("retry")
+	HoldWorkflowRetryStrategy  = WorkflowRetryStrategy("hold")
+)
+
 type WorkflowDefinition struct {
 	ID                     string                `human:"ID" json:"id" yaml:"id"`
 	Title                  string                `human:"Title" json:"title" yaml:"title"`
 	Description            string                `human:"Description,wideonly" json:"description" yaml:"description"`
 	Tags                   []string              `human:"Tags,wideonly" json:"tags" yaml:"tags"`
-	ConfigurationPanel     string                `human:"Configuration Panel,wideonly" json:"configuration_panel" yaml:"configuration_panel"`
-	ConfigurationPanelJSON string                `human:"Configuration Panel JSON,wideonly" json:"configuration_panel_json" yaml:"configuration_panel_json"`
+	ConfigurationPanel     string                `human:"Configuration Panel,wideonly" json:"configurationPanel" yaml:"configurationPanel"`
+	ConfigurationPanelJSON string                `human:"Configuration Panel JSON,wideonly" json:"configurationPanelJson" yaml:"configurationPanelJson"`
 	Operations             []OperationDefinition `human:"Operations,wideonly" json:"operations" yaml:"operations"`
 }
 
 type OperationDefinition struct {
-	Operation            string            `human:"Operation" json:"operation" yaml:"operation"`
-	Description          string            `human:"Description" json:"description" yaml:"description"`
-	Configuration        map[string]string `human:"Configuration,wideonly" json:"configuration" yaml:"configuration"`
-	If                   string            `human:"If,wideonly" json:"if" yaml:"if"`
-	Unless               string            `human:"Unless,wideonly" json:"unless" yaml:"unless"`
-	FailWorkflowOnError  bool              `human:"Fail Workflow On Error,wideonly" json:"fail_workflow_on_error" yaml:"fail_workflow_on_error"`
-	ErrorHandlerWorkflow string            `human:"Error Handler Workflow,wideonly" json:"error_handler_workflow" yaml:"error_handler_workflow"`
-	RetryStrategy        RetryStrategy     `human:"Retry Strategy,wideonly" json:"retry_strategy" yaml:"retry_strategy"`
-	MaxAttempts          int               `human:"Max Attempts,wideonly" json:"max_attempts" yaml:"max_attempts"`
+	Operation            string                `human:"Operation" json:"operation" yaml:"operation"`
+	Description          string                `human:"Description" json:"description" yaml:"description"`
+	Configuration        map[string]string     `human:"Configuration,wideonly" json:"configuration" yaml:"configuration"`
+	If                   string                `human:"If,wideonly" json:"if" yaml:"if"`
+	Unless               string                `human:"Unless,wideonly" json:"unless" yaml:"unless"`
+	FailWorkflowOnError  bool                  `human:"Fail Workflow On Error,wideonly" json:"failWorkflowOnError" yaml:"failWorkflowOnError"`
+	ErrorHandlerWorkflow string                `human:"Error Handler Workflow,wideonly" json:"errorHandlerWorkflow" yaml:"errorHandlerWorkflow"`
+	RetryStrategy        WorkflowRetryStrategy `human:"Retry Strategy,wideonly" json:"retryStrategy" yaml:"retryStrategy"`
+	MaxAttempts          int                   `human:"Max Attempts,wideonly" json:"maxAttempts" yaml:"maxAttempts"`
 }
-
-type RetryStrategy string
-
-const (
-	NoneRetryStrategy  = RetryStrategy("none")
-	RetryRetryStrategy = RetryStrategy("retry")
-	HoldRetryStrategy  = RetryStrategy("hold")
-)

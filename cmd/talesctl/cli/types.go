@@ -82,3 +82,23 @@ func OutputValue() *mapValue[Output] {
 		},
 	}
 }
+
+type WorkflowState int
+
+const (
+	NoneWorkflowState WorkflowState = iota
+	RunningWorkflowState
+	PausedWorkflowState
+	StoppedWorkflowState
+)
+
+func WorkflowStateValue() *mapValue[WorkflowState] {
+	return &mapValue[WorkflowState]{
+		Default: NoneWorkflowState,
+		Map: map[string]WorkflowState{
+			"running": RunningWorkflowState,
+			"paused":  PausedWorkflowState,
+			"stopped": StoppedWorkflowState,
+		},
+	}
+}

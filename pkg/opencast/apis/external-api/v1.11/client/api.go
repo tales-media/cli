@@ -67,6 +67,24 @@ type Client interface {
 	GetAgent(ctx context.Context, id string, opts ...oc.RequestOpts) (*extapiv1.Agent, *oc.Response, error)
 	GetAgentRequest(ctx context.Context, id string, opts ...oc.RequestOpts) (*oc.Request, error)
 
+	// Workflow
+
+	// TODO: add list workflow to External API
+	// ListWorkflow(ctx context.Context, opts ...oc.RequestOpts) ([]extapiv1.Workflow, *oc.Response, error)
+	// ListWorkflowRequest(ctx context.Context, opts ...oc.RequestOpts) (*oc.Request, error)
+
+	CreateWorkflow(ctx context.Context, eventID, workflowDefinitionID string, configuration extapiv1.Properties, opts ...oc.RequestOpts) (*extapiv1.WorkflowInstance, *oc.Response, error)
+	CreateWorkflowRequest(ctx context.Context, eventID, workflowDefinitionID string, configuration extapiv1.Properties, opts ...oc.RequestOpts) (*oc.Request, error)
+
+	GetWorkflow(ctx context.Context, id string, opts ...oc.RequestOpts) (*extapiv1.WorkflowInstance, *oc.Response, error)
+	GetWorkflowRequest(ctx context.Context, id string, opts ...oc.RequestOpts) (*oc.Request, error)
+
+	UpdateWorkflow(ctx context.Context, id string, state *extapiv1.WorkflowState, configuration extapiv1.Properties, opts ...oc.RequestOpts) (*extapiv1.WorkflowInstance, *oc.Response, error)
+	UpdateWorkflowRequest(ctx context.Context, id string, state *extapiv1.WorkflowState, configuration extapiv1.Properties, opts ...oc.RequestOpts) (*oc.Request, error)
+
+	DeleteWorkflow(ctx context.Context, id string, opts ...oc.RequestOpts) (*oc.Response, error)
+	DeleteWorkflowRequest(ctx context.Context, id string, opts ...oc.RequestOpts) (*oc.Request, error)
+
 	// Workflow Definitions
 
 	ListWorkflowDefinition(ctx context.Context, opts ...oc.RequestOpts) ([]extapiv1.WorkflowDefinition, *oc.Response, error)

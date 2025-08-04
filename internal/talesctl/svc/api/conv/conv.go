@@ -68,6 +68,40 @@ func OCAgentToAgent(ocAgent extapiv1.Agent) api.Agent {
 	}
 }
 
+func OCWorkflowInstanceToWorkflow(ocWorkflowInstance extapiv1.WorkflowInstance) api.Workflow {
+	return api.Workflow{
+		ID:                   ocWorkflowInstance.Identifier,
+		Title:                ocWorkflowInstance.Title,
+		Description:          ocWorkflowInstance.Description,
+		WorkflowDefinitionID: ocWorkflowInstance.WorkflowDefinitionIdentifier,
+		EventID:              ocWorkflowInstance.EventIdentifier,
+		Creator:              ocWorkflowInstance.Creator,
+		State:                api.WorkflowState(ocWorkflowInstance.State),
+		Operations:           Map(ocWorkflowInstance.Operations, OCOperationInstanceToOperation),
+		Configuration:        ocWorkflowInstance.Configuration,
+	}
+}
+
+func OCOperationInstanceToOperation(ocOperationInstance extapiv1.OperationInstance) api.Operation {
+	return api.Operation{
+		ID:                   ocOperationInstance.Identifier,
+		Operation:            ocOperationInstance.Operation,
+		Description:          ocOperationInstance.Description,
+		State:                api.WorkflowOperationState(ocOperationInstance.State),
+		TimeInQueue:          ocOperationInstance.TimeInQueue,
+		Host:                 ocOperationInstance.Host,
+		If:                   ocOperationInstance.If,
+		FailWorkflowOnError:  ocOperationInstance.FailWorkflowOnError,
+		ErrorHandlerWorkflow: ocOperationInstance.ErrorHandlerWorkflow,
+		RetryStrategy:        api.WorkflowRetryStrategy(ocOperationInstance.RetryStrategy),
+		MaxAttempts:          ocOperationInstance.MaxAttempts,
+		FailedAttempts:       ocOperationInstance.FailedAttempts,
+		Configuration:        ocOperationInstance.Configuration,
+		Start:                ocOperationInstance.Start,
+		Completion:           ocOperationInstance.Completion,
+	}
+}
+
 func OCWorkflowDefinitionToWorkflowDefinition(ocWorkflowDefinition extapiv1.WorkflowDefinition) api.WorkflowDefinition {
 	return api.WorkflowDefinition{
 		ID:                     ocWorkflowDefinition.Identifier,
@@ -89,7 +123,7 @@ func OCOperationDefinitionToOperationDefinition(ocOperationDefinition extapiv1.O
 		Unless:               ocOperationDefinition.Unless,
 		FailWorkflowOnError:  ocOperationDefinition.FailWorkflowOnError,
 		ErrorHandlerWorkflow: ocOperationDefinition.ErrorHandlerWorkflow,
-		RetryStrategy:        api.RetryStrategy(ocOperationDefinition.RetryStrategy),
+		RetryStrategy:        api.WorkflowRetryStrategy(ocOperationDefinition.RetryStrategy),
 		MaxAttempts:          ocOperationDefinition.MaxAttempts,
 	}
 }
