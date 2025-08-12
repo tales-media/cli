@@ -56,19 +56,11 @@ func workflowDefinitionListCommand(cfg *Config) *cobra.Command {
 			if req.FilterByTag, err = cmd.Flags().GetString(TagFlag); err != nil {
 				return nil, err
 			}
-			if req.WithOperations, err = cmd.Flags().GetBool(IncludeOperationsFlag); err != nil {
-				return nil, err
-			}
-			if req.WithConfigurationPanel, err = cmd.Flags().GetBool(IncludeConfigurationPanelFlag); err != nil {
-				return nil, err
-			}
 
 			return s.List(cmd.Context(), req)
 		},
 	)
 	cmd.Flags().String(TagFlag, "", "only include workflow definitions with this tag")
-	cmd.Flags().Bool(IncludeOperationsFlag, false, "include list of workflow operations in output")
-	cmd.Flags().Bool(IncludeConfigurationPanelFlag, false, "include configuration panel in output")
 	return cmd
 }
 
@@ -80,7 +72,6 @@ func workflowDefinitionGetCommand(cfg *Config) *cobra.Command {
 			var (
 				s   svc.WorkflowDefinition
 				req svc.WorkflowDefinitionGetRequest
-				err error
 			)
 
 			mustSelect(cfg.AliasType, map[AliasType]func(){
@@ -89,18 +80,10 @@ func workflowDefinitionGetCommand(cfg *Config) *cobra.Command {
 			})()
 
 			req.ID = args[0]
-			if req.WithOperations, err = cmd.Flags().GetBool(IncludeOperationsFlag); err != nil {
-				return nil, err
-			}
-			if req.WithConfigurationPanel, err = cmd.Flags().GetBool(IncludeConfigurationPanelFlag); err != nil {
-				return nil, err
-			}
 
 			return s.Get(cmd.Context(), req)
 		},
 	)
 	cmd.Args = cobra.ExactArgs(1)
-	cmd.Flags().Bool(IncludeOperationsFlag, false, "include list of workflow operations in output")
-	cmd.Flags().Bool(IncludeConfigurationPanelFlag, false, "include configuration panel in output")
 	return cmd
 }

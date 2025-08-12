@@ -79,21 +79,11 @@ func workflowCreateCommand(cfg *Config) *cobra.Command {
 				req.Configuration[k] = v
 			}
 
-			if req.WithOperations, err = cmd.Flags().GetBool(IncludeOperationsFlag); err != nil {
-				return nil, err
-			}
-
-			if req.WithConfiguration, err = cmd.Flags().GetBool(IncludeConfigurationFlag); err != nil {
-				return nil, err
-			}
-
 			return s.Create(cmd.Context(), req)
 		},
 	)
 	cmd.Args = cobra.ExactArgs(2)
 	cmd.Flags().StringSliceP(ConfigFlag, ConfigFlagShort, nil, "set workflow configuration property in the form \"key=value\" (can be specified multiple times or a comma separated list)")
-	cmd.Flags().Bool(IncludeOperationsFlag, false, "include list of workflow operations in output")
-	cmd.Flags().Bool(IncludeConfigurationFlag, false, "include configuration in output")
 	return cmd
 }
 
@@ -105,7 +95,6 @@ func workflowGetCommand(cfg *Config) *cobra.Command {
 			var (
 				s   svc.Workflow
 				req svc.WorkflowGetRequest
-				err error
 			)
 
 			mustSelect(cfg.AliasType, map[AliasType]func(){
@@ -115,20 +104,10 @@ func workflowGetCommand(cfg *Config) *cobra.Command {
 
 			req.ID = args[0]
 
-			if req.WithOperations, err = cmd.Flags().GetBool(IncludeOperationsFlag); err != nil {
-				return nil, err
-			}
-
-			if req.WithConfiguration, err = cmd.Flags().GetBool(IncludeConfigurationFlag); err != nil {
-				return nil, err
-			}
-
 			return s.Get(cmd.Context(), req)
 		},
 	)
 	cmd.Args = cobra.ExactArgs(1)
-	cmd.Flags().Bool(IncludeOperationsFlag, false, "include list of workflow operations in output")
-	cmd.Flags().Bool(IncludeConfigurationFlag, false, "include configuration in output")
 	return cmd
 }
 
@@ -173,14 +152,6 @@ func workflowUpdateCommand(cfg *Config) *cobra.Command {
 				req.State = ptr.To(api.StoppedWorkflowState)
 			}
 
-			if req.WithOperations, err = cmd.Flags().GetBool(IncludeOperationsFlag); err != nil {
-				return nil, err
-			}
-
-			if req.WithConfiguration, err = cmd.Flags().GetBool(IncludeConfigurationFlag); err != nil {
-				return nil, err
-			}
-
 			return s.Update(cmd.Context(), req)
 		},
 	)
@@ -188,8 +159,6 @@ func workflowUpdateCommand(cfg *Config) *cobra.Command {
 	workflowStateValue := WorkflowStateValue()
 	cmd.Flags().Var(workflowStateValue, StateFlag, workflowStateValue.Usage("set a new workflow state"))
 	cmd.Flags().StringSliceP(ConfigFlag, ConfigFlagShort, nil, "set workflow configuration property in the form \"key=value\" (can be specified multiple times or a comma separated list)")
-	cmd.Flags().Bool(IncludeOperationsFlag, false, "include list of workflow operations in output")
-	cmd.Flags().Bool(IncludeConfigurationFlag, false, "include configuration in output")
 	return cmd
 }
 

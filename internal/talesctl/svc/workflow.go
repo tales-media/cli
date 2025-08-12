@@ -37,22 +37,16 @@ type WorkflowCreateRequest struct {
 	EventID              string
 	WorkflowDefinitionID string
 	Configuration        map[string]string
-	WithOperations       bool
-	WithConfiguration    bool
 }
 
 type WorkflowGetRequest struct {
-	ID                string
-	WithOperations    bool
-	WithConfiguration bool
+	ID string
 }
 
 type WorkflowUpdateRequest struct {
-	ID                string
-	State             *api.WorkflowState
-	Configuration     map[string]string
-	WithOperations    bool
-	WithConfiguration bool
+	ID            string
+	State         *api.WorkflowState
+	Configuration map[string]string
 }
 
 type WorkflowDeleteRequest struct {
@@ -78,8 +72,8 @@ func (svc *opencastWorkflow) Create(ctx context.Context, req WorkflowCreateReque
 		req.WorkflowDefinitionID,
 		req.Configuration,
 		extapiclientv1.WithWorkflowOptions{
-			WithOperations:    req.WithOperations,
-			WithConfiguration: req.WithConfiguration,
+			WithOperations:    true,
+			WithConfiguration: true,
 		},
 	)
 	if err != nil {
@@ -93,8 +87,8 @@ func (svc *opencastWorkflow) Get(ctx context.Context, req WorkflowGetRequest) (a
 		ctx,
 		req.ID,
 		extapiclientv1.WithWorkflowOptions{
-			WithOperations:    req.WithOperations,
-			WithConfiguration: req.WithConfiguration,
+			WithOperations:    true,
+			WithConfiguration: true,
 		},
 	)
 	if err != nil {
@@ -114,8 +108,8 @@ func (svc *opencastWorkflow) Update(ctx context.Context, req WorkflowUpdateReque
 		ocState,
 		req.Configuration,
 		extapiclientv1.WithWorkflowOptions{
-			WithOperations:    req.WithOperations,
-			WithConfiguration: req.WithConfiguration,
+			WithOperations:    true,
+			WithConfiguration: true,
 		},
 	)
 	if err != nil {

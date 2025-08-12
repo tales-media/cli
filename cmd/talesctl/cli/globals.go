@@ -25,14 +25,11 @@ var (
 )
 
 const (
-	ContextFlag                   = "context"
-	OutputFlag                    = "output"
-	OutputFlagShort               = "o"
-	TagFlag                       = "tag"
-	ConfigFlag                    = "config"
-	ConfigFlagShort               = "c"
-	StateFlag                     = "state"
-	IncludeOperationsFlag         = "include-operations"
-	IncludeConfigurationFlag      = "include-configuration"
-	IncludeConfigurationPanelFlag = "include-configuration-panel"
+	ContextFlag     = "context"
+	OutputFlag      = "output"
+	OutputFlagShort = "o"
+	TagFlag         = "tag"
+	ConfigFlag      = "config"
+	ConfigFlagShort = "c"
+	StateFlag       = "state"
 )

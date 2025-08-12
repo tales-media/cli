@@ -32,16 +32,12 @@ type WorkflowDefinition interface {
 }
 
 type WorkflowDefinitionListRequest struct {
-	FilterByTag            string
-	WithOperations         bool
-	WithConfigurationPanel bool
+	FilterByTag string
 	// TODO: add sort-by support
 }
 
 type WorkflowDefinitionGetRequest struct {
-	ID                     string
-	WithOperations         bool
-	WithConfigurationPanel bool
+	ID string
 }
 
 type opencastWorkflowDefinition struct {
@@ -59,9 +55,9 @@ func NewOpencastWorkflowDefinition(extAPI extapiclientv1.Client) WorkflowDefinit
 func (svc *opencastWorkflowDefinition) List(ctx context.Context, req WorkflowDefinitionListRequest) ([]api.WorkflowDefinition, error) {
 	commonReqOpts := []oc.RequestOpts{
 		extapiclientv1.WithWorkflowDefinitionOptions{
-			WithOperations:             req.WithOperations,
-			WithConfigurationPanel:     req.WithConfigurationPanel,
-			WithConfigurationPanelJSON: req.WithConfigurationPanel,
+			WithOperations:             true,
+			WithConfigurationPanel:     true,
+			WithConfigurationPanelJSON: true,
 		},
 		extapiclientv1.WithSort{
 			extapiclientv1.Sort{By: extapiclientv1.WorkflowDefinitionDisplayOrderSortKey, Direction: extapiclientv1.Ascending},
@@ -109,9 +105,9 @@ func (svc *opencastWorkflowDefinition) Get(ctx context.Context, req WorkflowDefi
 		ctx,
 		req.ID,
 		extapiclientv1.WithWorkflowDefinitionOptions{
-			WithOperations:             req.WithOperations,
-			WithConfigurationPanel:     req.WithConfigurationPanel,
-			WithConfigurationPanelJSON: req.WithConfigurationPanel,
+			WithOperations:             true,
+			WithConfigurationPanel:     true,
+			WithConfigurationPanelJSON: true,
 		},
 	)
 	if err != nil {
