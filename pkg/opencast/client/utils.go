@@ -73,7 +73,7 @@ func GenericAutoDecodedDo[T any](do Doer, reqFunc func() (*Request, error)) (T, 
 
 	resp, err := GenericDo(do, reqFunc)
 	if err != nil {
-		return data, nil, err
+		return data, resp, err
 	}
 
 	decData := new(T)
