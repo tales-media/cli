@@ -48,7 +48,7 @@ func FromObject[T any](val T) StringOrObject[T] {
 	}
 }
 
-func (strobj *StringOrObject[T]) MarshalJSON() ([]byte, error) {
+func (strobj StringOrObject[T]) MarshalJSON() ([]byte, error) {
 	switch strobj.Type {
 	case String:
 		return json.Marshal(strobj.StringVal)

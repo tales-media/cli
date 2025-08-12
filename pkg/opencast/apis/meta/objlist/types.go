@@ -48,7 +48,7 @@ func FromList[T any](val []T) ObjectOrList[T] {
 	}
 }
 
-func (objlist *ObjectOrList[T]) MarshalJSON() ([]byte, error) {
+func (objlist ObjectOrList[T]) MarshalJSON() ([]byte, error) {
 	switch objlist.Type {
 	case Object:
 		return json.Marshal(objlist.ObjectVal)
