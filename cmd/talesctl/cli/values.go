@@ -57,6 +57,6 @@ func (v *mapValue[T]) Type() string {
 }
 
 func (v *mapValue[T]) Usage(s string) string {
-	keys := slices.Collect(maps.Keys(v.Map))
+	keys := slices.Sorted(maps.Keys(v.Map))
 	return s + " ( " + strings.Join(keys, " | ") + " )"
 }
