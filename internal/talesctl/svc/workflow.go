@@ -19,11 +19,12 @@ package svc
 import (
 	"context"
 
+	"k8s.io/utils/ptr"
+
 	"github.com/tales-media/cli/internal/talesctl/svc/api"
 	"github.com/tales-media/cli/internal/talesctl/svc/api/conv"
 	extapiv1 "github.com/tales-media/cli/pkg/opencast/apis/external-api/v1.11"
 	extapiclientv1 "github.com/tales-media/cli/pkg/opencast/apis/external-api/v1.11/client"
-	"k8s.io/utils/ptr"
 )
 
 type Workflow interface {

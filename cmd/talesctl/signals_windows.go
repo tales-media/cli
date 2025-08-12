@@ -18,8 +18,6 @@ limitations under the License.
 
 package main
 
-import (
-	"os"
-)
+import "os"
 
 var shutdownSignals = []os.Signal{os.Interrupt}

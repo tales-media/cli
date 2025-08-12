@@ -18,6 +18,7 @@ package cli
 
 import (
 	"github.com/spf13/cobra"
+
 	"github.com/tales-media/cli/internal/talesctl/svc"
 	extapiclientv1 "github.com/tales-media/cli/pkg/opencast/apis/external-api/v1.11/client"
 )
