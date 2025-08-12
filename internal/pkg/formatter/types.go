@@ -34,8 +34,8 @@ type errorObj struct {
 }
 
 type genericList struct {
-	Count int `json:"count"`
-	Items any `json:"items"`
+	Count int `json:"count" yaml:"count"`
+	Items any `json:"items" yaml:"items"`
 }
 
 func NewGenericList(list any) (*genericList, error) {
