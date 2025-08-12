@@ -130,9 +130,23 @@ func WithQuery(key, value string) RequestOpts {
 	})
 }
 
+func WithoutQuery(key string) RequestOpts {
+	return RequestOptsFunc(func(req *Request) error {
+		req.Query.Del(key)
+		return nil
+	})
+}
+
 func WithHeader(key, value string) RequestOpts {
 	return RequestOptsFunc(func(req *Request) error {
 		req.Header.Set(key, value)
+		return nil
+	})
+}
+
+func WithoutHeader(key string) RequestOpts {
+	return RequestOptsFunc(func(req *Request) error {
+		req.Header.Del(key)
 		return nil
 	})
 }
