@@ -19,14 +19,14 @@ package client
 import (
 	"bytes"
 	"io"
-	"mime/multipart"
 	"net/http"
-	"net/textproto"
 	"net/url"
 	"strings"
 	"sync"
 
 	"k8s.io/utils/ptr"
+
+	"github.com/tales-media/cli/pkg/multipart"
 )
 
 type Body interface {
@@ -226,83 +226,26 @@ func (b *formBody) ContentType() string {
 }
 
 type multipartBody struct {
-	buf    *bytes.Buffer
-	mw     *multipart.Writer
-	once   sync.Once
-	closed bool
+	mp *multipart.Multipart
 }
 
 var _ Body = &multipartBody{}
 
-func NewMultipartBody() *multipartBody {
-	buf := &bytes.Buffer{}
+func NewMultipartBody(mp *multipart.Multipart) *multipartBody {
 	return &multipartBody{
-		buf: buf,
-		mw:  multipart.NewWriter(buf),
+		mp: mp,
 	}
-}
-
-func (b *multipartBody) CreatePart(header textproto.MIMEHeader) (io.Writer, error) {
-	if b.closed {
-		panic("multipartBody: creating part in closed multipart form")
-	}
-	return b.mw.CreatePart(header)
-}
-
-func (b *multipartBody) CreateFormFile(fieldname, filename string) (io.Writer, error) {
-	if b.closed {
-		panic("multipartBody: creating part in closed multipart form")
-	}
-	return b.mw.CreateFormFile(fieldname, filename)
-}
-
-func (b *multipartBody) CreateFormField(fieldname string) (io.Writer, error) {
-	if b.closed {
-		panic("multipartBody: creating part in closed multipart form")
-	}
-	return b.mw.CreateFormField(fieldname)
-}
-
-func (b *multipartBody) WriteField(fieldname string, value []byte) error {
-	if b.closed {
-		panic("multipartBody: creating part in closed multipart form")
-	}
-	p, err := b.mw.CreateFormField(fieldname)
-	if err != nil {
-		return err
-	}
-	_, err = p.Write(value)
-	return err
-}
-
-func (b *multipartBody) WriteStringField(fieldname, value string) error {
-	if b.closed {
-		panic("multipartBody: creating part in closed multipart form")
-	}
-	return b.mw.WriteField(fieldname, value)
-}
-
-func (b *multipartBody) Close() (err error) {
-	b.once.Do(func() {
-		b.closed = true
-		err = b.mw.Close()
-	})
-	return
 }
 
 func (b *multipartBody) Len() int64 {
-	_ = b.Close()
-	return int64(b.buf.Len())
+	return b.mp.Len()
 }
 
 func (b *multipartBody) Reader() (io.ReadCloser, error) {
-	if err := b.Close(); err != nil {
-		return nil, err
-	}
-	r := bytes.NewReader(b.buf.Bytes())
-	return io.NopCloser(r), nil
+	r := multipart.Reader(b.mp)
+	return r, nil
 }
 
 func (b *multipartBody) ContentType() string {
-	return b.mw.FormDataContentType()
+	return `multipart/form-data; boundary="` + b.mp.Boundary() + `"`
 }
