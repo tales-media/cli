@@ -23,6 +23,10 @@ import (
 	oc "github.com/tales-media/cli/pkg/opencast/client"
 )
 
+func WithSignedURLs() oc.RequestOpts {
+	return oc.WithQuery("sign", "true")
+}
+
 type WithPagination struct {
 	Limit  int
 	Offset int
@@ -87,8 +91,13 @@ func (opt WithSort) Apply(r *oc.Request) error {
 	for _, s := range opt {
 		n = n +
 			len(s.By) + // by
-			1 + // colon
-			len(s.Direction) // direction
+			1 // colon
+		// direction
+		if s.Direction == "" {
+			n = n + len(Ascending)
+		} else {
+			n = n + len(s.Direction)
+		}
 	}
 
 	// build filter
@@ -98,7 +107,11 @@ func (opt WithSort) Apply(r *oc.Request) error {
 		}
 		sb.WriteString(string(s.By))
 		sb.WriteString(":")
-		sb.WriteString(string(s.Direction))
+		if s.Direction == "" {
+			sb.WriteString(string(Ascending))
+		} else {
+			sb.WriteString(string(s.Direction))
+		}
 	}
 
 	return r.ApplyOptions(oc.WithQuery("sort", sb.String()))

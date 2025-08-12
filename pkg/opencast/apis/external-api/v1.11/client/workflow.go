@@ -23,9 +23,21 @@ import (
 	"net/url"
 	"strconv"
 
+	"github.com/tales-media/cli/pkg/multipart"
 	extapiv1 "github.com/tales-media/cli/pkg/opencast/apis/external-api/v1.11"
 	oc "github.com/tales-media/cli/pkg/opencast/client"
 )
+
+type CreateWorkflowRequestBody struct {
+	EventID              string
+	WorkflowDefinitionID string
+	Configuration        extapiv1.Properties
+}
+
+type UpdateWorkflowRequestBody struct {
+	State         *extapiv1.WorkflowState
+	Configuration extapiv1.Properties
+}
 
 type WithWorkflowOptions struct {
 	WithOperations    bool
@@ -41,38 +53,34 @@ func (opt WithWorkflowOptions) Apply(r *oc.Request) error {
 	)
 }
 
-func (c *client) CreateWorkflow(ctx context.Context, eventID, workflowDefinitionID string, configuration extapiv1.Properties, opts ...oc.RequestOpts) (*extapiv1.WorkflowInstance, *oc.Response, error) {
+func (c *client) CreateWorkflow(ctx context.Context, body *CreateWorkflowRequestBody, opts ...oc.RequestOpts) (*extapiv1.WorkflowInstance, *oc.Response, error) {
 	return oc.GenericAutoDecodedDo[*extapiv1.WorkflowInstance](
 		c,
 		func() (*oc.Request, error) {
-			return c.CreateWorkflowRequest(ctx, eventID, workflowDefinitionID, configuration, opts...)
+			return c.CreateWorkflowRequest(ctx, body, opts...)
 		},
 	)
 }
 
-func (c *client) CreateWorkflowRequest(ctx context.Context, eventID, workflowDefinitionID string, configuration extapiv1.Properties, opts ...oc.RequestOpts) (*oc.Request, error) {
-	body := oc.NewMultipartBody()
-	if err := body.WriteStringField("event_identifier", eventID); err != nil {
-		return nil, err
-	}
-	if err := body.WriteStringField("workflow_definition_identifier", workflowDefinitionID); err != nil {
-		return nil, err
-	}
-	if len(configuration) > 0 {
-		cfgJSON, err := json.Marshal(configuration)
+func (c *client) CreateWorkflowRequest(ctx context.Context, body *CreateWorkflowRequestBody, opts ...oc.RequestOpts) (*oc.Request, error) {
+	mp := multipart.New()
+	mp.AddParts(
+		multipart.FormFieldString("event_identifier", body.EventID),
+		multipart.FormFieldString("workflow_definition_identifier", body.WorkflowDefinitionID),
+	)
+	if len(body.Configuration) > 0 {
+		configuration, err := json.Marshal(body.Configuration)
 		if err != nil {
 			return nil, err
 		}
-		if err := body.WriteField("configuration", cfgJSON); err != nil {
-			return nil, err
-		}
+		mp.AddPart(multipart.FormField("configuration", configuration))
 	}
 	return oc.NewRequest(
 		ctx,
 		http.MethodPost,
 		extapiv1.WorkflowInstancesServiceType,
-		"/api/workflows/",
-		body,
+		"/api/workflows",
+		oc.NewMultipartBody(mp),
 		opts...,
 	)
 }
@@ -95,35 +103,31 @@ func (c *client) GetWorkflowRequest(ctx context.Context, id string, opts ...oc.R
 	)
 }
 
-func (c *client) UpdateWorkflow(ctx context.Context, id string, state *extapiv1.WorkflowState, configuration extapiv1.Properties, opts ...oc.RequestOpts) (*extapiv1.WorkflowInstance, *oc.Response, error) {
+func (c *client) UpdateWorkflow(ctx context.Context, id string, body *UpdateWorkflowRequestBody, opts ...oc.RequestOpts) (*extapiv1.WorkflowInstance, *oc.Response, error) {
 	return oc.GenericAutoDecodedDo[*extapiv1.WorkflowInstance](
 		c,
-		func() (*oc.Request, error) { return c.UpdateWorkflowRequest(ctx, id, state, configuration, opts...) },
+		func() (*oc.Request, error) { return c.UpdateWorkflowRequest(ctx, id, body, opts...) },
 	)
 }
 
-func (c *client) UpdateWorkflowRequest(ctx context.Context, id string, state *extapiv1.WorkflowState, configuration extapiv1.Properties, opts ...oc.RequestOpts) (*oc.Request, error) {
-	body := oc.NewMultipartBody()
-	if state != nil {
-		if err := body.WriteStringField("state", string(*state)); err != nil {
-			return nil, err
-		}
+func (c *client) UpdateWorkflowRequest(ctx context.Context, id string, body *UpdateWorkflowRequestBody, opts ...oc.RequestOpts) (*oc.Request, error) {
+	mp := multipart.New()
+	if body.State != nil {
+		mp.AddPart(multipart.FormFieldString("state", string(*body.State)))
 	}
-	if len(configuration) > 0 {
-		cfgJSON, err := json.Marshal(configuration)
+	if len(body.Configuration) > 0 {
+		configuration, err := json.Marshal(body.Configuration)
 		if err != nil {
 			return nil, err
 		}
-		if err := body.WriteField("configuration", cfgJSON); err != nil {
-			return nil, err
-		}
+		mp.AddPart(multipart.FormField("configuration", configuration))
 	}
 	return oc.NewRequest(
 		ctx,
 		http.MethodPut,
 		extapiv1.WorkflowInstancesServiceType,
 		"/api/workflows/"+url.PathEscape(id),
-		body,
+		oc.NewMultipartBody(mp),
 		opts...,
 	)
 }
