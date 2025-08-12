@@ -34,8 +34,16 @@ func baseCommand(use, short string, valueFunc func(*cobra.Command, []string) (an
 		TraverseChildren:      true,
 		DisableFlagsInUseLine: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// at this point (after args parsing) we handle error output with formatter
+			cmd.SilenceErrors = true
+			formatter := detectFormatter(cmd)
+
 			val, err := valueFunc(cmd, args)
 			if err != nil {
+				fmtErr := formatter.Error(cmd.ErrOrStderr(), err)
+				if fmtErr != nil {
+					panic(fmtErr)
+				}
 				return err
 			}
 
@@ -43,7 +51,6 @@ func baseCommand(use, short string, valueFunc func(*cobra.Command, []string) (an
 				return nil
 			}
 
-			formatter := detectFormatter(cmd)
 			valType := reflect.TypeOf(val)
 			switch valType.Kind() {
 			case reflect.Slice:

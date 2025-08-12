@@ -29,3 +29,7 @@ func (f *None) List(w io.Writer, list any) error {
 func (f *None) Object(w io.Writer, obj any) error {
 	return nil
 }
+
+func (f *None) Error(w io.Writer, err error) error {
+	return nil
+}

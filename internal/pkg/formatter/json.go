@@ -38,3 +38,8 @@ func (f *JSON) Object(w io.Writer, obj any) error {
 	enc := json.NewEncoder(w)
 	return enc.Encode(obj)
 }
+
+func (f *JSON) Error(w io.Writer, err error) error {
+	enc := json.NewEncoder(w)
+	return enc.Encode(&errorObj{Error: err.Error()})
+}

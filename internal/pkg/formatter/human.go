@@ -133,6 +133,13 @@ func (f *Human) Object(w io.Writer, obj any) error {
 	return f.writeValue(w, reflect.ValueOf(obj), "")
 }
 
+func (f *Human) Error(w io.Writer, err error) error {
+	if _, err := fmt.Fprintf(w, "Error: %s\n", err.Error()); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (f *Human) writeValue(w io.Writer, val reflect.Value, prefix string) error {
 	valType := val.Type()
 

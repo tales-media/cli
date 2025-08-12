@@ -39,3 +39,8 @@ func (f *YAML) Object(w io.Writer, obj any) error {
 	enc := yaml.NewEncoder(w)
 	return enc.Encode(obj)
 }
+
+func (f *YAML) Error(w io.Writer, err error) error {
+	enc := yaml.NewEncoder(w)
+	return enc.Encode(&errorObj{Error: err.Error()})
+}

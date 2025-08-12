@@ -26,6 +26,11 @@ import (
 type Formatter interface {
 	List(w io.Writer, list any) error
 	Object(w io.Writer, obj any) error
+	Error(w io.Writer, err error) error
+}
+
+type errorObj struct {
+	Error string `json:"error" yaml:"error"`
 }
 
 type genericList struct {
