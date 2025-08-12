@@ -75,7 +75,7 @@ func (svc *opencastInfo) Organization(ctx context.Context) (api.Organization, er
 	if err != nil {
 		return api.Organization{}, err
 	}
-	return conv.OCOrganizationToOrganization(*ocOrganization, *orgProperties), nil
+	return conv.OCOrganizationToOrganization(*ocOrganization, orgProperties), nil
 }
 
 type talesInfo = opencastInfo

@@ -128,8 +128,8 @@ type WorkflowDefinition struct {
 	Title                  string                `human:"Title" json:"title" yaml:"title"`
 	Description            string                `human:"Description,wideonly" json:"description" yaml:"description"`
 	Tags                   []string              `human:"Tags,wideonly" json:"tags" yaml:"tags"`
-	ConfigurationPanel     string                `human:"Configuration Panel,wideonly" json:"configurationPanel" yaml:"configurationPanel"`
-	ConfigurationPanelJSON string                `human:"Configuration Panel JSON,wideonly" json:"configurationPanelJson" yaml:"configurationPanelJson"`
+	ConfigurationPanel     *string               `human:"Configuration Panel,wideonly" json:"configurationPanel" yaml:"configurationPanel"`
+	ConfigurationPanelJSON *string               `human:"Configuration Panel JSON,wideonly" json:"configurationPanelJson" yaml:"configurationPanelJson"`
 	Operations             []OperationDefinition `human:"Operations,wideonly" json:"operations" yaml:"operations"`
 }
 

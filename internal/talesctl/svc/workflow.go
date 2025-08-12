@@ -69,9 +69,11 @@ func NewOpencastWorkflow(extAPI extapiclientv1.Client) Workflow {
 func (svc *opencastWorkflow) Create(ctx context.Context, req WorkflowCreateRequest) (api.Workflow, error) {
 	ocWorkflow, _, err := svc.extAPI.CreateWorkflow(
 		ctx,
-		req.EventID,
-		req.WorkflowDefinitionID,
-		req.Configuration,
+		&extapiclientv1.CreateWorkflowRequestBody{
+			EventID:              req.EventID,
+			WorkflowDefinitionID: req.WorkflowDefinitionID,
+			Configuration:        req.Configuration,
+		},
 		extapiclientv1.WithWorkflowOptions{
 			WithOperations:    true,
 			WithConfiguration: true,
@@ -106,8 +108,10 @@ func (svc *opencastWorkflow) Update(ctx context.Context, req WorkflowUpdateReque
 	ocWorkflow, _, err := svc.extAPI.UpdateWorkflow(
 		ctx,
 		req.ID,
-		ocState,
-		req.Configuration,
+		&extapiclientv1.UpdateWorkflowRequestBody{
+			State:         ocState,
+			Configuration: req.Configuration,
+		},
 		extapiclientv1.WithWorkflowOptions{
 			WithOperations:    true,
 			WithConfiguration: true,

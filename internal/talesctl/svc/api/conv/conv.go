@@ -17,6 +17,8 @@ limitations under the License.
 package conv
 
 import (
+	"time"
+
 	"github.com/tales-media/cli/internal/talesctl/svc/api"
 	extapiv1 "github.com/tales-media/cli/pkg/opencast/apis/external-api/v1.11"
 )
@@ -62,7 +64,7 @@ func OCAgentToAgent(ocAgent extapiv1.Agent) api.Agent {
 	return api.Agent{
 		Name:       ocAgent.AgentID,
 		URL:        ocAgent.URL,
-		LastUpdate: ocAgent.Update,
+		LastUpdate: time.Time(ocAgent.Update),
 		Status:     api.AgentStatus(ocAgent.Status),
 		Inputs:     ocAgent.Inputs,
 	}
@@ -97,8 +99,8 @@ func OCOperationInstanceToOperation(ocOperationInstance extapiv1.OperationInstan
 		MaxAttempts:          ocOperationInstance.MaxAttempts,
 		FailedAttempts:       ocOperationInstance.FailedAttempts,
 		Configuration:        ocOperationInstance.Configuration,
-		Start:                ocOperationInstance.Start,
-		Completion:           ocOperationInstance.Completion,
+		Start:                time.Time(ocOperationInstance.Start),
+		Completion:           time.Time(ocOperationInstance.Completion),
 	}
 }
 
