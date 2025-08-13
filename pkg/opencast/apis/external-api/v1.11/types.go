@@ -269,6 +269,81 @@ const (
 	TimeFieldType         = FieldType("time")
 )
 
+const (
+	TitleFieldID           = "title"
+	TitleFieldLabel        = "EVENTS.EVENTS.DETAILS.METADATA.TITLE"
+	SubjectsFieldID        = "subjects"
+	SubjectsFieldLabel     = "EVENTS.EVENTS.DETAILS.METADATA.SUBJECT"
+	DescriptionFieldID     = "description"
+	DescriptionFieldLabel  = "EVENTS.EVENTS.DETAILS.METADATA.DESCRIPTION"
+	LanguageFieldID        = "language"
+	LanguageFieldLabel     = "EVENTS.EVENTS.DETAILS.METADATA.LANGUAGE"
+	RightsHolderFieldID    = "rightsHolder"
+	RightsHolderFieldLabel = "EVENTS.EVENTS.DETAILS.METADATA.RIGHTS"
+	LicenseFieldID         = "license"
+	LicenseFieldLabel      = "EVENTS.EVENTS.DETAILS.METADATA.LICENSE"
+	SeriesFieldID          = "isPartOf"
+	SeriesFieldLabel       = "EVENTS.EVENTS.DETAILS.METADATA.SERIES"
+	IsPartOfFieldID        = SeriesFieldID
+	IsPartOfFieldLabel     = SeriesFieldLabel
+	CreatorFieldID         = "creator"
+	CreatorFieldLabel      = "EVENTS.EVENTS.DETAILS.METADATA.PRESENTERS"
+	PresenterFieldID       = CreatorFieldID
+	PresenterFieldLabel    = CreatorFieldLabel
+	ContributorFieldID     = "contributor"
+	ContributorFieldLabel  = "EVENTS.EVENTS.DETAILS.METADATA.CONTRIBUTORS"
+	StartDateFieldID       = "startDate"
+	StartDateFieldLabel    = "EVENTS.EVENTS.DETAILS.METADATA.START_DATE"
+	DurationFieldID        = "duration"
+	DurationFieldLabel     = "EVENTS.EVENTS.DETAILS.METADATA.DURATION"
+	LocationFieldID        = "location"
+	LocationFieldLabel     = "EVENTS.EVENTS.DETAILS.METADATA.LOCATION"
+	SourceFieldID          = "source"
+	SourceFieldLabel       = "EVENTS.EVENTS.DETAILS.METADATA.SOURCE"
+	CreatedFieldID         = "created"
+	CreatedFieldLabel      = "EVENTS.EVENTS.DETAILS.METADATA.CREATED"
+	PublisherFieldID       = "publisher"
+	PublisherFieldLabel    = "EVENTS.EVENTS.DETAILS.METADATA.PUBLISHER"
+	IdentifierFieldID      = "identifier"
+	IdentifierFieldLabel   = "EVENTS.EVENTS.DETAILS.METADATA.ID"
+)
+
+const (
+	AllRightsReservedLicense = "ALLRIGHTS"
+	CCBYLicense              = "CC-BY"
+	CCBYSALicense            = "CC-BY-SA"
+	CCBYNDLicense            = "CC-BY-ND"
+	CCBYNCLicense            = "CC-BY-NC"
+	CCBYNCSALicense          = "CC-BY-NC-SA"
+	CCBYNCNDLicense          = "CC-BY-NC-ND"
+	CC0License               = "CC0"
+)
+
+const (
+	ArabicLanguage      = "ara"
+	ChinesLanguage      = "zho"
+	DanishLanguage      = "dan"
+	DutchLanguage       = "nld"
+	EnglishLanguage     = "eng"
+	FinnishLanguage     = "fin"
+	FrenchLanguage      = "fra"
+	GermanLanguage      = "deu"
+	SwissGermanLanguage = "gsw"
+	HindiLanguage       = "hin"
+	ItalianLanguage     = "ita"
+	JapaneseLanguage    = "jpx"
+	NorwegianLanguage   = "nor"
+	PolishLanguage      = "pol"
+	PortugueseLanguage  = "por"
+	RomanshLanguage     = "roh"
+	RussianLanguage     = "rus"
+	SlovenianLanguage   = "slv"
+	SpanishLanguage     = "spa"
+	SwedishLanguage     = "swa"
+	TurkishLanguage     = "tur"
+	UkrainianLanguage   = "ukr"
+)
+
 type API struct {
 	Version string `json:"version,omitempty"`
 	URL     string `json:"url,omitempty"`
@@ -496,9 +571,12 @@ type Publication struct {
 }
 
 const (
-	InternalChannel     = "internal"
-	EngagePlayerChannel = "engage-player"
-	EngageLiveChannel   = "engage-live"
+	InternalChannel      = "internal"
+	EngagePlayerChannel  = "engage-player"
+	EngageLiveChannel    = "engage-live"
+	APIChannel           = "api"
+	OAIPMHDefaultChannel = "oaipmh-default"
+	YouTubeChannel       = "youtube"
 )
 
 type TrackElement struct {
