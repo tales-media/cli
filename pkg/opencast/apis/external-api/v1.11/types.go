@@ -93,14 +93,14 @@ type Catalog struct {
 }
 
 type Value struct {
-	ID       string          `json:"id,omitempty"`
-	RawValue json.RawMessage `json:"value,omitempty"` // TODO: this can be many types depending on the "type" field
+	ID    string     `json:"id,omitempty"`
+	Value FieldValue `json:"value,omitempty"`
 }
 
 type Field struct {
 	ID              string                                    `json:"id,omitempty"`
 	Label           string                                    `json:"label,omitempty"`
-	RawValue        json.RawMessage                           `json:"value,omitempty"` // TODO: this can be many types depending on the "type" field
+	Value           FieldValue                                `json:"value,omitempty"`
 	Type            FieldType                                 `json:"type,omitempty"`
 	ReadOnly        bool                                      `json:"readOnly,omitempty"`
 	Required        bool                                      `json:"required,omitempty"`
@@ -110,17 +110,163 @@ type Field struct {
 	DifferentValues *bool                                     `json:"differentValues,omitempty"`
 }
 
+func (f *Field) UnmarshalJSON(data []byte) error {
+	type PartialField struct {
+		ID              string                                    `json:"id,omitempty"`
+		Label           string                                    `json:"label,omitempty"`
+		RawValue        json.RawMessage                           `json:"value,omitempty"`
+		Type            FieldType                                 `json:"type,omitempty"`
+		ReadOnly        bool                                      `json:"readOnly,omitempty"`
+		Required        bool                                      `json:"required,omitempty"`
+		Collection      *strobj.StringOrObject[map[string]string] `json:"collection,omitempty"`
+		Translatable    *bool                                     `json:"translatable,omitempty"`
+		Delimiter       *string                                   `json:"delimiter,omitempty"`
+		DifferentValues *bool                                     `json:"differentValues,omitempty"`
+	}
+
+	pf := PartialField{}
+	if err := json.Unmarshal(data, &pf); err != nil {
+		return err
+	}
+
+	f.ID = pf.ID
+	f.Label = pf.Label
+	f.Type = pf.Type
+	f.ReadOnly = pf.ReadOnly
+	f.Required = pf.Required
+	f.Collection = pf.Collection
+	f.Translatable = pf.Translatable
+	f.Delimiter = pf.Delimiter
+	f.DifferentValues = pf.DifferentValues
+
+	switch f.Type {
+	case BooleanFieldType:
+		var v BooleanFieldValue
+		if err := json.Unmarshal(pf.RawValue, &v); err != nil {
+			return err
+		}
+		f.Value = v
+
+	case DateFieldType:
+		var v DateTimeFieldValue
+		if err := json.Unmarshal(pf.RawValue, &v); err != nil {
+			return err
+		}
+		f.Value = v
+
+	case MixedTextFieldType:
+		var v MixedTextFieldValue
+		if err := json.Unmarshal(pf.RawValue, &v); err != nil {
+			return err
+		}
+		f.Value = v
+
+	case IterableTextFieldType:
+		var v IterableTextFieldValue
+		if err := json.Unmarshal(pf.RawValue, &v); err != nil {
+			return err
+		}
+		f.Value = v
+
+	case NumberFieldType:
+		var v NumberFieldValue
+		if err := json.Unmarshal(pf.RawValue, &v); err != nil {
+			return err
+		}
+		f.Value = v
+
+	case OrderedTextFieldType:
+		var v OrderedTextFieldValue
+		if err := json.Unmarshal(pf.RawValue, &v); err != nil {
+			return err
+		}
+		f.Value = v
+
+	case TextFieldType:
+		// TODO: Opencast reports iterable_text as text
+		if pf.RawValue[0] == '[' {
+			f.Type = IterableTextFieldType
+			var v IterableTextFieldValue
+			if err := json.Unmarshal(pf.RawValue, &v); err != nil {
+				return err
+			}
+			f.Value = v
+		} else {
+			var v TextFieldValue
+			if err := json.Unmarshal(pf.RawValue, &v); err != nil {
+				return err
+			}
+			f.Value = v
+		}
+
+	case TextLongFieldType:
+		var v TextLongFieldValue
+		if err := json.Unmarshal(pf.RawValue, &v); err != nil {
+			return err
+		}
+		f.Value = v
+
+	case TimeFieldType:
+		var v TimeFieldValue
+		if err := json.Unmarshal(pf.RawValue, &v); err != nil {
+			return err
+		}
+		f.Value = v
+	}
+
+	return nil
+}
+
+type FieldValue interface{}
+
+type BooleanFieldValue bool
+
+var _ FieldValue = BooleanFieldValue(true)
+
+type DateTimeFieldValue = DateTime
+
+var _ FieldValue = DateTimeFieldValue{}
+
+type MixedTextFieldValue []string
+
+var _ FieldValue = MixedTextFieldValue{}
+
+type IterableTextFieldValue []string
+
+var _ FieldValue = IterableTextFieldValue{}
+
+type NumberFieldValue int64
+
+var _ FieldValue = NumberFieldValue(0)
+
+type OrderedTextFieldValue string
+
+var _ FieldValue = OrderedTextFieldValue("")
+
+type TextFieldValue string
+
+var _ FieldValue = TextFieldValue("")
+
+type TextLongFieldValue string
+
+var _ FieldValue = TextLongFieldValue("")
+
+type TimeFieldValue = DateTime
+
+var _ FieldValue = TimeFieldValue{}
+
 type FieldType string
 
 const (
-	BooleanFieldType     = FieldType("boolean")
-	DateFieldType        = FieldType("date")
-	MixedTextFieldType   = FieldType("mixed_text")
-	NumberFieldType      = FieldType("number")
-	OrderedTextFieldType = FieldType("ordered_text")
-	TextFieldType        = FieldType("text")
-	TextLongFieldType    = FieldType("text_long")
-	TimeFieldType        = FieldType("time")
+	BooleanFieldType      = FieldType("boolean")
+	DateFieldType         = FieldType("date")
+	MixedTextFieldType    = FieldType("mixed_text")
+	IterableTextFieldType = FieldType("iterable_text")
+	NumberFieldType       = FieldType("number")
+	OrderedTextFieldType  = FieldType("ordered_text")
+	TextFieldType         = FieldType("text")
+	TextLongFieldType     = FieldType("text_long")
+	TimeFieldType         = FieldType("time")
 )
 
 type API struct {
