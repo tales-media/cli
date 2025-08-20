@@ -50,7 +50,7 @@ func (c *client) ListPlaylistRequest(ctx context.Context, opts ...oc.RequestOpts
 	return oc.NewRequest(
 		ctx,
 		http.MethodGet,
-		extapiv1.PlaylistsServiceType,
+		PlaylistsServiceType,
 		"/api/playlists",
 		oc.NoBody,
 		opts...,
@@ -74,7 +74,7 @@ func (c *client) CreatePlaylistRequest(ctx context.Context, body *CreatePlaylist
 	return oc.NewRequest(
 		ctx,
 		http.MethodPost,
-		extapiv1.PlaylistsServiceType,
+		PlaylistsServiceType,
 		"/api/playlists",
 		oc.NewMultipartBody(mp),
 		opts...,
@@ -92,7 +92,7 @@ func (c *client) GetPlaylistRequest(ctx context.Context, id string, opts ...oc.R
 	return oc.NewRequest(
 		ctx,
 		http.MethodGet,
-		extapiv1.PlaylistsServiceType,
+		PlaylistsServiceType,
 		"/api/playlists/"+url.PathEscape(id),
 		oc.NoBody,
 		opts...,
@@ -116,7 +116,7 @@ func (c *client) UpdatePlaylistRequest(ctx context.Context, id string, body *Upd
 	return oc.NewRequest(
 		ctx,
 		http.MethodPost,
-		extapiv1.PlaylistsServiceType,
+		PlaylistsServiceType,
 		"/api/playlists/"+url.PathEscape(id),
 		oc.NewMultipartBody(mp),
 		opts...,
@@ -134,7 +134,7 @@ func (c *client) DeletePlaylistRequest(ctx context.Context, id string, opts ...o
 	return oc.NewRequest(
 		ctx,
 		http.MethodDelete,
-		extapiv1.PlaylistsServiceType,
+		PlaylistsServiceType,
 		"/api/playlists/"+url.PathEscape(id),
 		oc.NoBody,
 		opts...,

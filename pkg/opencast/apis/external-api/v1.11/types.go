@@ -25,20 +25,6 @@ import (
 
 const Version = "v1.11.0"
 
-const (
-	ServiceType                    = "org.opencastproject.external"
-	AgentsServiceType              = "org.opencastproject.external.agents"
-	EventsServiceType              = "org.opencastproject.external.events"
-	GroupsServiceType              = "org.opencastproject.external.groups"
-	ListProvidersServiceType       = "org.opencastproject.external.listproviders"
-	PlaylistsServiceType           = "org.opencastproject.external.playlists"
-	SecurityServiceType            = "org.opencastproject.external.security"
-	SeriesServiceType              = "org.opencastproject.external" // TODO: fix this in Opencast
-	StatisticsServiceType          = "org.opencastproject.external.statistics"
-	WorkflowDefinitionsServiceType = "org.opencastproject.external.workflows.definitions"
-	WorkflowInstancesServiceType   = "org.opencastproject.external.workflows.instances"
-)
-
 // Access Control List (ACL)
 type ACL []ACE
 

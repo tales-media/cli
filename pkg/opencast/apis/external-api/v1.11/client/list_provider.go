@@ -21,7 +21,6 @@ import (
 	"net/http"
 	"net/url"
 
-	extapiv1 "github.com/tales-media/cli/pkg/opencast/apis/external-api/v1.11"
 	"github.com/tales-media/cli/pkg/opencast/apis/meta/base"
 	oc "github.com/tales-media/cli/pkg/opencast/client"
 )
@@ -44,7 +43,7 @@ func (c *client) ListListProviderRequest(ctx context.Context, opts ...oc.Request
 	return oc.NewRequest(
 		ctx,
 		http.MethodGet,
-		extapiv1.ListProvidersServiceType,
+		ListProvidersServiceType,
 		"/api/listproviders/providers.json",
 		oc.NoBody,
 		opts...,
@@ -62,7 +61,7 @@ func (c *client) GetListProviderRequest(ctx context.Context, source string, opts
 	return oc.NewRequest(
 		ctx,
 		http.MethodGet,
-		extapiv1.ListProvidersServiceType,
+		ListProvidersServiceType,
 		"/api/listproviders/"+url.PathEscape(source)+".json",
 		oc.NoBody,
 		opts...,

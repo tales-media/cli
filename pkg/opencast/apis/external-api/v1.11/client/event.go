@@ -140,7 +140,7 @@ func (c *client) ListEventRequest(ctx context.Context, opts ...oc.RequestOpts) (
 	return oc.NewRequest(
 		ctx,
 		http.MethodGet,
-		extapiv1.EventsServiceType,
+		EventsServiceType,
 		"/api/events",
 		oc.NoBody,
 		opts...,
@@ -204,7 +204,7 @@ func (c *client) CreateEventRequest(ctx context.Context, body *CreateEventReques
 	return oc.NewRequest(
 		ctx,
 		http.MethodPost,
-		extapiv1.EventsServiceType,
+		EventsServiceType,
 		"/api/events",
 		oc.NewMultipartBody(mp),
 		opts...,
@@ -222,7 +222,7 @@ func (c *client) GetEventRequest(ctx context.Context, id string, opts ...oc.Requ
 	return oc.NewRequest(
 		ctx,
 		http.MethodGet,
-		extapiv1.EventsServiceType,
+		EventsServiceType,
 		"/api/events/"+url.PathEscape(id),
 		oc.NoBody,
 		opts...,
@@ -274,7 +274,7 @@ func (c *client) UpdateEventRequest(ctx context.Context, id string, body *Update
 	return oc.NewRequest(
 		ctx,
 		http.MethodPost,
-		extapiv1.EventsServiceType,
+		EventsServiceType,
 		"/api/events/"+url.PathEscape(id),
 		oc.NewMultipartBody(mp),
 		opts...,
@@ -292,7 +292,7 @@ func (c *client) DeleteEventRequest(ctx context.Context, id string, opts ...oc.R
 	return oc.NewRequest(
 		ctx,
 		http.MethodDelete,
-		extapiv1.EventsServiceType,
+		EventsServiceType,
 		"/api/events/"+url.PathEscape(id),
 		oc.NoBody,
 		opts...,
@@ -310,7 +310,7 @@ func (c *client) GetEventACLRequest(ctx context.Context, id string, opts ...oc.R
 	return oc.NewRequest(
 		ctx,
 		http.MethodGet,
-		extapiv1.EventsServiceType,
+		EventsServiceType,
 		"/api/events/"+url.PathEscape(id)+"/acl",
 		oc.NoBody,
 		opts...,
@@ -334,7 +334,7 @@ func (c *client) UpdateEventACLRequest(ctx context.Context, id string, body *Upd
 	return oc.NewRequest(
 		ctx,
 		http.MethodPut,
-		extapiv1.EventsServiceType,
+		EventsServiceType,
 		"/api/events/"+url.PathEscape(id)+"/acl",
 		oc.NewMultipartBody(mp),
 		opts...,
@@ -354,7 +354,7 @@ func (c *client) CreateEventACERequest(ctx context.Context, id string, action ba
 	return oc.NewRequest(
 		ctx,
 		http.MethodPost,
-		extapiv1.EventsServiceType,
+		EventsServiceType,
 		"/api/events/"+url.PathEscape(id)+"/acl/"+url.PathEscape(string(action)),
 		oc.NewMultipartBody(mp),
 		opts...,
@@ -372,7 +372,7 @@ func (c *client) DeleteEventACERequest(ctx context.Context, id string, action ba
 	return oc.NewRequest(
 		ctx,
 		http.MethodDelete,
-		extapiv1.EventsServiceType,
+		EventsServiceType,
 		"/api/events/"+url.PathEscape(id)+"/acl/"+url.PathEscape(string(action))+"/"+url.PathEscape(role),
 		oc.NoBody,
 		opts...,
@@ -390,7 +390,7 @@ func (c *client) ListEventMediaRequest(ctx context.Context, id string, opts ...o
 	return oc.NewRequest(
 		ctx,
 		http.MethodGet,
-		extapiv1.EventsServiceType,
+		EventsServiceType,
 		"/api/events/"+url.PathEscape(id)+"/media",
 		oc.NoBody,
 		opts...,
@@ -415,7 +415,7 @@ func (c *client) CreateEventTrackRequest(ctx context.Context, id string, body *C
 	return oc.NewRequest(
 		ctx,
 		http.MethodPost,
-		extapiv1.EventsServiceType,
+		EventsServiceType,
 		"/api/events/"+url.PathEscape(id)+"/track",
 		oc.NewMultipartBody(mp),
 		opts...,
@@ -433,7 +433,7 @@ func (c *client) ListEventMetadataRequest(ctx context.Context, id string, opts .
 	req, err := oc.NewRequest(
 		ctx,
 		http.MethodGet,
-		extapiv1.EventsServiceType,
+		EventsServiceType,
 		"/api/events/"+url.PathEscape(id)+"/metadata",
 		oc.NoBody,
 		opts...,
@@ -459,7 +459,7 @@ func (c *client) GetEventMetadataRequest(ctx context.Context, id string, flavor 
 	req, err := oc.NewRequest(
 		ctx,
 		http.MethodGet,
-		extapiv1.EventsServiceType,
+		EventsServiceType,
 		"/api/events/"+url.PathEscape(id)+"/metadata",
 		oc.NoBody,
 		opts...,
@@ -490,7 +490,7 @@ func (c *client) UpdateEventMetadataRequest(ctx context.Context, id string, flav
 	req, err := oc.NewRequest(
 		ctx,
 		http.MethodPut,
-		extapiv1.EventsServiceType,
+		EventsServiceType,
 		"/api/events/"+url.PathEscape(id)+"/metadata",
 		oc.NewMultipartBody(mp),
 		opts...,
@@ -515,7 +515,7 @@ func (c *client) DeleteEventMetadataRequest(ctx context.Context, id string, flav
 	req, err := oc.NewRequest(
 		ctx,
 		http.MethodDelete,
-		extapiv1.EventsServiceType,
+		EventsServiceType,
 		"/api/events/"+url.PathEscape(id)+"/metadata",
 		oc.NoBody,
 		opts...,
@@ -540,7 +540,7 @@ func (c *client) ListEventPublicationRequest(ctx context.Context, id string, opt
 	return oc.NewRequest(
 		ctx,
 		http.MethodGet,
-		extapiv1.EventsServiceType,
+		EventsServiceType,
 		"/api/events/"+url.PathEscape(id)+"/publications",
 		oc.NoBody,
 		opts...,
@@ -558,7 +558,7 @@ func (c *client) GetEventPublicationRequest(ctx context.Context, id string, publ
 	return oc.NewRequest(
 		ctx,
 		http.MethodGet,
-		extapiv1.EventsServiceType,
+		EventsServiceType,
 		"/api/events/"+url.PathEscape(id)+"/publications/"+url.PathEscape(publicationID),
 		oc.NoBody,
 		opts...,
@@ -577,7 +577,7 @@ func (c *client) GetEventSchedulingRequest(ctx context.Context, id string, opts 
 	return oc.NewRequest(
 		ctx,
 		http.MethodGet,
-		extapiv1.EventsServiceType,
+		EventsServiceType,
 		"/api/events/"+url.PathEscape(id)+"/scheduling",
 		oc.NoBody,
 		opts...,
@@ -601,7 +601,7 @@ func (c *client) UpdateEventSchedulingRequest(ctx context.Context, id string, bo
 	return oc.NewRequest(
 		ctx,
 		http.MethodPut,
-		extapiv1.EventsServiceType,
+		EventsServiceType,
 		"/api/events/"+url.PathEscape(id)+"/scheduling",
 		oc.NewMultipartBody(mp),
 		opts...,

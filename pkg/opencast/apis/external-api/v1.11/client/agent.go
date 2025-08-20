@@ -36,7 +36,7 @@ func (c *client) ListAgentRequest(ctx context.Context, opts ...oc.RequestOpts) (
 	return oc.NewRequest(
 		ctx,
 		http.MethodGet,
-		extapiv1.AgentsServiceType,
+		AgentsServiceType,
 		"/api/agents",
 		oc.NoBody,
 		opts...,
@@ -54,7 +54,7 @@ func (c *client) GetAgentRequest(ctx context.Context, id string, opts ...oc.Requ
 	return oc.NewRequest(
 		ctx,
 		http.MethodGet,
-		extapiv1.AgentsServiceType,
+		AgentsServiceType,
 		"/api/agents/"+url.PathEscape(id),
 		oc.NoBody,
 		opts...,

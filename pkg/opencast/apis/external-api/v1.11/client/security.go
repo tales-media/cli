@@ -51,7 +51,7 @@ func (c *client) SignURLRequest(ctx context.Context, body *SignURLRequestBody, o
 	return oc.NewRequest(
 		ctx,
 		http.MethodPost,
-		extapiv1.SecurityServiceType,
+		SecurityServiceType,
 		"/api/security/sign",
 		oc.NewMultipartBody(mp),
 		opts...,

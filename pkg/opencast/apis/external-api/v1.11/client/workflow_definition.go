@@ -63,7 +63,7 @@ func (c *client) ListWorkflowDefinitionRequest(ctx context.Context, opts ...oc.R
 	return oc.NewRequest(
 		ctx,
 		http.MethodGet,
-		extapiv1.WorkflowDefinitionsServiceType,
+		WorkflowDefinitionsServiceType,
 		"/api/workflow-definitions",
 		oc.NoBody,
 		opts...,
@@ -81,7 +81,7 @@ func (c *client) GetWorkflowDefinitionRequest(ctx context.Context, id string, op
 	return oc.NewRequest(
 		ctx,
 		http.MethodGet,
-		extapiv1.WorkflowDefinitionsServiceType,
+		WorkflowDefinitionsServiceType,
 		"/api/workflow-definitions/"+url.PathEscape(id),
 		oc.NoBody,
 		opts...,

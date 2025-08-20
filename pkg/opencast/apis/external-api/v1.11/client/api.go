@@ -30,6 +30,20 @@ const (
 	AcceptJSONHeader = "application/" + extapiv1.Version + "+json"
 )
 
+const (
+	ServiceType                    = "org.opencastproject.external"
+	AgentsServiceType              = "org.opencastproject.external.agents"
+	EventsServiceType              = "org.opencastproject.external.events"
+	GroupsServiceType              = "org.opencastproject.external.groups"
+	ListProvidersServiceType       = "org.opencastproject.external.listproviders"
+	PlaylistsServiceType           = "org.opencastproject.external.playlists"
+	SecurityServiceType            = "org.opencastproject.external.security"
+	SeriesServiceType              = "org.opencastproject.external" // TODO: fix this in Opencast
+	StatisticsServiceType          = "org.opencastproject.external.statistics"
+	WorkflowDefinitionsServiceType = "org.opencastproject.external.workflows.definitions"
+	WorkflowInstancesServiceType   = "org.opencastproject.external.workflows.instances"
+)
+
 type Client interface {
 	Do(*oc.Request) (*oc.Response, error)
 
@@ -316,7 +330,7 @@ func (c *client) GetAPIRequest(ctx context.Context, opts ...oc.RequestOpts) (*oc
 	return oc.NewRequest(
 		ctx,
 		http.MethodGet,
-		extapiv1.ServiceType,
+		ServiceType,
 		"/api/",
 		oc.NoBody,
 		opts...,
@@ -334,7 +348,7 @@ func (c *client) GetAPIVersionRequest(ctx context.Context, opts ...oc.RequestOpt
 	return oc.NewRequest(
 		ctx,
 		http.MethodGet,
-		extapiv1.ServiceType,
+		ServiceType,
 		"/api/version",
 		oc.NoBody,
 		opts...,
@@ -352,7 +366,7 @@ func (c *client) GetAPIVersionDefaultRequest(ctx context.Context, opts ...oc.Req
 	return oc.NewRequest(
 		ctx,
 		http.MethodGet,
-		extapiv1.ServiceType,
+		ServiceType,
 		"/api/default",
 		oc.NoBody,
 		opts...,

@@ -63,7 +63,7 @@ func (c *client) ListStatisticProviderRequest(ctx context.Context, opts ...oc.Re
 	return oc.NewRequest(
 		ctx,
 		http.MethodGet,
-		extapiv1.StatisticsServiceType,
+		StatisticsServiceType,
 		"/api/statistics/providers",
 		oc.NoBody,
 		opts...,
@@ -81,7 +81,7 @@ func (c *client) GetStatisticProviderRequest(ctx context.Context, id string, opt
 	return oc.NewRequest(
 		ctx,
 		http.MethodGet,
-		extapiv1.StatisticsServiceType,
+		StatisticsServiceType,
 		"/api/statistics/providers/"+url.PathEscape(id),
 		oc.NoBody,
 		opts...,
@@ -105,7 +105,7 @@ func (c *client) QueryStatisticRequest(ctx context.Context, body *QueryStatistic
 	return oc.NewRequest(
 		ctx,
 		http.MethodPost,
-		extapiv1.StatisticsServiceType,
+		StatisticsServiceType,
 		"/api/statistics/data/query",
 		oc.NewMultipartBody(mp),
 		opts...,
@@ -129,7 +129,7 @@ func (c *client) ExportCSVStatisticRequest(ctx context.Context, body *ExportCSVS
 	return oc.NewRequest(
 		ctx,
 		http.MethodPost,
-		extapiv1.StatisticsServiceType,
+		StatisticsServiceType,
 		"/api/statistics/data/export.csv",
 		oc.NewMultipartBody(mp),
 		opts...,

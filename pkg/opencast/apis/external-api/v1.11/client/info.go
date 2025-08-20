@@ -36,7 +36,7 @@ func (c *client) GetInfoOrganizationRequest(ctx context.Context, opts ...oc.Requ
 	return oc.NewRequest(
 		ctx,
 		http.MethodGet,
-		extapiv1.ServiceType,
+		ServiceType,
 		"/api/info/organization",
 		oc.NoBody,
 		opts...,
@@ -54,7 +54,7 @@ func (c *client) GetInfoOrganizationPropertiesRequest(ctx context.Context, opts 
 	return oc.NewRequest(
 		ctx,
 		http.MethodGet,
-		extapiv1.ServiceType,
+		ServiceType,
 		"/api/info/organization/properties",
 		oc.NoBody,
 		opts...,
@@ -72,7 +72,7 @@ func (c *client) GetInfoOrganizationPropertiesEngageUIURLRequest(ctx context.Con
 	return oc.NewRequest(
 		ctx,
 		http.MethodGet,
-		extapiv1.ServiceType,
+		ServiceType,
 		"/api/info/organization/properties/engageuiurl",
 		oc.NoBody,
 		opts...,
@@ -90,7 +90,7 @@ func (c *client) GetInfoMeRequest(ctx context.Context, opts ...oc.RequestOpts) (
 	return oc.NewRequest(
 		ctx,
 		http.MethodGet,
-		extapiv1.ServiceType,
+		ServiceType,
 		"/api/info/me",
 		oc.NoBody,
 		opts...,
@@ -108,7 +108,7 @@ func (c *client) GetInfoMeRolesRequest(ctx context.Context, opts ...oc.RequestOp
 	return oc.NewRequest(
 		ctx,
 		http.MethodGet,
-		extapiv1.ServiceType,
+		ServiceType,
 		"/api/info/me/roles",
 		oc.NoBody,
 		opts...,

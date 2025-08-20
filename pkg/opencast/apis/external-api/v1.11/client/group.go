@@ -66,7 +66,7 @@ func (c *client) ListGroupRequest(ctx context.Context, opts ...oc.RequestOpts) (
 	return oc.NewRequest(
 		ctx,
 		http.MethodGet,
-		extapiv1.GroupsServiceType,
+		GroupsServiceType,
 		"/api/groups",
 		oc.NoBody,
 		opts...,
@@ -95,7 +95,7 @@ func (c *client) CreateGroupRequest(ctx context.Context, body *CreateGroupReques
 	return oc.NewRequest(
 		ctx,
 		http.MethodPost,
-		extapiv1.GroupsServiceType,
+		GroupsServiceType,
 		"/api/groups",
 		oc.NewMultipartBody(mp),
 		opts...,
@@ -113,7 +113,7 @@ func (c *client) GetGroupRequest(ctx context.Context, id string, opts ...oc.Requ
 	return oc.NewRequest(
 		ctx,
 		http.MethodGet,
-		extapiv1.GroupsServiceType,
+		GroupsServiceType,
 		"/api/groups/"+url.PathEscape(id),
 		oc.NoBody,
 		opts...,
@@ -144,7 +144,7 @@ func (c *client) UpdateGroupRequest(ctx context.Context, id string, body *Update
 	return oc.NewRequest(
 		ctx,
 		http.MethodPost,
-		extapiv1.GroupsServiceType,
+		GroupsServiceType,
 		"/api/groups/"+url.PathEscape(id),
 		oc.NewMultipartBody(mp),
 		opts...,
@@ -162,7 +162,7 @@ func (c *client) DeleteGroupRequest(ctx context.Context, id string, opts ...oc.R
 	return oc.NewRequest(
 		ctx,
 		http.MethodDelete,
-		extapiv1.GroupsServiceType,
+		GroupsServiceType,
 		"/api/groups/"+url.PathEscape(id),
 		oc.NoBody,
 		opts...,
@@ -182,7 +182,7 @@ func (c *client) CreateGroupMemberRequest(ctx context.Context, id string, body *
 	return oc.NewRequest(
 		ctx,
 		http.MethodPost,
-		extapiv1.GroupsServiceType,
+		GroupsServiceType,
 		"/api/groups/"+url.PathEscape(id)+"/members",
 		oc.NewMultipartBody(mp),
 		opts...,
@@ -200,7 +200,7 @@ func (c *client) DeleteGroupMemberRequest(ctx context.Context, id, memberID stri
 	return oc.NewRequest(
 		ctx,
 		http.MethodDelete,
-		extapiv1.GroupsServiceType,
+		GroupsServiceType,
 		"/api/groups/"+url.PathEscape(id)+"/members/"+url.PathEscape(memberID),
 		oc.NoBody,
 		opts...,

@@ -193,7 +193,7 @@ func (c *client) ListSeriesRequest(ctx context.Context, opts ...oc.RequestOpts) 
 	return oc.NewRequest(
 		ctx,
 		http.MethodGet,
-		extapiv1.SeriesServiceType,
+		SeriesServiceType,
 		"/api/series",
 		oc.NoBody,
 		opts...,
@@ -211,7 +211,7 @@ func (c *client) SearchSeriesRequest(ctx context.Context, opts ...oc.RequestOpts
 	return oc.NewRequest(
 		ctx,
 		http.MethodGet,
-		extapiv1.SeriesServiceType,
+		SeriesServiceType,
 		"/api/series/series.json",
 		oc.NoBody,
 		opts...,
@@ -251,7 +251,7 @@ func (c *client) CreateSeriesRequest(ctx context.Context, body *CreateSeriesRequ
 	return oc.NewRequest(
 		ctx,
 		http.MethodPost,
-		extapiv1.SeriesServiceType,
+		SeriesServiceType,
 		"/api/series",
 		oc.NewMultipartBody(mp),
 		opts...,
@@ -269,7 +269,7 @@ func (c *client) GetSeriesRequest(ctx context.Context, id string, opts ...oc.Req
 	return oc.NewRequest(
 		ctx,
 		http.MethodGet,
-		extapiv1.SeriesServiceType,
+		SeriesServiceType,
 		"/api/series/"+url.PathEscape(id),
 		oc.NoBody,
 		opts...,
@@ -297,7 +297,7 @@ func (c *client) UpdateSeriesRequest(ctx context.Context, id string, body *Updat
 	return oc.NewRequest(
 		ctx,
 		http.MethodPut,
-		extapiv1.SeriesServiceType,
+		SeriesServiceType,
 		"/api/series/"+url.PathEscape(id),
 		oc.NewMultipartBody(mp),
 		opts...,
@@ -315,7 +315,7 @@ func (c *client) DeleteSeriesRequest(ctx context.Context, id string, opts ...oc.
 	return oc.NewRequest(
 		ctx,
 		http.MethodDelete,
-		extapiv1.SeriesServiceType,
+		SeriesServiceType,
 		"/api/series/"+url.PathEscape(id),
 		oc.NoBody,
 		opts...,
@@ -333,7 +333,7 @@ func (c *client) GetSeriesACLRequest(ctx context.Context, id string, opts ...oc.
 	return oc.NewRequest(
 		ctx,
 		http.MethodGet,
-		extapiv1.SeriesServiceType,
+		SeriesServiceType,
 		"/api/series/"+url.PathEscape(id)+"/acl",
 		oc.NoBody,
 		opts...,
@@ -360,7 +360,7 @@ func (c *client) UpdateSeriesACLRequest(ctx context.Context, id string, body *Up
 	return oc.NewRequest(
 		ctx,
 		http.MethodPut,
-		extapiv1.SeriesServiceType,
+		SeriesServiceType,
 		"/api/series/"+url.PathEscape(id)+"/acl",
 		oc.NewMultipartBody(mp),
 		opts...,
@@ -378,7 +378,7 @@ func (c *client) ListSeriesMetadataRequest(ctx context.Context, id string, opts 
 	req, err := oc.NewRequest(
 		ctx,
 		http.MethodGet,
-		extapiv1.SeriesServiceType,
+		SeriesServiceType,
 		"/api/series/"+url.PathEscape(id)+"/metadata",
 		oc.NoBody,
 		opts...,
@@ -404,7 +404,7 @@ func (c *client) GetSeriesMetadataRequest(ctx context.Context, id string, flavor
 	req, err := oc.NewRequest(
 		ctx,
 		http.MethodGet,
-		extapiv1.SeriesServiceType,
+		SeriesServiceType,
 		"/api/series/"+url.PathEscape(id)+"/metadata",
 		oc.NoBody,
 		opts...,
@@ -435,7 +435,7 @@ func (c *client) UpdateSeriesMetadataRequest(ctx context.Context, id string, fla
 	req, err := oc.NewRequest(
 		ctx,
 		http.MethodPut,
-		extapiv1.SeriesServiceType,
+		SeriesServiceType,
 		"/api/series/"+url.PathEscape(id)+"/metadata",
 		oc.NewMultipartBody(mp),
 		opts...,
@@ -460,7 +460,7 @@ func (c *client) DeleteSeriesMetadataRequest(ctx context.Context, id string, fla
 	req, err := oc.NewRequest(
 		ctx,
 		http.MethodDelete,
-		extapiv1.SeriesServiceType,
+		SeriesServiceType,
 		"/api/series/"+url.PathEscape(id)+"/metadata",
 		oc.NoBody,
 		opts...,
@@ -485,7 +485,7 @@ func (c *client) GetSeriesPropertiesRequest(ctx context.Context, id string, opts
 	return oc.NewRequest(
 		ctx,
 		http.MethodGet,
-		extapiv1.SeriesServiceType,
+		SeriesServiceType,
 		"/api/series/"+url.PathEscape(id)+"/properties",
 		oc.NoBody,
 		opts...,
@@ -509,7 +509,7 @@ func (c *client) UpdateSeriesPropertiesRequest(ctx context.Context, id string, b
 	return oc.NewRequest(
 		ctx,
 		http.MethodPut,
-		extapiv1.SeriesServiceType,
+		SeriesServiceType,
 		"/api/series/"+url.PathEscape(id)+"/properties",
 		oc.NewMultipartBody(mp),
 		opts...,

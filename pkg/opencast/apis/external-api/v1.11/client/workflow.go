@@ -79,7 +79,7 @@ func (c *client) CreateWorkflowRequest(ctx context.Context, body *CreateWorkflow
 	return oc.NewRequest(
 		ctx,
 		http.MethodPost,
-		extapiv1.WorkflowInstancesServiceType,
+		WorkflowInstancesServiceType,
 		"/api/workflows",
 		oc.NewMultipartBody(mp),
 		opts...,
@@ -97,7 +97,7 @@ func (c *client) GetWorkflowRequest(ctx context.Context, id string, opts ...oc.R
 	return oc.NewRequest(
 		ctx,
 		http.MethodGet,
-		extapiv1.WorkflowInstancesServiceType,
+		WorkflowInstancesServiceType,
 		"/api/workflows/"+url.PathEscape(id),
 		oc.NoBody,
 		opts...,
@@ -126,7 +126,7 @@ func (c *client) UpdateWorkflowRequest(ctx context.Context, id string, body *Upd
 	return oc.NewRequest(
 		ctx,
 		http.MethodPut,
-		extapiv1.WorkflowInstancesServiceType,
+		WorkflowInstancesServiceType,
 		"/api/workflows/"+url.PathEscape(id),
 		oc.NewMultipartBody(mp),
 		opts...,
@@ -144,7 +144,7 @@ func (c *client) DeleteWorkflowRequest(ctx context.Context, id string, opts ...o
 	return oc.NewRequest(
 		ctx,
 		http.MethodDelete,
-		extapiv1.WorkflowInstancesServiceType,
+		WorkflowInstancesServiceType,
 		"/api/workflows/"+url.PathEscape(id),
 		oc.NoBody,
 		opts...,
