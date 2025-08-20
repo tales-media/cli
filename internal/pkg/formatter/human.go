@@ -92,20 +92,9 @@ func (f *Human) List(w io.Writer, list any) error {
 			continue
 		}
 
-		switch fieldStructType.Type.Kind() {
-		case reflect.Bool,
-			reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64,
-			reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64,
-			reflect.Float32, reflect.Float64,
-			reflect.Complex64, reflect.Complex128,
-			reflect.String:
+		if f.shouldIncludeStructFieldType(fieldStructType.Type) {
 			fieldNames = append(fieldNames, fieldName)
 			header = append(header, headerName)
-		default:
-			if _, ok := fieldStructType.Type.MethodByName("String"); ok {
-				fieldNames = append(fieldNames, fieldName)
-				header = append(header, headerName)
-			}
 		}
 	}
 
@@ -115,7 +104,7 @@ func (f *Human) List(w io.Writer, list any) error {
 		row := make(table.Row, 0, itemType.NumField())
 		for _, name := range fieldNames {
 			fieldVal := itemVal.FieldByName(name)
-			row = append(row, fmt.Sprintf("%v", fieldVal.Interface()))
+			row = append(row, f.getStringValue(fieldVal))
 		}
 		rows = append(rows, row)
 	}
@@ -127,6 +116,48 @@ func (f *Human) List(w io.Writer, list any) error {
 	tbl.AppendRows(rows)
 	tbl.Render()
 	return nil
+}
+
+func (f *Human) getStringValue(val reflect.Value) string {
+	valType := val.Type()
+	if _, ok := valType.MethodByName("String"); ok {
+		return fmt.Sprintf("%v", val.Interface())
+	}
+
+	switch valType.Kind() {
+	case reflect.Bool,
+		reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64,
+		reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64,
+		reflect.Float32, reflect.Float64,
+		reflect.Complex64, reflect.Complex128,
+		reflect.String:
+		return fmt.Sprintf("%v", val.Interface())
+	case reflect.Pointer:
+		if !val.IsNil() {
+			return f.getStringValue(val.Elem())
+		}
+	}
+	return ""
+}
+
+func (f *Human) shouldIncludeStructFieldType(t reflect.Type) bool {
+	switch t.Kind() {
+	case reflect.Bool,
+		reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64,
+		reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64,
+		reflect.Float32, reflect.Float64,
+		reflect.Complex64, reflect.Complex128,
+		reflect.String:
+		return true
+	default:
+		if _, ok := t.MethodByName("String"); ok {
+			return true
+		}
+		if t.Kind() == reflect.Pointer {
+			return f.shouldIncludeStructFieldType(t.Elem())
+		}
+	}
+	return false
 }
 
 func (f *Human) Object(w io.Writer, obj any) error {
