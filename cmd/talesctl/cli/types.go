@@ -18,8 +18,12 @@ package cli
 
 import (
 	"fmt"
+	"maps"
 	"path"
+	"slices"
 	"strings"
+
+	"github.com/spf13/pflag"
 )
 
 const TalesctlPrefix = "talesctl"
@@ -60,45 +64,52 @@ func mustSelect[K comparable, V any](a K, m map[K]V) V {
 	panic(fmt.Sprintf("missing value for %v", a))
 }
 
-type Output int
-
-const (
-	HumanOutput Output = iota
-	WideOutput
-	JSONOutput
-	YAMLOutput
-	NoneOutput
-)
-
-func OutputValue() *mapValue[Output] {
-	return &mapValue[Output]{
-		Default: HumanOutput,
-		Map: map[string]Output{
-			"human": HumanOutput,
-			"wide":  WideOutput,
-			"json":  JSONOutput,
-			"yaml":  YAMLOutput,
-			"none":  NoneOutput,
-		},
+func listValue[T any](defaultValue string, list []T) *mapValue[T] {
+	v := &mapValue[T]{
+		Default: defaultValue,
+		Map:     make(map[string]T),
 	}
+	for _, e := range list {
+		v.Map[fmt.Sprintf("%v", e)] = e
+	}
+	return v
 }
 
-type WorkflowState int
+type mapValue[T any] struct {
+	key     string
+	Default string
+	Map     map[string]T
+}
 
-const (
-	NoneWorkflowState WorkflowState = iota
-	RunningWorkflowState
-	PausedWorkflowState
-	StoppedWorkflowState
-)
+var _ pflag.Value = &mapValue[any]{}
 
-func WorkflowStateValue() *mapValue[WorkflowState] {
-	return &mapValue[WorkflowState]{
-		Default: NoneWorkflowState,
-		Map: map[string]WorkflowState{
-			"running": RunningWorkflowState,
-			"paused":  PausedWorkflowState,
-			"stopped": StoppedWorkflowState,
-		},
+func (v *mapValue[T]) String() string {
+	if v.key == "" {
+		return v.Default
 	}
+	return v.key
+}
+
+func (v *mapValue[T]) Value() T {
+	if val, ok := v.Map[v.key]; ok {
+		return val
+	}
+	return v.Map[v.Default]
+}
+
+func (v *mapValue[T]) Set(s string) error {
+	if _, ok := v.Map[strings.ToLower(s)]; ok {
+		v.key = s
+		return nil
+	}
+	return fmt.Errorf("unknown option")
+}
+
+func (v *mapValue[T]) Type() string {
+	return "string"
+}
+
+func (v *mapValue[T]) Usage(s string) string {
+	keys := slices.Sorted(maps.Keys(v.Map))
+	return s + " ( " + strings.Join(keys, " | ") + " )"
 }

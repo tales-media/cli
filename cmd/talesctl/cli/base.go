@@ -83,8 +83,7 @@ func extAPICommand(use, short string, extAPIClientValueFunc func(*cobra.Command,
 }
 
 func detectFormatter(cmd *cobra.Command) formatter.Formatter {
-	output := cmd.Flag(OutputFlag).Value.(*mapValue[Output])
-	switch output.Value() {
+	switch getOutputFlag(cmd.Flags()) {
 	default:
 		fallthrough
 	case HumanOutput:

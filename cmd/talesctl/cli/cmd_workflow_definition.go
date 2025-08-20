@@ -46,7 +46,6 @@ func workflowDefinitionListCommand(cfg *Config) *cobra.Command {
 			var (
 				s   svc.WorkflowDefinition
 				req svc.WorkflowDefinitionListRequest
-				err error
 			)
 
 			mustSelect(cfg.AliasType, map[AliasType]func(){
@@ -54,14 +53,23 @@ func workflowDefinitionListCommand(cfg *Config) *cobra.Command {
 				TalesAlias:    func() { s = svc.NewTalesWorkflowDefinition(extAPI) },
 			})()
 
-			if req.FilterByTag, err = cmd.Flags().GetString(TagFlag); err != nil {
-				return nil, err
-			}
+			req.FilterByTag = getFilterByXStringFlag("tag", cmd.Flags())
+			req.SortBy = getSortByFlag(cmd.Flags())
+			req.SortDirection = getSortDirectionFlag(cmd.Flags())
 
 			return s.List(cmd.Context(), req)
 		},
 	)
-	cmd.Flags().String(TagFlag, "", "only include workflow definitions with this tag")
+	addFilterByXStringFlag("tag", cmd.Flags())
+	addSortByFlag(&mapValue[string]{
+		Default: "id",
+		Map: map[string]string{
+			"id":           "identifier",
+			"title":        "title",
+			"displayorder": "displayorder",
+		},
+	}, cmd.Flags())
+	addSortDirectionFlag(cmd.Flags())
 	return cmd
 }
 

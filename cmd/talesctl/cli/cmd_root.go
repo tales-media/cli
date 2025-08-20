@@ -18,6 +18,12 @@ package cli
 
 import "github.com/spf13/cobra"
 
+var (
+	ManagementGroup = &cobra.Group{ID: "management", Title: "Management Commands:"}
+	ResourcesGroup  = &cobra.Group{ID: "resources", Title: "Resources Commands:"}
+	AdminGroup      = &cobra.Group{ID: "admin", Title: "Admin Commands:"}
+)
+
 func New(cfg *Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use: cfg.Alias,
@@ -40,9 +46,8 @@ func New(cfg *Config) *cobra.Command {
 	cmd.SetArgs(cfg.Args)
 
 	// global flags
-	cmd.PersistentFlags().String(ContextFlag, "", "the name of the Opencast context to use")
-	outputValue := OutputValue()
-	cmd.PersistentFlags().VarP(outputValue, OutputFlag, OutputFlagShort, outputValue.Usage("the output format"))
+	addContextFlag(cmd.PersistentFlags())
+	addOutputFlag(cmd.PersistentFlags())
 
 	// commands
 

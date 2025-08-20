@@ -17,9 +17,6 @@ limitations under the License.
 package cli
 
 import (
-	"errors"
-	"strings"
-
 	"github.com/spf13/cobra"
 	"k8s.io/utils/ptr"
 
@@ -65,25 +62,16 @@ func workflowCreateCommand(cfg *Config) *cobra.Command {
 
 			req.EventID = args[0]
 			req.WorkflowDefinitionID = args[1]
-
-			req.Configuration = make(map[string]string)
-			cfgFlags, err := cmd.Flags().GetStringSlice(ConfigFlag)
+			req.Configuration, err = getWorkflowPropertiesFlag(cmd.Flags())
 			if err != nil {
 				return nil, err
-			}
-			for _, c := range cfgFlags {
-				k, v, ok := strings.Cut(c, "=")
-				if !ok {
-					return nil, errors.New("invalid config flag: use key=value syntax")
-				}
-				req.Configuration[k] = v
 			}
 
 			return s.Create(cmd.Context(), req)
 		},
 	)
 	cmd.Args = cobra.ExactArgs(2)
-	cmd.Flags().StringSliceP(ConfigFlag, ConfigFlagShort, nil, "set workflow configuration property in the form \"key=value\" (can be specified multiple times or a comma separated list)")
+	addWorkflowPropertiesFlag(cmd.Flags())
 	return cmd
 }
 
@@ -129,36 +117,26 @@ func workflowUpdateCommand(cfg *Config) *cobra.Command {
 
 			req.ID = args[0]
 
-			req.Configuration = make(map[string]string)
-			cfgFlags, err := cmd.Flags().GetStringSlice(ConfigFlag)
+			req.Configuration, err = getWorkflowPropertiesFlag(cmd.Flags())
 			if err != nil {
 				return nil, err
 			}
-			for _, c := range cfgFlags {
-				k, v, ok := strings.Cut(c, "=")
-				if !ok {
-					return nil, errors.New("invalid config flag: use key=value syntax")
-				}
-				req.Configuration[k] = v
-			}
 
-			workflowState := cmd.Flag(StateFlag).Value.(*mapValue[WorkflowState])
-			switch workflowState.Value() {
-			case RunningWorkflowState:
-				req.State = ptr.To(api.RunningWorkflowState)
-			case PausedWorkflowState:
-				req.State = ptr.To(api.PausedWorkflowState)
-			case StoppedWorkflowState:
-				req.State = ptr.To(api.StoppedWorkflowState)
+			switch getWorkflowStatusFlag(cmd.Flags()) {
+			case RunningWorkflowStatus:
+				req.Status = ptr.To(api.RunningWorkflowStatus)
+			case PausedWorkflowStatus:
+				req.Status = ptr.To(api.PausedWorkflowStatus)
+			case StoppedWorkflowStatus:
+				req.Status = ptr.To(api.StoppedWorkflowStatus)
 			}
 
 			return s.Update(cmd.Context(), req)
 		},
 	)
 	cmd.Args = cobra.ExactArgs(1)
-	workflowStateValue := WorkflowStateValue()
-	cmd.Flags().Var(workflowStateValue, StateFlag, workflowStateValue.Usage("set a new workflow state"))
-	cmd.Flags().StringSliceP(ConfigFlag, ConfigFlagShort, nil, "set workflow configuration property in the form \"key=value\" (can be specified multiple times or a comma separated list)")
+	addWorkflowPropertiesFlag(cmd.Flags())
+	addWorkflowStatusFlag(cmd.Flags())
 	return cmd
 }
 
