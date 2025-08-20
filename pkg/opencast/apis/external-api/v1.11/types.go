@@ -18,8 +18,8 @@ package v1_11
 
 import (
 	"encoding/json"
-	"time"
 
+	"github.com/tales-media/cli/pkg/opencast/apis/meta/base"
 	"github.com/tales-media/cli/pkg/opencast/apis/meta/strobj"
 )
 
@@ -39,57 +39,20 @@ const (
 	WorkflowInstancesServiceType   = "org.opencastproject.external.workflows.instances"
 )
 
-type Properties map[string]string
-
-type DateTime time.Time
-
-func (dt DateTime) IsZero() bool {
-	return time.Time(dt).IsZero()
-}
-
-func (dt DateTime) MarshalJSON() ([]byte, error) {
-	if dt.IsZero() {
-		return []byte{'"', '"'}, nil
-	}
-	return time.Time(dt).MarshalJSON()
-}
-
-func (dt *DateTime) UnmarshalJSON(data []byte) error {
-	if len(data) == 2 && data[0] == '"' && data[1] == '"' {
-		// Opencast represents null dates as blank string. Skip unmarshal and let dt remain as zero value.
-		return nil
-	}
-	return (*time.Time)(dt).UnmarshalJSON(data)
-}
-
-type Flavor string
-
-const (
-	DublinCoreEpisodeFlavor = Flavor("dublincore/episode")
-	DublinCoreSeriesFlavor  = Flavor("dublincore/series")
-)
-
 // Access Control List (ACL)
 type ACL []ACE
 
 // Access Control Entry (ACE)
 type ACE struct {
-	Allow  bool   `json:"allow,omitempty"`
-	Action Action `json:"action,omitempty"`
-	Role   string `json:"role,omitempty"`
+	Allow  bool        `json:"allow,omitempty"`
+	Action base.Action `json:"action,omitempty"`
+	Role   string      `json:"role,omitempty"`
 }
 
-type Action string
-
-const (
-	ReadAction  = Action("read")
-	WriteAction = Action("write")
-)
-
 type Catalog struct {
-	Label  string  `json:"label,omitempty"`
-	Flavor Flavor  `json:"flavor,omitempty"`
-	Fields []Field `json:"fields,omitempty"`
+	Label  string      `json:"label,omitempty"`
+	Flavor base.Flavor `json:"flavor,omitempty"`
+	Fields []Field     `json:"fields,omitempty"`
 }
 
 type Value struct {
@@ -223,7 +186,7 @@ type BooleanFieldValue bool
 
 var _ FieldValue = BooleanFieldValue(true)
 
-type DateTimeFieldValue = DateTime
+type DateTimeFieldValue = base.DateTime
 
 var _ FieldValue = DateTimeFieldValue{}
 
@@ -235,7 +198,7 @@ type IterableTextFieldValue []string
 
 var _ FieldValue = IterableTextFieldValue{}
 
-type NumberFieldValue int64
+type NumberFieldValue base.Int
 
 var _ FieldValue = NumberFieldValue(0)
 
@@ -251,7 +214,7 @@ type TextLongFieldValue string
 
 var _ FieldValue = TextLongFieldValue("")
 
-type TimeFieldValue = DateTime
+type TimeFieldValue = base.DateTime
 
 var _ FieldValue = TimeFieldValue{}
 
@@ -354,13 +317,6 @@ type APIVersion struct {
 	Versions []string `json:"versions,omitempty"`
 }
 
-type Organization struct {
-	ID            string `json:"id,omitempty"`
-	Name          string `json:"name,omitempty"`
-	AdminRole     string `json:"adminRole,omitempty"`
-	AnonymousRole string `json:"anonymousRole,omitempty"`
-}
-
 type Me struct {
 	Username string `json:"username,omitempty"`
 	Name     string `json:"name,omitempty"`
@@ -369,12 +325,17 @@ type Me struct {
 	Provider string `json:"provider,omitempty"`
 }
 
-type StringList []string
+type Organization struct {
+	ID            string `json:"id,omitempty"`
+	Name          string `json:"name,omitempty"`
+	AdminRole     string `json:"adminRole,omitempty"`
+	AnonymousRole string `json:"anonymousRole,omitempty"`
+}
 
 type SignedURL struct {
-	Error      string   `json:"error,omitempty"`
-	URL        string   `json:"url,omitempty"`
-	ValidUntil DateTime `json:"valid-until,omitempty"`
+	Error      string        `json:"error,omitempty"`
+	URL        string        `json:"url,omitempty"`
+	ValidUntil base.DateTime `json:"valid-until,omitempty"`
 }
 
 const (
@@ -441,33 +402,34 @@ const (
 )
 
 type StatisticQuery struct {
-	Provider   Identifier `json:"provider,omitempty"`
-	Parameters Properties `json:"parameters,omitempty"`
+	Provider   Identifier      `json:"provider,omitempty"`
+	Parameters base.Properties `json:"parameters,omitempty"`
 }
 
 type StatisticQueryResult struct {
 	Provider   StatisticProvider `json:"provider,omitempty"`
-	Parameters Properties        `json:"parameters,omitempty"`
+	Parameters base.Properties   `json:"parameters,omitempty"`
 	RawData    json.RawMessage   `json:"data,omitempty"`
 }
 
 type StatisticQueryResultTimeSeriesData struct {
-	Labels []DateTime `json:"labels,omitempty"`
-	Values []float64  `json:"values,omitempty"`
-	Total  *float64   `json:"total,omitempty"`
+	Labels []base.DateTime `json:"labels,omitempty"`
+	Values []float64       `json:"values,omitempty"`
+	Total  *float64        `json:"total,omitempty"`
 }
 
 type Agent struct {
-	AgentID string      `json:"agent_id,omitempty"`
-	Inputs  []string    `json:"inputs,omitempty"`
-	Update  DateTime    `json:"update,omitempty"`
-	URL     string      `json:"url,omitempty"`
-	Status  AgentStatus `json:"status,omitempty"`
+	AgentID string        `json:"agent_id,omitempty"`
+	Inputs  []string      `json:"inputs,omitempty"`
+	Update  base.DateTime `json:"update,omitempty"`
+	URL     string        `json:"url,omitempty"`
+	Status  AgentStatus   `json:"status,omitempty"`
 }
 
 type AgentStatus string
 
 const (
+	UndefinedAgentStatus    = AgentStatus("")
 	UnknownAgentStatus      = AgentStatus("unknown")
 	IdleAgentStatus         = AgentStatus("idle")
 	CapturingAgentStatus    = AgentStatus("capturing")
@@ -482,8 +444,8 @@ type Identifier struct {
 }
 
 type Event struct {
-	ArchiveVersion    *int64          `json:"archive_version,omitempty"`
-	Created           DateTime        `json:"created,omitempty"`
+	ArchiveVersion    *base.Int       `json:"archive_version,omitempty"`
+	Created           base.DateTime   `json:"created,omitempty"`
 	Creator           string          `json:"creator,omitempty"`
 	Contributor       []string        `json:"contributor,omitempty"`
 	Description       string          `json:"description,omitempty"`
@@ -500,8 +462,8 @@ type Event struct {
 	Status            EventStatus     `json:"status,omitempty"`
 	PublicationStatus []string        `json:"publication_status,omitempty"`
 	ProcessingState   ProcessingState `json:"processing_state,omitempty"`
-	Start             DateTime        `json:"start,omitempty"`
-	Duration          *int64          `json:"duration,omitempty"`
+	Start             base.DateTime   `json:"start,omitempty"`
+	Duration          *base.Int       `json:"duration,omitempty"`
 	Subjects          []string        `json:"subjects,omitempty"`
 	Title             string          `json:"title,omitempty"`
 	ACL               ACL             `json:"acl,omitempty"`
@@ -528,6 +490,7 @@ const (
 type ProcessingState string
 
 const (
+	UndefinedProcessingState    = ProcessingState("")
 	InstantiatedProcessingState = ProcessingState("INSTANTIATED")
 	RunningProcessingState      = ProcessingState("RUNNING")
 	StoppedProcessingState      = ProcessingState("STOPPED")
@@ -538,24 +501,24 @@ const (
 )
 
 type Processing struct {
-	Workflow      string     `json:"workflow,omitempty"`
-	Configuration Properties `json:"configuration,omitempty"`
+	Workflow      string          `json:"workflow,omitempty"`
+	Configuration base.Properties `json:"configuration,omitempty"`
 }
 
 type Scheduling struct {
-	Start   DateTime `json:"start,omitempty"`
-	End     DateTime `json:"end,omitempty"`
-	AgentID string   `json:"agent_id,omitempty"`
-	Inputs  []string `json:"inputs,omitempty"`
+	Start   base.DateTime `json:"start,omitempty"`
+	End     base.DateTime `json:"end,omitempty"`
+	AgentID string        `json:"agent_id,omitempty"`
+	Inputs  []string      `json:"inputs,omitempty"`
 }
 
 type SchedulingRequest struct {
-	AgentID  string    `json:"agent_id,omitempty"`
-	Inputs   []string  `json:"inputs,omitempty"`
-	Start    DateTime  `json:"start,omitempty"`
-	End      *DateTime `json:"end,omitempty"`
-	Duration *int64    `json:"duration,omitempty"`
-	RRule    *RRule    `json:"rrule,omitempty"`
+	AgentID  string         `json:"agent_id,omitempty"`
+	Inputs   []string       `json:"inputs,omitempty"`
+	Start    base.DateTime  `json:"start,omitempty"`
+	End      *base.DateTime `json:"end,omitempty"`
+	Duration *base.Int      `json:"duration,omitempty"`
+	RRule    *RRule         `json:"rrule,omitempty"`
 }
 
 type RRule string
@@ -580,35 +543,35 @@ const (
 )
 
 type TrackElement struct {
-	ID               string   `json:"id,omitempty"`
-	MediaType        string   `json:"mediatype,omitempty"`
-	URL              string   `json:"url,omitempty"`
-	Flavor           Flavor   `json:"flavor,omitempty"`
-	Size             int64    `json:"size,omitempty"`
-	Checksum         string   `json:"checksum,omitempty"`
-	Tags             []string `json:"tags,omitempty"`
-	HasAudio         bool     `json:"has_audio,omitempty"`
-	HasVideo         bool     `json:"has_video,omitempty"`
-	Duration         *int64   `json:"duration,omitempty"`
-	Description      string   `json:"description,omitempty"`
-	BitRate          *float64 `json:"bitrate,omitempty"`
-	FrameRate        *float64 `json:"framerate,omitempty"`
-	FrameCount       *int64   `json:"framecount,omitempty"`
-	Width            *int     `json:"width,omitempty"`
-	Height           *int     `json:"height,omitempty"`
-	IsMasterPlaylist bool     `json:"is_master_playlist,omitempty"`
-	IsLive           bool     `json:"is_live,omitempty"`
+	ID               string      `json:"id,omitempty"`
+	MediaType        string      `json:"mediatype,omitempty"`
+	URL              string      `json:"url,omitempty"`
+	Flavor           base.Flavor `json:"flavor,omitempty"`
+	Size             base.Int    `json:"size,omitempty"`
+	Checksum         string      `json:"checksum,omitempty"`
+	Tags             []string    `json:"tags,omitempty"`
+	HasAudio         bool        `json:"has_audio,omitempty"`
+	HasVideo         bool        `json:"has_video,omitempty"`
+	Duration         *base.Int   `json:"duration,omitempty"`
+	Description      string      `json:"description,omitempty"`
+	BitRate          *float64    `json:"bitrate,omitempty"`
+	FrameRate        *float64    `json:"framerate,omitempty"`
+	FrameCount       *base.Int   `json:"framecount,omitempty"`
+	Width            *base.Int   `json:"width,omitempty"`
+	Height           *base.Int   `json:"height,omitempty"`
+	IsMasterPlaylist bool        `json:"is_master_playlist,omitempty"`
+	IsLive           bool        `json:"is_live,omitempty"`
 }
 
 type MediaTrackElement struct {
 	Checksum           *string                            `json:"checksum,omitempty"`
 	Description        *string                            `json:"description,omitempty"`
-	Duration           *int64                             `json:"duration,omitempty"`
+	Duration           *base.Int                          `json:"duration,omitempty"`
 	ElementDescription *string                            `json:"element-description,omitempty"`
-	Flavor             *Flavor                            `json:"flavor,omitempty"`
+	Flavor             *base.Flavor                       `json:"flavor,omitempty"`
 	Identifier         *string                            `json:"identifier,omitempty"`
 	MimeType           *string                            `json:"mimetype,omitempty"`
-	Size               int64                              `json:"size,omitempty"`
+	Size               base.Int                           `json:"size,omitempty"`
 	HasVideo           bool                               `json:"has_video,omitempty"`
 	HasAudio           bool                               `json:"has_audio,omitempty"`
 	IsMasterPlaylist   bool                               `json:"is_master_playlist,omitempty"`
@@ -620,27 +583,27 @@ type MediaTrackElement struct {
 
 type MediaTrackElementStream struct {
 	// common fields
-	Identifier           *string  `json:"identifier,omitempty"`
-	BitRate              *float64 `json:"bitrate,omitempty"`
-	CaptureDevice        *string  `json:"capturedevice,omitempty"`
-	CaptureDeviceVendor  *string  `json:"capturedevicevendor,omitempty"`
-	CaptureDeviceVersion *string  `json:"capturedeviceversion,omitempty"`
-	EncoderLibraryVendor *string  `json:"encoderlibraryvendor,omitempty"`
-	Format               *string  `json:"format,omitempty"`
-	FormatVersion        *string  `json:"formatversion,omitempty"`
-	FrameCount           *int64   `json:"framecount,omitempty"`
+	Identifier           *string   `json:"identifier,omitempty"`
+	BitRate              *float64  `json:"bitrate,omitempty"`
+	CaptureDevice        *string   `json:"capturedevice,omitempty"`
+	CaptureDeviceVendor  *string   `json:"capturedevicevendor,omitempty"`
+	CaptureDeviceVersion *string   `json:"capturedeviceversion,omitempty"`
+	EncoderLibraryVendor *string   `json:"encoderlibraryvendor,omitempty"`
+	Format               *string   `json:"format,omitempty"`
+	FormatVersion        *string   `json:"formatversion,omitempty"`
+	FrameCount           *base.Int `json:"framecount,omitempty"`
 
 	// audio fields
-	BitDepth     *int     `json:"bitdepth,omitempty"`
-	Channels     *int     `json:"channels,omitempty"`
-	PkLevDB      *float64 `json:"pklevdb,omitempty"`
-	RmsLevDB     *float64 `json:"rmslevdb,omitempty"`
-	RmsPkDB      *float64 `json:"rmspkdb,omitempty"`
-	SamplingRate *int     `json:"samplingrate,omitempty"`
+	BitDepth     *base.Int `json:"bitdepth,omitempty"`
+	Channels     *base.Int `json:"channels,omitempty"`
+	PkLevDB      *float64  `json:"pklevdb,omitempty"`
+	RmsLevDB     *float64  `json:"rmslevdb,omitempty"`
+	RmsPkDB      *float64  `json:"rmspkdb,omitempty"`
+	SamplingRate *base.Int `json:"samplingrate,omitempty"`
 
 	// video fields
-	FrameHeight *int       `json:"frameheight,omitempty"`
-	FrameWidth  *int       `json:"framewidth,omitempty"`
+	FrameHeight *base.Int  `json:"frameheight,omitempty"`
+	FrameWidth  *base.Int  `json:"framewidth,omitempty"`
 	FrameRate   *float64   `json:"framerate,omitempty"`
 	ScanOrder   *ScanOrder `json:"scanorder,omitempty"`
 	ScanType    *ScanType  `json:"scantype,omitempty"`
@@ -649,6 +612,7 @@ type MediaTrackElementStream struct {
 type ScanOrder string
 
 const (
+	UndefinedScanOrder        = ScanOrder("")
 	TopFieldFirstScanOrder    = ScanOrder("TopFieldFirst")
 	BottomFieldFirstScanOrder = ScanOrder("BottomFieldFirst")
 )
@@ -656,47 +620,48 @@ const (
 type ScanType string
 
 const (
+	UndefinedScanType   = ScanType("")
 	InterlacedScanType  = ScanType("Interlaced")
 	ProgressiveScanType = ScanType("Progressive")
 )
 
 type AttachmentElement struct {
-	ID        string   `json:"id,omitempty"`
-	MediaType string   `json:"mediatype,omitempty"`
-	URL       string   `json:"url,omitempty"`
-	Flavor    Flavor   `json:"flavor,omitempty"`
-	Ref       string   `json:"ref,omitempty"`
-	Size      int64    `json:"size,omitempty"`
-	Checksum  string   `json:"checksum,omitempty"`
-	Tags      []string `json:"tags,omitempty"`
+	ID        string      `json:"id,omitempty"`
+	MediaType string      `json:"mediatype,omitempty"`
+	URL       string      `json:"url,omitempty"`
+	Flavor    base.Flavor `json:"flavor,omitempty"`
+	Ref       string      `json:"ref,omitempty"`
+	Size      base.Int    `json:"size,omitempty"`
+	Checksum  string      `json:"checksum,omitempty"`
+	Tags      []string    `json:"tags,omitempty"`
 }
 
 type CatalogElement struct {
-	ID        string   `json:"id,omitempty"`
-	MediaType string   `json:"mediatype,omitempty"`
-	URL       string   `json:"url,omitempty"`
-	Flavor    Flavor   `json:"flavor,omitempty"`
-	Size      int64    `json:"size,omitempty"`
-	Checksum  string   `json:"checksum,omitempty"`
-	Tags      []string `json:"tags,omitempty"`
+	ID        string      `json:"id,omitempty"`
+	MediaType string      `json:"mediatype,omitempty"`
+	URL       string      `json:"url,omitempty"`
+	Flavor    base.Flavor `json:"flavor,omitempty"`
+	Size      base.Int    `json:"size,omitempty"`
+	Checksum  string      `json:"checksum,omitempty"`
+	Tags      []string    `json:"tags,omitempty"`
 }
 
 type Series struct {
-	Identifier   string   `json:"identifier,omitempty"`
-	Title        string   `json:"title,omitempty"`
-	Description  string   `json:"description,omitempty"`
-	Creator      string   `json:"creator,omitempty"`
-	Subjects     []string `json:"subjects,omitempty"`
-	Organization string   `json:"organization,omitempty"`
-	Created      DateTime `json:"created,omitempty"`
-	Contributors []string `json:"contributors,omitempty"`
-	Organizers   []string `json:"organizers,omitempty"`
-	OptOut       bool     `json:"opt_out,omitempty"` // always false
-	Publishers   []string `json:"publishers,omitempty"`
-	Language     string   `json:"language,omitempty"`
-	License      string   `json:"license,omitempty"`
-	RightsHolder string   `json:"rightsholder,omitempty"`
-	ACL          ACL      `json:"acl,omitempty"`
+	Identifier   string        `json:"identifier,omitempty"`
+	Title        string        `json:"title,omitempty"`
+	Description  string        `json:"description,omitempty"`
+	Creator      string        `json:"creator,omitempty"`
+	Subjects     []string      `json:"subjects,omitempty"`
+	Organization string        `json:"organization,omitempty"`
+	Created      base.DateTime `json:"created,omitempty"`
+	Contributors []string      `json:"contributors,omitempty"`
+	Organizers   []string      `json:"organizers,omitempty"`
+	OptOut       bool          `json:"opt_out,omitempty"` // always false
+	Publishers   []string      `json:"publishers,omitempty"`
+	Language     string        `json:"language,omitempty"`
+	License      string        `json:"license,omitempty"`
+	RightsHolder string        `json:"rightsholder,omitempty"`
+	ACL          ACL           `json:"acl,omitempty"`
 }
 
 type Playlist struct {
@@ -723,14 +688,14 @@ const (
 )
 
 type PlaylistACE struct {
-	ID     string `json:"id,omitempty"`
-	Allow  bool   `json:"allow,omitempty"`
-	Action Action `json:"action,omitempty"`
-	Role   string `json:"role,omitempty"`
+	ID     string      `json:"id,omitempty"`
+	Allow  bool        `json:"allow,omitempty"`
+	Action base.Action `json:"action,omitempty"`
+	Role   string      `json:"role,omitempty"`
 }
 
 type WorkflowInstance struct {
-	Identifier                   int64               `json:"identifier,omitempty"`
+	Identifier                   base.Int            `json:"identifier,omitempty"`
 	Title                        string              `json:"title,omitempty"`
 	Description                  string              `json:"description,omitempty"`
 	WorkflowDefinitionIdentifier string              `json:"workflow_definition_identifier,omitempty"`
@@ -738,7 +703,7 @@ type WorkflowInstance struct {
 	Creator                      string              `json:"creator,omitempty"`
 	State                        WorkflowState       `json:"state,omitempty"`
 	Operations                   []OperationInstance `json:"operations,omitempty"`
-	Configuration                Properties          `json:"configuration,omitempty"`
+	Configuration                base.Properties     `json:"configuration,omitempty"`
 }
 
 type WorkflowState string
@@ -754,21 +719,21 @@ const (
 )
 
 type OperationInstance struct {
-	Identifier           int64                  `json:"identifier,omitempty"`
+	Identifier           *base.Int              `json:"identifier,omitempty"`
 	Operation            string                 `json:"operation,omitempty"`
 	Description          string                 `json:"description,omitempty"`
 	State                WorkflowOperationState `json:"state,omitempty"`
-	TimeInQueue          int64                  `json:"time_in_queue,omitempty"`
+	TimeInQueue          base.Int               `json:"time_in_queue,omitempty"`
 	Host                 string                 `json:"host,omitempty"`
 	If                   string                 `json:"if,omitempty"`
 	FailWorkflowOnError  bool                   `json:"fail_workflow_on_error,omitempty"`
 	ErrorHandlerWorkflow string                 `json:"error_handler_workflow,omitempty"`
 	RetryStrategy        WorkflowRetryStrategy  `json:"retry_strategy,omitempty"`
-	MaxAttempts          int                    `json:"max_attempts,omitempty"`
-	FailedAttempts       int                    `json:"failed_attempts,omitempty"`
-	Configuration        Properties             `json:"configuration,omitempty"`
-	Start                DateTime               `json:"start,omitempty"`
-	Completion           DateTime               `json:"completion,omitempty"`
+	MaxAttempts          base.Int               `json:"max_attempts,omitempty"`
+	FailedAttempts       base.Int               `json:"failed_attempts,omitempty"`
+	Configuration        base.Properties        `json:"configuration,omitempty"`
+	Start                base.DateTime          `json:"start,omitempty"`
+	Completion           base.DateTime          `json:"completion,omitempty"`
 }
 
 type WorkflowOperationState string
@@ -786,9 +751,10 @@ const (
 type WorkflowRetryStrategy string
 
 const (
-	NoneWorkflowRetryStrategy  = WorkflowRetryStrategy("none")
-	RetryWorkflowRetryStrategy = WorkflowRetryStrategy("retry")
-	HoldWorkflowRetryStrategy  = WorkflowRetryStrategy("hold")
+	UndefinedWorkflowRetryStrategy = WorkflowRetryStrategy("")
+	NoneWorkflowRetryStrategy      = WorkflowRetryStrategy("none")
+	RetryWorkflowRetryStrategy     = WorkflowRetryStrategy("retry")
+	HoldWorkflowRetryStrategy      = WorkflowRetryStrategy("hold")
 )
 
 type WorkflowDefinition struct {
@@ -804,11 +770,11 @@ type WorkflowDefinition struct {
 type OperationDefinition struct {
 	Operation            string                `json:"operation,omitempty"`
 	Description          string                `json:"description,omitempty"`
-	Configuration        Properties            `json:"configuration,omitempty"`
+	Configuration        base.Properties       `json:"configuration,omitempty"`
 	If                   string                `json:"if,omitempty"`
 	Unless               string                `json:"unless,omitempty"`
 	FailWorkflowOnError  bool                  `json:"fail_workflow_on_error,omitempty"`
 	ErrorHandlerWorkflow string                `json:"error_handler_workflow,omitempty"`
 	RetryStrategy        WorkflowRetryStrategy `json:"retry_strategy,omitempty"`
-	MaxAttempts          int                   `json:"max_attempts,omitempty"`
+	MaxAttempts          base.Int              `json:"max_attempts,omitempty"`
 }

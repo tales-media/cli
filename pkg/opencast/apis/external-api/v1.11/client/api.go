@@ -21,6 +21,7 @@ import (
 	"net/http"
 
 	extapiv1 "github.com/tales-media/cli/pkg/opencast/apis/external-api/v1.11"
+	"github.com/tales-media/cli/pkg/opencast/apis/meta/base"
 	"github.com/tales-media/cli/pkg/opencast/apis/meta/objlist"
 	oc "github.com/tales-media/cli/pkg/opencast/client"
 )
@@ -48,16 +49,16 @@ type Client interface {
 	GetInfoOrganization(ctx context.Context, opts ...oc.RequestOpts) (*extapiv1.Organization, *oc.Response, error)
 	GetInfoOrganizationRequest(ctx context.Context, opts ...oc.RequestOpts) (*oc.Request, error)
 
-	GetInfoOrganizationProperties(ctx context.Context, opts ...oc.RequestOpts) (extapiv1.Properties, *oc.Response, error)
+	GetInfoOrganizationProperties(ctx context.Context, opts ...oc.RequestOpts) (base.Properties, *oc.Response, error)
 	GetInfoOrganizationPropertiesRequest(ctx context.Context, opts ...oc.RequestOpts) (*oc.Request, error)
 
-	GetInfoOrganizationPropertiesEngageUIURL(ctx context.Context, opts ...oc.RequestOpts) (extapiv1.Properties, *oc.Response, error)
+	GetInfoOrganizationPropertiesEngageUIURL(ctx context.Context, opts ...oc.RequestOpts) (base.Properties, *oc.Response, error)
 	GetInfoOrganizationPropertiesEngageUIURLRequest(ctx context.Context, opts ...oc.RequestOpts) (*oc.Request, error)
 
 	GetInfoMe(ctx context.Context, opts ...oc.RequestOpts) (*extapiv1.Me, *oc.Response, error)
 	GetInfoMeRequest(ctx context.Context, opts ...oc.RequestOpts) (*oc.Request, error)
 
-	GetInfoMeRoles(ctx context.Context, opts ...oc.RequestOpts) (extapiv1.StringList, *oc.Response, error)
+	GetInfoMeRoles(ctx context.Context, opts ...oc.RequestOpts) ([]string, *oc.Response, error)
 	GetInfoMeRolesRequest(ctx context.Context, opts ...oc.RequestOpts) (*oc.Request, error)
 
 	// Security
@@ -70,7 +71,7 @@ type Client interface {
 	ListListProvider(ctx context.Context, opts ...oc.RequestOpts) ([]string, *oc.Response, error)
 	ListListProviderRequest(ctx context.Context, opts ...oc.RequestOpts) (*oc.Request, error)
 
-	GetListProvider(ctx context.Context, source string, opts ...oc.RequestOpts) (extapiv1.Properties, *oc.Response, error)
+	GetListProvider(ctx context.Context, source string, opts ...oc.RequestOpts) (base.Properties, *oc.Response, error)
 	GetListProviderRequest(ctx context.Context, source string, opts ...oc.RequestOpts) (*oc.Request, error)
 
 	// Groups
@@ -145,11 +146,11 @@ type Client interface {
 	UpdateEventACL(ctx context.Context, id string, body *UpdateEventACLRequestBody, opts ...oc.RequestOpts) (*oc.Response, error)
 	UpdateEventACLRequest(ctx context.Context, id string, body *UpdateEventACLRequestBody, opts ...oc.RequestOpts) (*oc.Request, error)
 
-	CreateEventACE(ctx context.Context, id string, action extapiv1.Action, role string, opts ...oc.RequestOpts) (*oc.Response, error)
-	CreateEventACERequest(ctx context.Context, id string, action extapiv1.Action, role string, opts ...oc.RequestOpts) (*oc.Request, error)
+	CreateEventACE(ctx context.Context, id string, action base.Action, role string, opts ...oc.RequestOpts) (*oc.Response, error)
+	CreateEventACERequest(ctx context.Context, id string, action base.Action, role string, opts ...oc.RequestOpts) (*oc.Request, error)
 
-	DeleteEventACE(ctx context.Context, id string, action extapiv1.Action, role string, opts ...oc.RequestOpts) (*oc.Response, error)
-	DeleteEventACERequest(ctx context.Context, id string, action extapiv1.Action, role string, opts ...oc.RequestOpts) (*oc.Request, error)
+	DeleteEventACE(ctx context.Context, id string, action base.Action, role string, opts ...oc.RequestOpts) (*oc.Response, error)
+	DeleteEventACERequest(ctx context.Context, id string, action base.Action, role string, opts ...oc.RequestOpts) (*oc.Request, error)
 
 	// Events - Media
 
@@ -164,14 +165,14 @@ type Client interface {
 	ListEventMetadata(ctx context.Context, id string, opts ...oc.RequestOpts) ([]extapiv1.Catalog, *oc.Response, error)
 	ListEventMetadataRequest(ctx context.Context, id string, opts ...oc.RequestOpts) (*oc.Request, error)
 
-	GetEventMetadata(ctx context.Context, id string, flavor extapiv1.Flavor, opts ...oc.RequestOpts) (*extapiv1.Catalog, *oc.Response, error)
-	GetEventMetadataRequest(ctx context.Context, id string, flavor extapiv1.Flavor, opts ...oc.RequestOpts) (*oc.Request, error)
+	GetEventMetadata(ctx context.Context, id string, flavor base.Flavor, opts ...oc.RequestOpts) (*extapiv1.Catalog, *oc.Response, error)
+	GetEventMetadataRequest(ctx context.Context, id string, flavor base.Flavor, opts ...oc.RequestOpts) (*oc.Request, error)
 
-	UpdateEventMetadata(ctx context.Context, id string, flavor extapiv1.Flavor, body *UpdateEventMetadataRequestBody, opts ...oc.RequestOpts) (*oc.Response, error)
-	UpdateEventMetadataRequest(ctx context.Context, id string, flavor extapiv1.Flavor, body *UpdateEventMetadataRequestBody, opts ...oc.RequestOpts) (*oc.Request, error)
+	UpdateEventMetadata(ctx context.Context, id string, flavor base.Flavor, body *UpdateEventMetadataRequestBody, opts ...oc.RequestOpts) (*oc.Response, error)
+	UpdateEventMetadataRequest(ctx context.Context, id string, flavor base.Flavor, body *UpdateEventMetadataRequestBody, opts ...oc.RequestOpts) (*oc.Request, error)
 
-	DeleteEventMetadata(ctx context.Context, id string, flavor extapiv1.Flavor, opts ...oc.RequestOpts) (*oc.Response, error)
-	DeleteEventMetadataRequest(ctx context.Context, id string, flavor extapiv1.Flavor, opts ...oc.RequestOpts) (*oc.Request, error)
+	DeleteEventMetadata(ctx context.Context, id string, flavor base.Flavor, opts ...oc.RequestOpts) (*oc.Response, error)
+	DeleteEventMetadataRequest(ctx context.Context, id string, flavor base.Flavor, opts ...oc.RequestOpts) (*oc.Request, error)
 
 	// Events - Publications
 
@@ -222,21 +223,21 @@ type Client interface {
 	ListSeriesMetadata(ctx context.Context, id string, opts ...oc.RequestOpts) ([]extapiv1.Catalog, *oc.Response, error)
 	ListSeriesMetadataRequest(ctx context.Context, id string, opts ...oc.RequestOpts) (*oc.Request, error)
 
-	GetSeriesMetadata(ctx context.Context, id string, flavor extapiv1.Flavor, opts ...oc.RequestOpts) (*extapiv1.Catalog, *oc.Response, error)
-	GetSeriesMetadataRequest(ctx context.Context, id string, flavor extapiv1.Flavor, opts ...oc.RequestOpts) (*oc.Request, error)
+	GetSeriesMetadata(ctx context.Context, id string, flavor base.Flavor, opts ...oc.RequestOpts) (*extapiv1.Catalog, *oc.Response, error)
+	GetSeriesMetadataRequest(ctx context.Context, id string, flavor base.Flavor, opts ...oc.RequestOpts) (*oc.Request, error)
 
-	UpdateSeriesMetadata(ctx context.Context, id string, flavor extapiv1.Flavor, body *UpdateSeriesMetadataRequestBody, opts ...oc.RequestOpts) (*oc.Response, error)
-	UpdateSeriesMetadataRequest(ctx context.Context, id string, flavor extapiv1.Flavor, body *UpdateSeriesMetadataRequestBody, opts ...oc.RequestOpts) (*oc.Request, error)
+	UpdateSeriesMetadata(ctx context.Context, id string, flavor base.Flavor, body *UpdateSeriesMetadataRequestBody, opts ...oc.RequestOpts) (*oc.Response, error)
+	UpdateSeriesMetadataRequest(ctx context.Context, id string, flavor base.Flavor, body *UpdateSeriesMetadataRequestBody, opts ...oc.RequestOpts) (*oc.Request, error)
 
-	DeleteSeriesMetadata(ctx context.Context, id string, flavor extapiv1.Flavor, opts ...oc.RequestOpts) (*oc.Response, error)
-	DeleteSeriesMetadataRequest(ctx context.Context, id string, flavor extapiv1.Flavor, opts ...oc.RequestOpts) (*oc.Request, error)
+	DeleteSeriesMetadata(ctx context.Context, id string, flavor base.Flavor, opts ...oc.RequestOpts) (*oc.Response, error)
+	DeleteSeriesMetadataRequest(ctx context.Context, id string, flavor base.Flavor, opts ...oc.RequestOpts) (*oc.Request, error)
 
 	// Series - Properties
 
-	GetSeriesProperties(ctx context.Context, id string, opts ...oc.RequestOpts) (extapiv1.Properties, *oc.Response, error)
+	GetSeriesProperties(ctx context.Context, id string, opts ...oc.RequestOpts) (base.Properties, *oc.Response, error)
 	GetSeriesPropertiesRequest(ctx context.Context, id string, opts ...oc.RequestOpts) (*oc.Request, error)
 
-	UpdateSeriesProperties(ctx context.Context, id string, body *UpdateSeriesPropertiesRequestBody, opts ...oc.RequestOpts) (extapiv1.Properties, *oc.Response, error)
+	UpdateSeriesProperties(ctx context.Context, id string, body *UpdateSeriesPropertiesRequestBody, opts ...oc.RequestOpts) (base.Properties, *oc.Response, error)
 	UpdateSeriesPropertiesRequest(ctx context.Context, id string, body *UpdateSeriesPropertiesRequestBody, opts ...oc.RequestOpts) (*oc.Request, error)
 
 	// Playlists

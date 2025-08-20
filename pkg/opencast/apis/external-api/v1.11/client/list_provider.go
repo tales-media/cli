@@ -22,6 +22,7 @@ import (
 	"net/url"
 
 	extapiv1 "github.com/tales-media/cli/pkg/opencast/apis/external-api/v1.11"
+	"github.com/tales-media/cli/pkg/opencast/apis/meta/base"
 	oc "github.com/tales-media/cli/pkg/opencast/client"
 )
 
@@ -50,8 +51,8 @@ func (c *client) ListListProviderRequest(ctx context.Context, opts ...oc.Request
 	)
 }
 
-func (c *client) GetListProvider(ctx context.Context, source string, opts ...oc.RequestOpts) (extapiv1.Properties, *oc.Response, error) {
-	return oc.GenericAutoDecodedDo[extapiv1.Properties](
+func (c *client) GetListProvider(ctx context.Context, source string, opts ...oc.RequestOpts) (base.Properties, *oc.Response, error) {
+	return oc.GenericAutoDecodedDo[base.Properties](
 		c,
 		func() (*oc.Request, error) { return c.GetListProviderRequest(ctx, source, opts...) },
 	)

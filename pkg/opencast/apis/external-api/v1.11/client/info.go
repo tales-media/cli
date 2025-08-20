@@ -21,6 +21,7 @@ import (
 	"net/http"
 
 	extapiv1 "github.com/tales-media/cli/pkg/opencast/apis/external-api/v1.11"
+	"github.com/tales-media/cli/pkg/opencast/apis/meta/base"
 	oc "github.com/tales-media/cli/pkg/opencast/client"
 )
 
@@ -42,8 +43,8 @@ func (c *client) GetInfoOrganizationRequest(ctx context.Context, opts ...oc.Requ
 	)
 }
 
-func (c *client) GetInfoOrganizationProperties(ctx context.Context, opts ...oc.RequestOpts) (extapiv1.Properties, *oc.Response, error) {
-	return oc.GenericAutoDecodedDo[extapiv1.Properties](
+func (c *client) GetInfoOrganizationProperties(ctx context.Context, opts ...oc.RequestOpts) (base.Properties, *oc.Response, error) {
+	return oc.GenericAutoDecodedDo[base.Properties](
 		c,
 		func() (*oc.Request, error) { return c.GetInfoOrganizationPropertiesRequest(ctx, opts...) },
 	)
@@ -60,8 +61,8 @@ func (c *client) GetInfoOrganizationPropertiesRequest(ctx context.Context, opts 
 	)
 }
 
-func (c *client) GetInfoOrganizationPropertiesEngageUIURL(ctx context.Context, opts ...oc.RequestOpts) (extapiv1.Properties, *oc.Response, error) {
-	return oc.GenericAutoDecodedDo[extapiv1.Properties](
+func (c *client) GetInfoOrganizationPropertiesEngageUIURL(ctx context.Context, opts ...oc.RequestOpts) (base.Properties, *oc.Response, error) {
+	return oc.GenericAutoDecodedDo[base.Properties](
 		c,
 		func() (*oc.Request, error) { return c.GetInfoOrganizationPropertiesEngageUIURLRequest(ctx, opts...) },
 	)
@@ -96,8 +97,8 @@ func (c *client) GetInfoMeRequest(ctx context.Context, opts ...oc.RequestOpts) (
 	)
 }
 
-func (c *client) GetInfoMeRoles(ctx context.Context, opts ...oc.RequestOpts) (extapiv1.StringList, *oc.Response, error) {
-	return oc.GenericAutoDecodedDo[extapiv1.StringList](
+func (c *client) GetInfoMeRoles(ctx context.Context, opts ...oc.RequestOpts) ([]string, *oc.Response, error) {
+	return oc.GenericAutoDecodedDo[[]string](
 		c,
 		func() (*oc.Request, error) { return c.GetInfoMeRolesRequest(ctx, opts...) },
 	)

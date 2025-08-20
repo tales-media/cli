@@ -26,6 +26,7 @@ import (
 
 	"github.com/tales-media/cli/pkg/multipart"
 	extapiv1 "github.com/tales-media/cli/pkg/opencast/apis/external-api/v1.11"
+	"github.com/tales-media/cli/pkg/opencast/apis/meta/base"
 	"github.com/tales-media/cli/pkg/opencast/apis/meta/objlist"
 	oc "github.com/tales-media/cli/pkg/opencast/client"
 )
@@ -52,7 +53,7 @@ type UpdateEventACLRequestBody struct {
 }
 
 type CreateEventTrackRequestBody struct {
-	Flavor            extapiv1.Flavor
+	Flavor            base.Flavor
 	OverwriteExisting bool
 	Tags              []string
 	TrackFile         string // TODO: allow option to use io.Reader
@@ -340,14 +341,14 @@ func (c *client) UpdateEventACLRequest(ctx context.Context, id string, body *Upd
 	)
 }
 
-func (c *client) CreateEventACE(ctx context.Context, id string, action extapiv1.Action, role string, opts ...oc.RequestOpts) (*oc.Response, error) {
+func (c *client) CreateEventACE(ctx context.Context, id string, action base.Action, role string, opts ...oc.RequestOpts) (*oc.Response, error) {
 	return oc.GenericDo(
 		c,
 		func() (*oc.Request, error) { return c.CreateEventACERequest(ctx, id, action, role, opts...) },
 	)
 }
 
-func (c *client) CreateEventACERequest(ctx context.Context, id string, action extapiv1.Action, role string, opts ...oc.RequestOpts) (*oc.Request, error) {
+func (c *client) CreateEventACERequest(ctx context.Context, id string, action base.Action, role string, opts ...oc.RequestOpts) (*oc.Request, error) {
 	mp := multipart.New()
 	mp.AddPart(multipart.FormFieldString("role", role))
 	return oc.NewRequest(
@@ -360,14 +361,14 @@ func (c *client) CreateEventACERequest(ctx context.Context, id string, action ex
 	)
 }
 
-func (c *client) DeleteEventACE(ctx context.Context, id string, action extapiv1.Action, role string, opts ...oc.RequestOpts) (*oc.Response, error) {
+func (c *client) DeleteEventACE(ctx context.Context, id string, action base.Action, role string, opts ...oc.RequestOpts) (*oc.Response, error) {
 	return oc.GenericDo(
 		c,
 		func() (*oc.Request, error) { return c.DeleteEventACERequest(ctx, id, action, role, opts...) },
 	)
 }
 
-func (c *client) DeleteEventACERequest(ctx context.Context, id string, action extapiv1.Action, role string, opts ...oc.RequestOpts) (*oc.Request, error) {
+func (c *client) DeleteEventACERequest(ctx context.Context, id string, action base.Action, role string, opts ...oc.RequestOpts) (*oc.Request, error) {
 	return oc.NewRequest(
 		ctx,
 		http.MethodDelete,
@@ -447,14 +448,14 @@ func (c *client) ListEventMetadataRequest(ctx context.Context, id string, opts .
 	return req, nil
 }
 
-func (c *client) GetEventMetadata(ctx context.Context, id string, flavor extapiv1.Flavor, opts ...oc.RequestOpts) (*extapiv1.Catalog, *oc.Response, error) {
+func (c *client) GetEventMetadata(ctx context.Context, id string, flavor base.Flavor, opts ...oc.RequestOpts) (*extapiv1.Catalog, *oc.Response, error) {
 	return oc.GenericAutoDecodedDo[*extapiv1.Catalog](
 		c,
 		func() (*oc.Request, error) { return c.GetEventMetadataRequest(ctx, id, flavor, opts...) },
 	)
 }
 
-func (c *client) GetEventMetadataRequest(ctx context.Context, id string, flavor extapiv1.Flavor, opts ...oc.RequestOpts) (*oc.Request, error) {
+func (c *client) GetEventMetadataRequest(ctx context.Context, id string, flavor base.Flavor, opts ...oc.RequestOpts) (*oc.Request, error) {
 	req, err := oc.NewRequest(
 		ctx,
 		http.MethodGet,
@@ -472,14 +473,14 @@ func (c *client) GetEventMetadataRequest(ctx context.Context, id string, flavor 
 	return req, nil
 }
 
-func (c *client) UpdateEventMetadata(ctx context.Context, id string, flavor extapiv1.Flavor, body *UpdateEventMetadataRequestBody, opts ...oc.RequestOpts) (*oc.Response, error) {
+func (c *client) UpdateEventMetadata(ctx context.Context, id string, flavor base.Flavor, body *UpdateEventMetadataRequestBody, opts ...oc.RequestOpts) (*oc.Response, error) {
 	return oc.GenericDo(
 		c,
 		func() (*oc.Request, error) { return c.UpdateEventMetadataRequest(ctx, id, flavor, body, opts...) },
 	)
 }
 
-func (c *client) UpdateEventMetadataRequest(ctx context.Context, id string, flavor extapiv1.Flavor, body *UpdateEventMetadataRequestBody, opts ...oc.RequestOpts) (*oc.Request, error) {
+func (c *client) UpdateEventMetadataRequest(ctx context.Context, id string, flavor base.Flavor, body *UpdateEventMetadataRequestBody, opts ...oc.RequestOpts) (*oc.Request, error) {
 	mp := multipart.New()
 	metadata, err := json.Marshal(body.Metadata)
 	if err != nil {
@@ -503,14 +504,14 @@ func (c *client) UpdateEventMetadataRequest(ctx context.Context, id string, flav
 	return req, nil
 }
 
-func (c *client) DeleteEventMetadata(ctx context.Context, id string, flavor extapiv1.Flavor, opts ...oc.RequestOpts) (*oc.Response, error) {
+func (c *client) DeleteEventMetadata(ctx context.Context, id string, flavor base.Flavor, opts ...oc.RequestOpts) (*oc.Response, error) {
 	return oc.GenericDo(
 		c,
 		func() (*oc.Request, error) { return c.DeleteEventMetadataRequest(ctx, id, flavor, opts...) },
 	)
 }
 
-func (c *client) DeleteEventMetadataRequest(ctx context.Context, id string, flavor extapiv1.Flavor, opts ...oc.RequestOpts) (*oc.Request, error) {
+func (c *client) DeleteEventMetadataRequest(ctx context.Context, id string, flavor base.Flavor, opts ...oc.RequestOpts) (*oc.Request, error) {
 	req, err := oc.NewRequest(
 		ctx,
 		http.MethodDelete,

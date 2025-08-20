@@ -26,6 +26,7 @@ import (
 
 	"github.com/tales-media/cli/pkg/multipart"
 	extapiv1 "github.com/tales-media/cli/pkg/opencast/apis/external-api/v1.11"
+	"github.com/tales-media/cli/pkg/opencast/apis/meta/base"
 	oc "github.com/tales-media/cli/pkg/opencast/client"
 )
 
@@ -49,7 +50,7 @@ type UpdateSeriesMetadataRequestBody struct {
 }
 
 type UpdateSeriesPropertiesRequestBody struct {
-	Properties extapiv1.Properties
+	Properties base.Properties
 }
 
 type WithSeriesOptions struct {
@@ -392,14 +393,14 @@ func (c *client) ListSeriesMetadataRequest(ctx context.Context, id string, opts 
 	return req, nil
 }
 
-func (c *client) GetSeriesMetadata(ctx context.Context, id string, flavor extapiv1.Flavor, opts ...oc.RequestOpts) (*extapiv1.Catalog, *oc.Response, error) {
+func (c *client) GetSeriesMetadata(ctx context.Context, id string, flavor base.Flavor, opts ...oc.RequestOpts) (*extapiv1.Catalog, *oc.Response, error) {
 	return oc.GenericAutoDecodedDo[*extapiv1.Catalog](
 		c,
 		func() (*oc.Request, error) { return c.GetSeriesMetadataRequest(ctx, id, flavor, opts...) },
 	)
 }
 
-func (c *client) GetSeriesMetadataRequest(ctx context.Context, id string, flavor extapiv1.Flavor, opts ...oc.RequestOpts) (*oc.Request, error) {
+func (c *client) GetSeriesMetadataRequest(ctx context.Context, id string, flavor base.Flavor, opts ...oc.RequestOpts) (*oc.Request, error) {
 	req, err := oc.NewRequest(
 		ctx,
 		http.MethodGet,
@@ -417,14 +418,14 @@ func (c *client) GetSeriesMetadataRequest(ctx context.Context, id string, flavor
 	return req, nil
 }
 
-func (c *client) UpdateSeriesMetadata(ctx context.Context, id string, flavor extapiv1.Flavor, body *UpdateSeriesMetadataRequestBody, opts ...oc.RequestOpts) (*oc.Response, error) {
+func (c *client) UpdateSeriesMetadata(ctx context.Context, id string, flavor base.Flavor, body *UpdateSeriesMetadataRequestBody, opts ...oc.RequestOpts) (*oc.Response, error) {
 	return oc.GenericDo(
 		c,
 		func() (*oc.Request, error) { return c.UpdateSeriesMetadataRequest(ctx, id, flavor, body, opts...) },
 	)
 }
 
-func (c *client) UpdateSeriesMetadataRequest(ctx context.Context, id string, flavor extapiv1.Flavor, body *UpdateSeriesMetadataRequestBody, opts ...oc.RequestOpts) (*oc.Request, error) {
+func (c *client) UpdateSeriesMetadataRequest(ctx context.Context, id string, flavor base.Flavor, body *UpdateSeriesMetadataRequestBody, opts ...oc.RequestOpts) (*oc.Request, error) {
 	mp := multipart.New()
 	metadata, err := json.Marshal(body.Metadata)
 	if err != nil {
@@ -448,14 +449,14 @@ func (c *client) UpdateSeriesMetadataRequest(ctx context.Context, id string, fla
 	return req, nil
 }
 
-func (c *client) DeleteSeriesMetadata(ctx context.Context, id string, flavor extapiv1.Flavor, opts ...oc.RequestOpts) (*oc.Response, error) {
+func (c *client) DeleteSeriesMetadata(ctx context.Context, id string, flavor base.Flavor, opts ...oc.RequestOpts) (*oc.Response, error) {
 	return oc.GenericDo(
 		c,
 		func() (*oc.Request, error) { return c.DeleteSeriesMetadataRequest(ctx, id, flavor, opts...) },
 	)
 }
 
-func (c *client) DeleteSeriesMetadataRequest(ctx context.Context, id string, flavor extapiv1.Flavor, opts ...oc.RequestOpts) (*oc.Request, error) {
+func (c *client) DeleteSeriesMetadataRequest(ctx context.Context, id string, flavor base.Flavor, opts ...oc.RequestOpts) (*oc.Request, error) {
 	req, err := oc.NewRequest(
 		ctx,
 		http.MethodDelete,
@@ -473,8 +474,8 @@ func (c *client) DeleteSeriesMetadataRequest(ctx context.Context, id string, fla
 	return req, nil
 }
 
-func (c *client) GetSeriesProperties(ctx context.Context, id string, opts ...oc.RequestOpts) (extapiv1.Properties, *oc.Response, error) {
-	return oc.GenericAutoDecodedDo[extapiv1.Properties](
+func (c *client) GetSeriesProperties(ctx context.Context, id string, opts ...oc.RequestOpts) (base.Properties, *oc.Response, error) {
+	return oc.GenericAutoDecodedDo[base.Properties](
 		c,
 		func() (*oc.Request, error) { return c.GetSeriesPropertiesRequest(ctx, id, opts...) },
 	)
@@ -491,8 +492,8 @@ func (c *client) GetSeriesPropertiesRequest(ctx context.Context, id string, opts
 	)
 }
 
-func (c *client) UpdateSeriesProperties(ctx context.Context, id string, body *UpdateSeriesPropertiesRequestBody, opts ...oc.RequestOpts) (extapiv1.Properties, *oc.Response, error) {
-	return oc.GenericAutoDecodedDo[extapiv1.Properties](
+func (c *client) UpdateSeriesProperties(ctx context.Context, id string, body *UpdateSeriesPropertiesRequestBody, opts ...oc.RequestOpts) (base.Properties, *oc.Response, error) {
+	return oc.GenericAutoDecodedDo[base.Properties](
 		c,
 		func() (*oc.Request, error) { return c.UpdateSeriesPropertiesRequest(ctx, id, body, opts...) },
 	)

@@ -25,18 +25,19 @@ import (
 
 	"github.com/tales-media/cli/pkg/multipart"
 	extapiv1 "github.com/tales-media/cli/pkg/opencast/apis/external-api/v1.11"
+	"github.com/tales-media/cli/pkg/opencast/apis/meta/base"
 	oc "github.com/tales-media/cli/pkg/opencast/client"
 )
 
 type CreateWorkflowRequestBody struct {
 	EventID              string
 	WorkflowDefinitionID string
-	Configuration        extapiv1.Properties
+	Configuration        base.Properties
 }
 
 type UpdateWorkflowRequestBody struct {
 	State         *extapiv1.WorkflowState
-	Configuration extapiv1.Properties
+	Configuration base.Properties
 }
 
 type WithWorkflowOptions struct {
