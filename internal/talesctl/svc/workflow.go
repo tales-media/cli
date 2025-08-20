@@ -46,7 +46,7 @@ type WorkflowGetRequest struct {
 
 type WorkflowUpdateRequest struct {
 	ID            string
-	State         *api.WorkflowState
+	Status        *api.WorkflowStatus
 	Configuration map[string]string
 }
 
@@ -102,8 +102,8 @@ func (svc *opencastWorkflow) Get(ctx context.Context, req WorkflowGetRequest) (a
 
 func (svc *opencastWorkflow) Update(ctx context.Context, req WorkflowUpdateRequest) (api.Workflow, error) {
 	var ocState *extapiv1.WorkflowState
-	if req.State != nil {
-		ocState = ptr.To(extapiv1.WorkflowState(*req.State))
+	if req.Status != nil {
+		ocState = ptr.To(conv.WorkflowStatusToOCWorkflowState(*req.Status))
 	}
 	ocWorkflow, _, err := svc.extAPI.UpdateWorkflow(
 		ctx,

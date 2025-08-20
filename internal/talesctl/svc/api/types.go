@@ -16,7 +16,18 @@ limitations under the License.
 
 package api
 
-import "time"
+import (
+	"encoding"
+	"fmt"
+	"time"
+)
+
+type SortDirection int
+
+const (
+	Ascending SortDirection = iota
+	Descending
+)
 
 type APIInfo struct {
 	URL               string   `human:"URL" json:"url" yaml:"url"`
@@ -44,7 +55,7 @@ type Organization struct {
 type Agent struct {
 	Name       string      `human:"Name" json:"name" yaml:"name"`
 	URL        string      `human:"URL" json:"url" yaml:"url"`
-	LastUpdate time.Time   `human:"Last Update" json:"lastUpdate" yaml:"update"`
+	LastUpdate *time.Time  `human:"Last Update" json:"lastUpdate" yaml:"update"`
 	Status     AgentStatus `human:"Status" json:"status" yaml:"status"`
 	Inputs     []string    `human:"Inputs,wideonly" json:"inputs" yaml:"inputs"`
 }
@@ -68,51 +79,51 @@ type Workflow struct {
 	WorkflowDefinitionID string            `human:"Workflow Definition ID" json:"workflowDefinitionId" yaml:"workflowDefinitionId"`
 	EventID              string            `human:"Event ID" json:"eventId" yaml:"eventId"`
 	Creator              string            `human:"Creator" json:"creator" yaml:"creator"`
-	State                WorkflowState     `human:"State" json:"state" yaml:"state"`
+	Status               WorkflowStatus    `human:"Status" json:"status" yaml:"status"`
 	Operations           []Operation       `human:"Operations,wideonly" json:"operations" yaml:"operations"`
 	Configuration        map[string]string `human:"Configuration,wideonly" json:"configuration" yaml:"configuration"`
 }
 
-type WorkflowState string
+type WorkflowStatus string
 
 const (
-	InstantiatedWorkflowState = WorkflowState("instantiated")
-	RunningWorkflowState      = WorkflowState("running")
-	StoppedWorkflowState      = WorkflowState("stopped")
-	PausedWorkflowState       = WorkflowState("paused")
-	SucceededWorkflowState    = WorkflowState("succeeded")
-	FailedWorkflowState       = WorkflowState("failed")
-	FailingWorkflowState      = WorkflowState("failing")
+	InstantiatedWorkflowStatus = WorkflowStatus("instantiated")
+	RunningWorkflowStatus      = WorkflowStatus("running")
+	StoppedWorkflowStatus      = WorkflowStatus("stopped")
+	PausedWorkflowStatus       = WorkflowStatus("paused")
+	SucceededWorkflowStatus    = WorkflowStatus("succeeded")
+	FailedWorkflowStatus       = WorkflowStatus("failed")
+	FailingWorkflowStatus      = WorkflowStatus("failing")
 )
 
 type Operation struct {
-	ID                   int64                  `human:"ID" json:"id" yaml:"id"`
-	Operation            string                 `human:"Operation" json:"operation" yaml:"operation"`
-	Description          string                 `human:"Description" json:"description" yaml:"description"`
-	State                WorkflowOperationState `human:"State" json:"state" yaml:"state"`
-	TimeInQueue          int64                  `human:"Time In Queue,wideonly" json:"timeInQueue" yaml:"timeInQueue"`
-	Host                 string                 `human:"Host,wideonly" json:"host" yaml:"host"`
-	If                   string                 `human:"If,wideonly" json:"if" yaml:"if"`
-	FailWorkflowOnError  bool                   `human:"Fail Workflow On Error,wideonly" json:"failWorkflowOnError" yaml:"failWorkflowOnError"`
-	ErrorHandlerWorkflow string                 `human:"Error Handler Workflow,wideonly" json:"errorHandlerWorkflow" yaml:"errorHandlerWorkflow"`
-	RetryStrategy        WorkflowRetryStrategy  `human:"Retry Strategy,wideonly" json:"retryStrategy" yaml:"retryStrategy"`
-	MaxAttempts          int                    `human:"Max Attempts,wideonly" json:"maxAttempts" yaml:"maxAttempts"`
-	FailedAttempts       int                    `human:"Failed Attempts,wideonly" json:"failedAttempts" yaml:"failedAttempts"`
-	Configuration        map[string]string      `human:"Configuration,wideonly" json:"configuration" yaml:"configuration"`
-	Start                time.Time              `human:"Start" json:"start" yaml:"start"`
-	Completion           time.Time              `human:"Completion" json:"completion" yaml:"completion"`
+	ID                   *int64                  `human:"ID" json:"id" yaml:"id"`
+	Operation            string                  `human:"Operation" json:"operation" yaml:"operation"`
+	Description          string                  `human:"Description" json:"description" yaml:"description"`
+	Status               WorkflowOperationStatus `human:"Status" json:"status" yaml:"status"`
+	TimeInQueue          int64                   `human:"Time In Queue,wideonly" json:"timeInQueue" yaml:"timeInQueue"`
+	Host                 string                  `human:"Host,wideonly" json:"host" yaml:"host"`
+	If                   string                  `human:"If,wideonly" json:"if" yaml:"if"`
+	FailWorkflowOnError  bool                    `human:"Fail Workflow On Error,wideonly" json:"failWorkflowOnError" yaml:"failWorkflowOnError"`
+	ErrorHandlerWorkflow string                  `human:"Error Handler Workflow,wideonly" json:"errorHandlerWorkflow" yaml:"errorHandlerWorkflow"`
+	RetryStrategy        WorkflowRetryStrategy   `human:"Retry Strategy,wideonly" json:"retryStrategy" yaml:"retryStrategy"`
+	MaxAttempts          int64                   `human:"Max Attempts,wideonly" json:"maxAttempts" yaml:"maxAttempts"`
+	FailedAttempts       int64                   `human:"Failed Attempts,wideonly" json:"failedAttempts" yaml:"failedAttempts"`
+	Configuration        map[string]string       `human:"Configuration,wideonly" json:"configuration" yaml:"configuration"`
+	Start                *time.Time              `human:"Start" json:"start" yaml:"start"`
+	Completion           *time.Time              `human:"Completion" json:"completion" yaml:"completion"`
 }
 
-type WorkflowOperationState string
+type WorkflowOperationStatus string
 
 const (
-	InstantiatedWorkflowOperationState = WorkflowOperationState("instantiated")
-	RunningWorkflowOperationState      = WorkflowOperationState("running")
-	PausedWorkflowOperationState       = WorkflowOperationState("paused")
-	SucceededWorkflowOperationState    = WorkflowOperationState("succeeded")
-	FailedWorkflowOperationState       = WorkflowOperationState("failed")
-	SkippedWorkflowOperationState      = WorkflowOperationState("skipped")
-	RetryWorkflowOperationState        = WorkflowOperationState("retry")
+	InstantiatedWorkflowOperationStatus = WorkflowOperationStatus("instantiated")
+	RunningWorkflowOperationStatus      = WorkflowOperationStatus("running")
+	PausedWorkflowOperationStatus       = WorkflowOperationStatus("paused")
+	SucceededWorkflowOperationStatus    = WorkflowOperationStatus("succeeded")
+	FailedWorkflowOperationStatus       = WorkflowOperationStatus("failed")
+	SkippedWorkflowOperationStatus      = WorkflowOperationStatus("skipped")
+	RetryWorkflowOperationStatus        = WorkflowOperationStatus("retry")
 )
 
 type WorkflowRetryStrategy string
@@ -142,5 +153,5 @@ type OperationDefinition struct {
 	FailWorkflowOnError  bool                  `human:"Fail Workflow On Error,wideonly" json:"failWorkflowOnError" yaml:"failWorkflowOnError"`
 	ErrorHandlerWorkflow string                `human:"Error Handler Workflow,wideonly" json:"errorHandlerWorkflow" yaml:"errorHandlerWorkflow"`
 	RetryStrategy        WorkflowRetryStrategy `human:"Retry Strategy,wideonly" json:"retryStrategy" yaml:"retryStrategy"`
-	MaxAttempts          int                   `human:"Max Attempts,wideonly" json:"maxAttempts" yaml:"maxAttempts"`
+	MaxAttempts          int64                 `human:"Max Attempts,wideonly" json:"maxAttempts" yaml:"maxAttempts"`
 }

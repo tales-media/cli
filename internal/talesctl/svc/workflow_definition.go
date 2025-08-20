@@ -32,8 +32,9 @@ type WorkflowDefinition interface {
 }
 
 type WorkflowDefinitionListRequest struct {
-	FilterByTag string
-	// TODO: add sort-by support
+	FilterByTag   string
+	SortBy        string // TODO: add conversion function
+	SortDirection api.SortDirection
 }
 
 type WorkflowDefinitionGetRequest struct {
@@ -59,16 +60,17 @@ func (svc *opencastWorkflowDefinition) List(ctx context.Context, req WorkflowDef
 			WithConfigurationPanel:     true,
 			WithConfigurationPanelJSON: true,
 		},
-		extapiclientv1.WithSort{
-			extapiclientv1.Sort{By: extapiclientv1.WorkflowDefinitionDisplayOrderSortKey, Direction: extapiclientv1.Ascending},
-		},
 	}
 	if req.FilterByTag != "" {
 		commonReqOpts = append(commonReqOpts,
-			extapiclientv1.WithFilter{
-				extapiclientv1.WorkflowDefinitionTagFilterKey: req.FilterByTag,
-			},
+			extapiclientv1.WithFilter{extapiclientv1.WorkflowDefinitionTagFilterKey: req.FilterByTag},
 		)
+	}
+	if req.SortBy != "" {
+		commonReqOpts = append(commonReqOpts, extapiclientv1.WithSort{{
+			By:        extapiclientv1.SortKey(req.SortBy),
+			Direction: conv.SortDirectionToOCSortDirection(req.SortDirection),
+		}})
 	}
 
 	var ocWorkflowDefinitions []extapiv1.WorkflowDefinition
