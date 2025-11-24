@@ -5,9 +5,9 @@ go 1.24
 toolchain go1.24.5
 
 require (
-	github.com/jedib0t/go-pretty/v6 v6.6.8
-	github.com/spf13/cobra v1.9.1
-	github.com/spf13/pflag v1.0.7
+	github.com/jedib0t/go-pretty/v6 v6.7.5
+	github.com/spf13/cobra v1.10.1
+	github.com/spf13/pflag v1.0.9
 	k8s.io/utils v0.0.0-20250604170112-4c0f3b243397
 	sigs.k8s.io/yaml v1.6.0
 )
