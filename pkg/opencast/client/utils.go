@@ -21,9 +21,7 @@ import (
 	"net/http"
 )
 
-var (
-	UnexpectedStatusCodeErr = errors.New("UnexpectedStatusCode")
-)
+var UnexpectedStatusCodeErr = errors.New("UnexpectedStatusCode")
 
 func Paginate[T any](do Doer, paginateReqFunc func(i int) (*Request, error), pageFunc func(page []T, resp *Response) bool) error {
 	cont := true

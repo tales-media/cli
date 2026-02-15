@@ -31,8 +31,7 @@ type Agent interface {
 	Get(context.Context, AgentGetRequest) (api.Agent, error)
 }
 
-type AgentListRequest struct {
-}
+type AgentListRequest struct{}
 
 type AgentGetRequest struct {
 	Name string

@@ -29,9 +29,7 @@ import (
 	"shio.solutions/tales.media/cli/pkg/opencast/apis/serviceregistry"
 )
 
-var (
-	ServiceNotFoundErr = errors.New("service not found")
-)
+var ServiceNotFoundErr = errors.New("service not found")
 
 type ServiceMapper interface {
 	GetHost(svc string) (string, error)

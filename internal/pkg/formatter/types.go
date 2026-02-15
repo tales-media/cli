@@ -74,5 +74,4 @@ func (o StructTagOptions) Contains(optionName string) bool {
 		}
 	}
 	return false
-
 }

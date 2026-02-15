@@ -25,8 +25,10 @@ import (
 	"github.com/jedib0t/go-pretty/v6/table"
 )
 
-const HumanStructTagKey = "human"
-const HumanStructTagWideOnlyOption = "wideonly"
+const (
+	HumanStructTagKey            = "human"
+	HumanStructTagWideOnlyOption = "wideonly"
+)
 
 var TableStyle = table.Style{
 	Name: "talesctl",

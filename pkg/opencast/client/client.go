@@ -21,8 +21,10 @@ import (
 	"time"
 )
 
-const Version = "1.0"
-const UserAgent = "OpencastGoClient/" + Version
+const (
+	Version   = "1.0"
+	UserAgent = "OpencastGoClient/" + Version
+)
 
 type Doer interface {
 	Do(*Request) (*Response, error)
