@@ -52,9 +52,7 @@ func New(cfg *Config) *cobra.Command {
 	// commands
 
 	cmd.AddGroup(
-		ManagementGroup,
 		ResourcesGroup,
-		AdminGroup,
 	)
 
 	cmd.AddCommand(

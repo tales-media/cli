@@ -35,6 +35,9 @@ func workflowCommand(cfg *Config) *cobra.Command {
 		DisableFlagsInUseLine: true,
 	}
 	cmd.GroupID = ResourcesGroup.ID
+	cmd.AddGroup(
+		ManagementGroup,
+	)
 	cmd.AddCommand(
 		workflowCreateCommand(cfg),
 		workflowGetCommand(cfg),
@@ -72,6 +75,7 @@ func workflowCreateCommand(cfg *Config) *cobra.Command {
 	)
 	cmd.Args = cobra.ExactArgs(2)
 	addWorkflowPropertiesFlag(cmd.Flags())
+	cmd.GroupID = ManagementGroup.ID
 	return cmd
 }
 
@@ -96,6 +100,7 @@ func workflowGetCommand(cfg *Config) *cobra.Command {
 		},
 	)
 	cmd.Args = cobra.ExactArgs(1)
+	cmd.GroupID = ManagementGroup.ID
 	return cmd
 }
 
@@ -137,6 +142,7 @@ func workflowUpdateCommand(cfg *Config) *cobra.Command {
 	cmd.Args = cobra.ExactArgs(1)
 	addWorkflowPropertiesFlag(cmd.Flags())
 	addWorkflowStatusFlag(cmd.Flags())
+	cmd.GroupID = ManagementGroup.ID
 	return cmd
 }
 
@@ -163,5 +169,6 @@ func workflowDeleteCommand(cfg *Config) *cobra.Command {
 		},
 	)
 	cmd.Args = cobra.ExactArgs(1)
+	cmd.GroupID = ManagementGroup.ID
 	return cmd
 }

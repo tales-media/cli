@@ -31,6 +31,9 @@ func agentCommand(cfg *Config) *cobra.Command {
 		DisableFlagsInUseLine: true,
 	}
 	cmd.GroupID = ResourcesGroup.ID
+	cmd.AddGroup(
+		ManagementGroup,
+	)
 	cmd.AddCommand(
 		agentListCommand(cfg),
 		agentGetCommand(cfg),
@@ -39,7 +42,7 @@ func agentCommand(cfg *Config) *cobra.Command {
 }
 
 func agentListCommand(cfg *Config) *cobra.Command {
-	return extAPICommand(
+	cmd := extAPICommand(
 		"list",
 		"List Capture Agents",
 		func(cmd *cobra.Command, args []string, extAPI extapiclientv1.Client) (any, error) {
@@ -56,6 +59,8 @@ func agentListCommand(cfg *Config) *cobra.Command {
 			return s.List(cmd.Context(), req)
 		},
 	)
+	cmd.GroupID = ManagementGroup.ID
+	return cmd
 }
 
 func agentGetCommand(cfg *Config) *cobra.Command {
@@ -79,5 +84,6 @@ func agentGetCommand(cfg *Config) *cobra.Command {
 		},
 	)
 	cmd.Args = cobra.ExactArgs(1)
+	cmd.GroupID = ManagementGroup.ID
 	return cmd
 }

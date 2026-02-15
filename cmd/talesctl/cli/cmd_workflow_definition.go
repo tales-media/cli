@@ -31,6 +31,9 @@ func workflowDefinitionCommand(cfg *Config) *cobra.Command {
 		DisableFlagsInUseLine: true,
 	}
 	cmd.GroupID = ResourcesGroup.ID
+	cmd.AddGroup(
+		ManagementGroup,
+	)
 	cmd.AddCommand(
 		workflowDefinitionListCommand(cfg),
 		workflowDefinitionGetCommand(cfg),
@@ -70,6 +73,7 @@ func workflowDefinitionListCommand(cfg *Config) *cobra.Command {
 		},
 	}, cmd.Flags())
 	addSortDirectionFlag(cmd.Flags())
+	cmd.GroupID = ManagementGroup.ID
 	return cmd
 }
 
@@ -94,5 +98,6 @@ func workflowDefinitionGetCommand(cfg *Config) *cobra.Command {
 		},
 	)
 	cmd.Args = cobra.ExactArgs(1)
+	cmd.GroupID = ManagementGroup.ID
 	return cmd
 }
