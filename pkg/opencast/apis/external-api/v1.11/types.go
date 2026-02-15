@@ -166,43 +166,31 @@ func (f *Field) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-type FieldValue interface{}
+type FieldValue any
 
-type BooleanFieldValue bool
+type (
+	BooleanFieldValue      bool
+	DateTimeFieldValue     = base.DateTime
+	MixedTextFieldValue    []string
+	IterableTextFieldValue []string
+	NumberFieldValue       base.Int
+	OrderedTextFieldValue  string
+	TextFieldValue         string
+	TextLongFieldValue     string
+	TimeFieldValue         = base.DateTime
+)
 
-var _ FieldValue = BooleanFieldValue(true)
-
-type DateTimeFieldValue = base.DateTime
-
-var _ FieldValue = DateTimeFieldValue{}
-
-type MixedTextFieldValue []string
-
-var _ FieldValue = MixedTextFieldValue{}
-
-type IterableTextFieldValue []string
-
-var _ FieldValue = IterableTextFieldValue{}
-
-type NumberFieldValue base.Int
-
-var _ FieldValue = NumberFieldValue(0)
-
-type OrderedTextFieldValue string
-
-var _ FieldValue = OrderedTextFieldValue("")
-
-type TextFieldValue string
-
-var _ FieldValue = TextFieldValue("")
-
-type TextLongFieldValue string
-
-var _ FieldValue = TextLongFieldValue("")
-
-type TimeFieldValue = base.DateTime
-
-var _ FieldValue = TimeFieldValue{}
+var (
+	_ FieldValue = BooleanFieldValue(true)
+	_ FieldValue = DateTimeFieldValue{}
+	_ FieldValue = MixedTextFieldValue{}
+	_ FieldValue = IterableTextFieldValue{}
+	_ FieldValue = NumberFieldValue(0)
+	_ FieldValue = OrderedTextFieldValue("")
+	_ FieldValue = TextFieldValue("")
+	_ FieldValue = TextLongFieldValue("")
+	_ FieldValue = TimeFieldValue{}
+)
 
 type FieldType string
 
@@ -400,8 +388,8 @@ type StatisticQueryResult struct {
 
 type StatisticQueryResultTimeSeriesData struct {
 	Labels []base.DateTime `json:"labels,omitempty"`
-	Values []float64       `json:"values,omitempty"`
-	Total  *float64        `json:"total,omitempty"`
+	Values []base.Float    `json:"values,omitempty"`
+	Total  *base.Float     `json:"total,omitempty"`
 }
 
 type Agent struct {
@@ -540,8 +528,8 @@ type TrackElement struct {
 	HasVideo         bool        `json:"has_video,omitempty"`
 	Duration         *base.Int   `json:"duration,omitempty"`
 	Description      string      `json:"description,omitempty"`
-	BitRate          *float64    `json:"bitrate,omitempty"`
-	FrameRate        *float64    `json:"framerate,omitempty"`
+	BitRate          *base.Float `json:"bitrate,omitempty"`
+	FrameRate        *base.Float `json:"framerate,omitempty"`
 	FrameCount       *base.Int   `json:"framecount,omitempty"`
 	Width            *base.Int   `json:"width,omitempty"`
 	Height           *base.Int   `json:"height,omitempty"`
@@ -569,30 +557,30 @@ type MediaTrackElement struct {
 
 type MediaTrackElementStream struct {
 	// common fields
-	Identifier           *string   `json:"identifier,omitempty"`
-	BitRate              *float64  `json:"bitrate,omitempty"`
-	CaptureDevice        *string   `json:"capturedevice,omitempty"`
-	CaptureDeviceVendor  *string   `json:"capturedevicevendor,omitempty"`
-	CaptureDeviceVersion *string   `json:"capturedeviceversion,omitempty"`
-	EncoderLibraryVendor *string   `json:"encoderlibraryvendor,omitempty"`
-	Format               *string   `json:"format,omitempty"`
-	FormatVersion        *string   `json:"formatversion,omitempty"`
-	FrameCount           *base.Int `json:"framecount,omitempty"`
+	Identifier           *string     `json:"identifier,omitempty"`
+	BitRate              *base.Float `json:"bitrate,omitempty"`
+	CaptureDevice        *string     `json:"capturedevice,omitempty"`
+	CaptureDeviceVendor  *string     `json:"capturedevicevendor,omitempty"`
+	CaptureDeviceVersion *string     `json:"capturedeviceversion,omitempty"`
+	EncoderLibraryVendor *string     `json:"encoderlibraryvendor,omitempty"`
+	Format               *string     `json:"format,omitempty"`
+	FormatVersion        *string     `json:"formatversion,omitempty"`
+	FrameCount           *base.Int   `json:"framecount,omitempty"`
 
 	// audio fields
-	BitDepth     *base.Int `json:"bitdepth,omitempty"`
-	Channels     *base.Int `json:"channels,omitempty"`
-	PkLevDB      *float64  `json:"pklevdb,omitempty"`
-	RmsLevDB     *float64  `json:"rmslevdb,omitempty"`
-	RmsPkDB      *float64  `json:"rmspkdb,omitempty"`
-	SamplingRate *base.Int `json:"samplingrate,omitempty"`
+	BitDepth     *base.Int   `json:"bitdepth,omitempty"`
+	Channels     *base.Int   `json:"channels,omitempty"`
+	PkLevDB      *base.Float `json:"pklevdb,omitempty"`
+	RmsLevDB     *base.Float `json:"rmslevdb,omitempty"`
+	RmsPkDB      *base.Float `json:"rmspkdb,omitempty"`
+	SamplingRate *base.Int   `json:"samplingrate,omitempty"`
 
 	// video fields
-	FrameHeight *base.Int  `json:"frameheight,omitempty"`
-	FrameWidth  *base.Int  `json:"framewidth,omitempty"`
-	FrameRate   *float64   `json:"framerate,omitempty"`
-	ScanOrder   *ScanOrder `json:"scanorder,omitempty"`
-	ScanType    *ScanType  `json:"scantype,omitempty"`
+	FrameHeight *base.Int   `json:"frameheight,omitempty"`
+	FrameWidth  *base.Int   `json:"framewidth,omitempty"`
+	FrameRate   *base.Float `json:"framerate,omitempty"`
+	ScanOrder   *ScanOrder  `json:"scanorder,omitempty"`
+	ScanType    *ScanType   `json:"scantype,omitempty"`
 }
 
 type ScanOrder string

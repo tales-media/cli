@@ -18,30 +18,118 @@ package base
 
 import (
 	"encoding/json"
+	"errors"
 	"time"
 )
 
+const HourMinuteOnly = "15:04"
+
 type Properties map[string]string
 
-type DateTime time.Time
+type DateTime struct {
+	Time time.Time
+
+	L string
+}
 
 func (dt DateTime) IsZero() bool {
-	return time.Time(dt).IsZero()
+	return dt.Time.IsZero()
+}
+
+func (dt DateTime) Layout() string {
+	if dt.L == "" {
+		return time.RFC3339
+	}
+	return dt.L
+}
+
+func (dt DateTime) MarshalText() ([]byte, error) {
+	if dt.IsZero() {
+		return []byte{}, nil
+	}
+
+	// 10 as used by time.Format
+	layout := dt.Layout()
+	bufLen := len(layout) + 10
+
+	buf := make([]byte, 0, bufLen)
+	buf = dt.Time.AppendFormat(buf, layout)
+
+	return buf, nil
 }
 
 func (dt DateTime) MarshalJSON() ([]byte, error) {
 	if dt.IsZero() {
 		return []byte{'"', '"'}, nil
 	}
-	return time.Time(dt).MarshalJSON()
+
+	//  2 for ""
+	// 10 as used by time.Format
+	layout := dt.Layout()
+	bufLen := len(layout) + 2 + 10
+
+	buf := make([]byte, 0, bufLen)
+	buf = append(buf, '"')
+	buf = dt.Time.AppendFormat(buf, layout)
+	buf = append(buf, '"')
+
+	return buf, nil
 }
 
-func (dt *DateTime) UnmarshalJSON(data []byte) error {
-	if len(data) == 2 && data[0] == '"' && data[1] == '"' {
+func (dt *DateTime) UnmarshalText(data []byte) error {
+	var (
+		str = string(data)
+		err error
+	)
+
+	if str == "" {
 		// Opencast represents null dates as blank string. Skip unmarshal and let dt remain as zero value.
 		return nil
 	}
-	return (*time.Time)(dt).UnmarshalJSON(data)
+
+	dt.L, err = detectDateLayout(str)
+	if err != nil {
+		return err
+	}
+
+	dt.Time, err = time.Parse(dt.L, str)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (dt *DateTime) UnmarshalJSON(data []byte) error {
+	if data[0] != '"' || data[len(data)-1] != '"' {
+		return errors.New("DateTime.UnmarshalJSON: input is not a JSON string")
+	}
+	data = data[len(`"`) : len(data)-len(`"`)]
+	return dt.UnmarshalText(data)
+}
+
+func detectDateLayout(date string) (string, error) {
+	l := len(date)
+	switch {
+	case l > len(time.DateOnly):
+		// 2006-01-02T15:04:05Z07:00
+		return time.RFC3339, nil
+
+	case l > len(time.TimeOnly):
+		// 2006-01-02
+		return time.DateOnly, nil
+
+	case l > len(HourMinuteOnly):
+		// 15:04:05
+		return time.TimeOnly, nil
+
+	case l == len(HourMinuteOnly):
+		// 15:04
+		return HourMinuteOnly, nil
+
+	default:
+		return "", errors.New("base: unknown date or time format")
+	}
 }
 
 type Int int64
@@ -60,6 +148,25 @@ func (i *Int) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*i = Int(i2)
+	return nil
+}
+
+type Float float64
+
+func (f Float) MarshalJSON() ([]byte, error) {
+	return json.Marshal(float64(f))
+}
+
+func (f *Float) UnmarshalJSON(data []byte) error {
+	if len(data) == 2 && data[0] == '"' && data[1] == '"' {
+		// Opencast represents null floats as blank string. Skip unmarshal and let f remain as zero value.
+		return nil
+	}
+	var f2 float64
+	if err := json.Unmarshal(data, &f2); err != nil {
+		return err
+	}
+	*f = Float(f2)
 	return nil
 }
 
