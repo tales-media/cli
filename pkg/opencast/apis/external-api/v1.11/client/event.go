@@ -448,8 +448,8 @@ func (c *client) ListEventMetadataRequest(ctx context.Context, id string, opts .
 	return req, nil
 }
 
-func (c *client) GetEventMetadata(ctx context.Context, id string, flavor base.Flavor, opts ...oc.RequestOpts) (*extapiv1.Catalog, *oc.Response, error) {
-	return oc.GenericAutoDecodedDo[*extapiv1.Catalog](
+func (c *client) GetEventMetadata(ctx context.Context, id string, flavor base.Flavor, opts ...oc.RequestOpts) ([]extapiv1.Field, *oc.Response, error) {
+	return oc.GenericAutoDecodedDo[[]extapiv1.Field](
 		c,
 		func() (*oc.Request, error) { return c.GetEventMetadataRequest(ctx, id, flavor, opts...) },
 	)

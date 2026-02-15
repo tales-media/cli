@@ -180,7 +180,7 @@ type Client interface {
 	ListEventMetadata(ctx context.Context, id string, opts ...oc.RequestOpts) ([]extapiv1.Catalog, *oc.Response, error)
 	ListEventMetadataRequest(ctx context.Context, id string, opts ...oc.RequestOpts) (*oc.Request, error)
 
-	GetEventMetadata(ctx context.Context, id string, flavor base.Flavor, opts ...oc.RequestOpts) (*extapiv1.Catalog, *oc.Response, error)
+	GetEventMetadata(ctx context.Context, id string, flavor base.Flavor, opts ...oc.RequestOpts) ([]extapiv1.Field, *oc.Response, error)
 	GetEventMetadataRequest(ctx context.Context, id string, flavor base.Flavor, opts ...oc.RequestOpts) (*oc.Request, error)
 
 	UpdateEventMetadata(ctx context.Context, id string, flavor base.Flavor, body *UpdateEventMetadataRequestBody, opts ...oc.RequestOpts) (*oc.Response, error)
