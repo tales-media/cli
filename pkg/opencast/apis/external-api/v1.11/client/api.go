@@ -155,7 +155,7 @@ type Client interface {
 
 	// Events - Access Policy
 
-	GetEventACL(ctx context.Context, id string, opts ...oc.RequestOpts) (*extapiv1.ACL, *oc.Response, error)
+	GetEventACL(ctx context.Context, id string, opts ...oc.RequestOpts) (extapiv1.ACL, *oc.Response, error)
 	GetEventACLRequest(ctx context.Context, id string, opts ...oc.RequestOpts) (*oc.Request, error)
 
 	UpdateEventACL(ctx context.Context, id string, body *UpdateEventACLRequestBody, opts ...oc.RequestOpts) (*oc.Response, error)
@@ -227,7 +227,7 @@ type Client interface {
 
 	// Series - Access Policy
 
-	GetSeriesACL(ctx context.Context, id string, opts ...oc.RequestOpts) (*extapiv1.ACL, *oc.Response, error)
+	GetSeriesACL(ctx context.Context, id string, opts ...oc.RequestOpts) (extapiv1.ACL, *oc.Response, error)
 	GetSeriesACLRequest(ctx context.Context, id string, opts ...oc.RequestOpts) (*oc.Request, error)
 
 	UpdateSeriesACL(ctx context.Context, id string, body *UpdateSeriesACLRequestBody, opts ...oc.RequestOpts) (*oc.Response, error)

@@ -322,8 +322,8 @@ func (c *client) DeleteSeriesRequest(ctx context.Context, id string, opts ...oc.
 	)
 }
 
-func (c *client) GetSeriesACL(ctx context.Context, id string, opts ...oc.RequestOpts) (*extapiv1.ACL, *oc.Response, error) {
-	return oc.GenericAutoDecodedDo[*extapiv1.ACL](
+func (c *client) GetSeriesACL(ctx context.Context, id string, opts ...oc.RequestOpts) (extapiv1.ACL, *oc.Response, error) {
+	return oc.GenericAutoDecodedDo[extapiv1.ACL](
 		c,
 		func() (*oc.Request, error) { return c.GetSeriesACLRequest(ctx, id, opts...) },
 	)

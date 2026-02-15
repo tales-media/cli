@@ -299,8 +299,8 @@ func (c *client) DeleteEventRequest(ctx context.Context, id string, opts ...oc.R
 	)
 }
 
-func (c *client) GetEventACL(ctx context.Context, id string, opts ...oc.RequestOpts) (*extapiv1.ACL, *oc.Response, error) {
-	return oc.GenericAutoDecodedDo[*extapiv1.ACL](
+func (c *client) GetEventACL(ctx context.Context, id string, opts ...oc.RequestOpts) (extapiv1.ACL, *oc.Response, error) {
+	return oc.GenericAutoDecodedDo[extapiv1.ACL](
 		c,
 		func() (*oc.Request, error) { return c.GetEventACLRequest(ctx, id, opts...) },
 	)
