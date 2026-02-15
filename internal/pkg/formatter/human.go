@@ -22,6 +22,8 @@ import (
 	"io"
 	"reflect"
 
+	yaml "sigs.k8s.io/yaml/goyaml.v3"
+
 	"github.com/jedib0t/go-pretty/v6/table"
 )
 
@@ -163,7 +165,11 @@ func (f *Human) shouldIncludeStructFieldType(t reflect.Type) bool {
 }
 
 func (f *Human) Object(w io.Writer, obj any) error {
-	return f.writeValue(w, reflect.ValueOf(obj), "")
+	enc := yaml.NewEncoder(w)
+	return enc.Encode(obj)
+
+	// TODO: fix human (object) formatter
+	// return f.writeValue(w, reflect.ValueOf(obj), "")
 }
 
 func (f *Human) Error(w io.Writer, err error) error {
