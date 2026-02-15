@@ -42,3 +42,31 @@ var (
 		Platform:     platform,
 	}
 )
+
+// Info holds version and build information. The fields are largely the same as in the `k8s.io/kubernetes/pkg/version`
+// package of the Kubernetes project.
+type Info struct {
+	// Name of the versioned object.
+	Name string `human:"Name,wideonly" json:"name" yaml:"name"`
+
+	// Version number.
+	Version string `human:"Version" json:"version" yaml:"version"`
+
+	// GitCommit SHA.
+	GitCommit string `human:"Git Commit,wideonly" json:"gitCommit" yaml:"gitCommit"`
+
+	// GitTreeState is either "clean" or "dirty".
+	GitTreeState string `human:"Git Tree State,wideonly" json:"gitTreeState" yaml:"gitTreeState"`
+
+	// BuildDate of the binary.
+	BuildDate string `human:"Build Date,wideonly" json:"buildDate" yaml:"buildDate"`
+
+	// GoVersion of the binary.
+	GoVersion string `human:"Go Version,wideonly" json:"goVersion" yaml:"goVersion"`
+
+	// Compiler used for the binary.
+	Compiler string `human:"Compiler,wideonly" json:"compiler" yaml:"compiler"`
+
+	// Platform the binary is compiled for.
+	Platform string `human:"Platform,wideonly" json:"platform" yaml:"platform"`
+}
