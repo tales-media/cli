@@ -46,6 +46,7 @@ const (
 
 type Client interface {
 	Do(*oc.Request) (*oc.Response, error)
+	OpencastClient() oc.Client
 
 	// API
 
@@ -317,6 +318,10 @@ func (c *client) Do(req *oc.Request) (*oc.Response, error) {
 		return nil, err
 	}
 	return c.occ.Do(req)
+}
+
+func (c *client) OpencastClient() oc.Client {
+	return c.occ
 }
 
 func (c *client) GetAPI(ctx context.Context, opts ...oc.RequestOpts) (*extapiv1.API, *oc.Response, error) {
