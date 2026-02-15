@@ -21,8 +21,8 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/tales-media/cli/cmd/talesctl/cli"
-	"github.com/tales-media/cli/internal/pkg/version"
+	"shio.solutions/tales.media/cli/cmd/talesctl/cli"
+	"shio.solutions/tales.media/cli/internal/pkg/version"
 )
 
 func main() {

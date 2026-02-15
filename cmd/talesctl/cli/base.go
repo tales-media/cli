@@ -22,9 +22,9 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/tales-media/cli/internal/pkg/formatter"
-	extapiclientv1 "github.com/tales-media/cli/pkg/opencast/apis/external-api/v1.11/client"
-	oc "github.com/tales-media/cli/pkg/opencast/client"
+	"shio.solutions/tales.media/cli/internal/pkg/formatter"
+	extapiclientv1 "shio.solutions/tales.media/cli/pkg/opencast/apis/external-api/v1.11/client"
+	oc "shio.solutions/tales.media/cli/pkg/opencast/client"
 )
 
 func baseCommand(use, short string, valueFunc func(*cobra.Command, []string) (any, error)) *cobra.Command {

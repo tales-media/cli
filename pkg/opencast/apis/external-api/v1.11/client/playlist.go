@@ -22,9 +22,9 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/tales-media/cli/pkg/multipart"
-	extapiv1 "github.com/tales-media/cli/pkg/opencast/apis/external-api/v1.11"
-	oc "github.com/tales-media/cli/pkg/opencast/client"
+	"shio.solutions/tales.media/cli/pkg/multipart"
+	extapiv1 "shio.solutions/tales.media/cli/pkg/opencast/apis/external-api/v1.11"
+	oc "shio.solutions/tales.media/cli/pkg/opencast/client"
 )
 
 type CreatePlaylistRequestBody struct {

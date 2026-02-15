@@ -19,8 +19,8 @@ package v1_11
 import (
 	"encoding/json"
 
-	"github.com/tales-media/cli/pkg/opencast/apis/meta/base"
-	"github.com/tales-media/cli/pkg/opencast/apis/meta/strobj"
+	"shio.solutions/tales.media/cli/pkg/opencast/apis/meta/base"
+	"shio.solutions/tales.media/cli/pkg/opencast/apis/meta/strobj"
 )
 
 const Version = "v1.11.0"

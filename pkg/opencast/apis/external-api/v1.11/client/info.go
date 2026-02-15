@@ -20,9 +20,9 @@ import (
 	"context"
 	"net/http"
 
-	extapiv1 "github.com/tales-media/cli/pkg/opencast/apis/external-api/v1.11"
-	"github.com/tales-media/cli/pkg/opencast/apis/meta/base"
-	oc "github.com/tales-media/cli/pkg/opencast/client"
+	extapiv1 "shio.solutions/tales.media/cli/pkg/opencast/apis/external-api/v1.11"
+	"shio.solutions/tales.media/cli/pkg/opencast/apis/meta/base"
+	oc "shio.solutions/tales.media/cli/pkg/opencast/client"
 )
 
 func (c *client) GetInfoOrganization(ctx context.Context, opts ...oc.RequestOpts) (*extapiv1.Organization, *oc.Response, error) {

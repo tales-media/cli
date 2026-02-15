@@ -23,7 +23,7 @@ import (
 
 	"github.com/spf13/pflag"
 
-	"github.com/tales-media/cli/internal/talesctl/svc/api"
+	"shio.solutions/tales.media/cli/internal/talesctl/svc/api"
 )
 
 //

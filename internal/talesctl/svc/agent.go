@@ -19,11 +19,11 @@ package svc
 import (
 	"context"
 
-	"github.com/tales-media/cli/internal/talesctl/svc/api"
-	"github.com/tales-media/cli/internal/talesctl/svc/api/conv"
-	extapiv1 "github.com/tales-media/cli/pkg/opencast/apis/external-api/v1.11"
-	extapiclientv1 "github.com/tales-media/cli/pkg/opencast/apis/external-api/v1.11/client"
-	oc "github.com/tales-media/cli/pkg/opencast/client"
+	"shio.solutions/tales.media/cli/internal/talesctl/svc/api"
+	"shio.solutions/tales.media/cli/internal/talesctl/svc/api/conv"
+	extapiv1 "shio.solutions/tales.media/cli/pkg/opencast/apis/external-api/v1.11"
+	extapiclientv1 "shio.solutions/tales.media/cli/pkg/opencast/apis/external-api/v1.11/client"
+	oc "shio.solutions/tales.media/cli/pkg/opencast/client"
 )
 
 type Agent interface {

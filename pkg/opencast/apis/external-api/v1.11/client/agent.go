@@ -21,8 +21,8 @@ import (
 	"net/http"
 	"net/url"
 
-	extapiv1 "github.com/tales-media/cli/pkg/opencast/apis/external-api/v1.11"
-	oc "github.com/tales-media/cli/pkg/opencast/client"
+	extapiv1 "shio.solutions/tales.media/cli/pkg/opencast/apis/external-api/v1.11"
+	oc "shio.solutions/tales.media/cli/pkg/opencast/client"
 )
 
 func (c *client) ListAgent(ctx context.Context, opts ...oc.RequestOpts) ([]extapiv1.Agent, *oc.Response, error) {

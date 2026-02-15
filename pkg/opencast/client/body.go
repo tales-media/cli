@@ -26,7 +26,7 @@ import (
 
 	"k8s.io/utils/ptr"
 
-	"github.com/tales-media/cli/pkg/multipart"
+	"shio.solutions/tales.media/cli/pkg/multipart"
 )
 
 type Body interface {

@@ -19,8 +19,8 @@ package serviceregistry
 import (
 	"time"
 
-	"github.com/tales-media/cli/pkg/opencast/apis/meta/objlist"
-	"github.com/tales-media/cli/pkg/opencast/apis/meta/strobj"
+	"shio.solutions/tales.media/cli/pkg/opencast/apis/meta/objlist"
+	"shio.solutions/tales.media/cli/pkg/opencast/apis/meta/strobj"
 )
 
 const ServiceType = "org.opencastproject.serviceregistry"

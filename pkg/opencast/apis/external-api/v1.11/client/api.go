@@ -20,10 +20,10 @@ import (
 	"context"
 	"net/http"
 
-	extapiv1 "github.com/tales-media/cli/pkg/opencast/apis/external-api/v1.11"
-	"github.com/tales-media/cli/pkg/opencast/apis/meta/base"
-	"github.com/tales-media/cli/pkg/opencast/apis/meta/objlist"
-	oc "github.com/tales-media/cli/pkg/opencast/client"
+	extapiv1 "shio.solutions/tales.media/cli/pkg/opencast/apis/external-api/v1.11"
+	"shio.solutions/tales.media/cli/pkg/opencast/apis/meta/base"
+	"shio.solutions/tales.media/cli/pkg/opencast/apis/meta/objlist"
+	oc "shio.solutions/tales.media/cli/pkg/opencast/client"
 )
 
 const (

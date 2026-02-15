@@ -24,9 +24,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/tales-media/cli/pkg/opencast/apis/meta/objlist"
-	"github.com/tales-media/cli/pkg/opencast/apis/meta/strobj"
-	"github.com/tales-media/cli/pkg/opencast/apis/serviceregistry"
+	"shio.solutions/tales.media/cli/pkg/opencast/apis/meta/objlist"
+	"shio.solutions/tales.media/cli/pkg/opencast/apis/meta/strobj"
+	"shio.solutions/tales.media/cli/pkg/opencast/apis/serviceregistry"
 )
 
 var (

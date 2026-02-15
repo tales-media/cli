@@ -20,7 +20,7 @@ import (
 	"strconv"
 	"strings"
 
-	oc "github.com/tales-media/cli/pkg/opencast/client"
+	oc "shio.solutions/tales.media/cli/pkg/opencast/client"
 )
 
 func WithSignedURLs() oc.RequestOpts {

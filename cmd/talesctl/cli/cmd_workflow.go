@@ -20,9 +20,9 @@ import (
 	"github.com/spf13/cobra"
 	"k8s.io/utils/ptr"
 
-	"github.com/tales-media/cli/internal/talesctl/svc"
-	"github.com/tales-media/cli/internal/talesctl/svc/api"
-	extapiclientv1 "github.com/tales-media/cli/pkg/opencast/apis/external-api/v1.11/client"
+	"shio.solutions/tales.media/cli/internal/talesctl/svc"
+	"shio.solutions/tales.media/cli/internal/talesctl/svc/api"
+	extapiclientv1 "shio.solutions/tales.media/cli/pkg/opencast/apis/external-api/v1.11/client"
 )
 
 // TODO: add list

@@ -24,10 +24,10 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/tales-media/cli/pkg/multipart"
-	extapiv1 "github.com/tales-media/cli/pkg/opencast/apis/external-api/v1.11"
-	"github.com/tales-media/cli/pkg/opencast/apis/meta/base"
-	oc "github.com/tales-media/cli/pkg/opencast/client"
+	"shio.solutions/tales.media/cli/pkg/multipart"
+	extapiv1 "shio.solutions/tales.media/cli/pkg/opencast/apis/external-api/v1.11"
+	"shio.solutions/tales.media/cli/pkg/opencast/apis/meta/base"
+	oc "shio.solutions/tales.media/cli/pkg/opencast/client"
 )
 
 type CreateSeriesRequestBody struct {

@@ -23,10 +23,10 @@ import (
 
 	"k8s.io/utils/ptr"
 
-	"github.com/tales-media/cli/internal/talesctl/svc/api"
-	extapiv1 "github.com/tales-media/cli/pkg/opencast/apis/external-api/v1.11"
-	extapiclientv1 "github.com/tales-media/cli/pkg/opencast/apis/external-api/v1.11/client"
-	"github.com/tales-media/cli/pkg/opencast/apis/meta/base"
+	"shio.solutions/tales.media/cli/internal/talesctl/svc/api"
+	extapiv1 "shio.solutions/tales.media/cli/pkg/opencast/apis/external-api/v1.11"
+	extapiclientv1 "shio.solutions/tales.media/cli/pkg/opencast/apis/external-api/v1.11/client"
+	"shio.solutions/tales.media/cli/pkg/opencast/apis/meta/base"
 )
 
 func Map[F, T any](ocList []F, mapper func(F) T) []T {

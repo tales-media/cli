@@ -21,8 +21,8 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/tales-media/cli/pkg/opencast/apis/meta/base"
-	oc "github.com/tales-media/cli/pkg/opencast/client"
+	"shio.solutions/tales.media/cli/pkg/opencast/apis/meta/base"
+	oc "shio.solutions/tales.media/cli/pkg/opencast/client"
 )
 
 func (c *client) ListListProvider(ctx context.Context, opts ...oc.RequestOpts) ([]string, *oc.Response, error) {

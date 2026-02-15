@@ -19,9 +19,9 @@ package svc
 import (
 	"context"
 
-	"github.com/tales-media/cli/internal/talesctl/svc/api"
-	"github.com/tales-media/cli/internal/talesctl/svc/api/conv"
-	extapiclientv1 "github.com/tales-media/cli/pkg/opencast/apis/external-api/v1.11/client"
+	"shio.solutions/tales.media/cli/internal/talesctl/svc/api"
+	"shio.solutions/tales.media/cli/internal/talesctl/svc/api/conv"
+	extapiclientv1 "shio.solutions/tales.media/cli/pkg/opencast/apis/external-api/v1.11/client"
 )
 
 type Info interface {

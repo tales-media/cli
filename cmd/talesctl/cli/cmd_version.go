@@ -19,7 +19,7 @@ package cli
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/tales-media/cli/internal/pkg/version"
+	"shio.solutions/tales.media/cli/internal/pkg/version"
 )
 
 func versionCommand(cfg *Config) *cobra.Command {

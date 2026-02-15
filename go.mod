@@ -1,4 +1,4 @@
-module github.com/tales-media/cli
+module shio.solutions/tales.media/cli
 
 go 1.26
 
