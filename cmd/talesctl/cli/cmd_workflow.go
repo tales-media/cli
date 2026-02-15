@@ -18,7 +18,6 @@ package cli
 
 import (
 	"github.com/spf13/cobra"
-	"k8s.io/utils/ptr"
 
 	"shio.solutions/tales.media/cli/internal/talesctl/svc"
 	"shio.solutions/tales.media/cli/internal/talesctl/svc/api"
@@ -129,11 +128,11 @@ func workflowUpdateCommand(cfg *Config) *cobra.Command {
 
 			switch getWorkflowStatusFlag(cmd.Flags()) {
 			case RunningWorkflowStatus:
-				req.Status = ptr.To(api.RunningWorkflowStatus)
+				req.Status = new(api.RunningWorkflowStatus)
 			case PausedWorkflowStatus:
-				req.Status = ptr.To(api.PausedWorkflowStatus)
+				req.Status = new(api.PausedWorkflowStatus)
 			case StoppedWorkflowStatus:
-				req.Status = ptr.To(api.StoppedWorkflowStatus)
+				req.Status = new(api.StoppedWorkflowStatus)
 			}
 
 			return s.Update(cmd.Context(), req)

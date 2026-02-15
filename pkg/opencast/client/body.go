@@ -24,8 +24,6 @@ import (
 	"strings"
 	"sync"
 
-	"k8s.io/utils/ptr"
-
 	"shio.solutions/tales.media/cli/pkg/multipart"
 )
 
@@ -203,7 +201,7 @@ func (b *formBody) HasField(key string) bool {
 
 func (b *formBody) Encode() error {
 	b.once.Do(func() {
-		b.enc = ptr.To(b.f.Encode())
+		b.enc = new(b.f.Encode())
 	})
 	return nil
 }

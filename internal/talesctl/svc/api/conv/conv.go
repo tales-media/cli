@@ -21,8 +21,6 @@ import (
 	"strings"
 	"time"
 
-	"k8s.io/utils/ptr"
-
 	"shio.solutions/tales.media/cli/internal/talesctl/svc/api"
 	extapiv1 "shio.solutions/tales.media/cli/pkg/opencast/apis/external-api/v1.11"
 	extapiclientv1 "shio.solutions/tales.media/cli/pkg/opencast/apis/external-api/v1.11/client"
@@ -84,7 +82,7 @@ func OCAgentToAgent(ocAgent extapiv1.Agent) api.Agent {
 		Inputs: ocAgent.Inputs,
 	}
 	if !ocAgent.Update.IsZero() {
-		a.LastUpdate = ptr.To(time.Time(ocAgent.Update))
+		a.LastUpdate = new(ocAgent.Update.Time)
 	}
 	return a
 }
@@ -189,10 +187,10 @@ func OCOperationInstanceToOperation(ocOperationInstance extapiv1.OperationInstan
 		Configuration:        ocOperationInstance.Configuration,
 	}
 	if !ocOperationInstance.Start.IsZero() {
-		o.Start = ptr.To(time.Time(ocOperationInstance.Start))
+		o.Start = new(ocOperationInstance.Start.Time)
 	}
 	if !ocOperationInstance.Completion.IsZero() {
-		o.Completion = ptr.To(time.Time(ocOperationInstance.Completion))
+		o.Completion = new(ocOperationInstance.Completion.Time)
 	}
 	return o
 }

@@ -19,8 +19,6 @@ package svc
 import (
 	"context"
 
-	"k8s.io/utils/ptr"
-
 	"shio.solutions/tales.media/cli/internal/talesctl/svc/api"
 	"shio.solutions/tales.media/cli/internal/talesctl/svc/api/conv"
 	extapiv1 "shio.solutions/tales.media/cli/pkg/opencast/apis/external-api/v1.11"
@@ -103,7 +101,7 @@ func (svc *opencastWorkflow) Get(ctx context.Context, req WorkflowGetRequest) (a
 func (svc *opencastWorkflow) Update(ctx context.Context, req WorkflowUpdateRequest) (api.Workflow, error) {
 	var ocState *extapiv1.WorkflowState
 	if req.Status != nil {
-		ocState = ptr.To(conv.WorkflowStatusToOCWorkflowState(*req.Status))
+		ocState = new(conv.WorkflowStatusToOCWorkflowState(*req.Status))
 	}
 	ocWorkflow, _, err := svc.extAPI.UpdateWorkflow(
 		ctx,
