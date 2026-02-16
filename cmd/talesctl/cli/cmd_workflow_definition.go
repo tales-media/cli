@@ -45,6 +45,7 @@ func workflowDefinitionListCommand(cfg *Config) *cobra.Command {
 	cmd := extAPICommand(
 		"list",
 		"List Workflow Definitions",
+		cfg,
 		func(cmd *cobra.Command, args []string, extAPI extapiclientv1.Client) (any, error) {
 			var (
 				s   svc.WorkflowDefinition
@@ -81,6 +82,7 @@ func workflowDefinitionGetCommand(cfg *Config) *cobra.Command {
 	cmd := extAPICommand(
 		"get [id]",
 		"Get a Workflow Definition",
+		cfg,
 		func(cmd *cobra.Command, args []string, extAPI extapiclientv1.Client) (any, error) {
 			var (
 				s   svc.WorkflowDefinition

@@ -58,6 +58,7 @@ func eventListCommand(cfg *Config) *cobra.Command {
 	cmd := extAPICommand(
 		"list",
 		"List Events",
+		cfg,
 		func(cmd *cobra.Command, args []string, extAPI extapiclientv1.Client) (any, error) {
 			var (
 				s   svc.Event
@@ -156,6 +157,7 @@ func eventGetCommand(cfg *Config) *cobra.Command {
 	cmd := extAPICommand(
 		"get [id]",
 		"Get an Event",
+		cfg,
 		func(cmd *cobra.Command, args []string, extAPI extapiclientv1.Client) (any, error) {
 			var (
 				s   svc.Event

@@ -46,6 +46,7 @@ func eventTrackListCommand(cfg *Config) *cobra.Command {
 	cmd := extAPICommand(
 		"list [event id]",
 		"List Event Tracks",
+		cfg,
 		func(cmd *cobra.Command, args []string, extAPI extapiclientv1.Client) (any, error) {
 			var (
 				s   svc.EventTrack

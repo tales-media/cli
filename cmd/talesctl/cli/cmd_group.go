@@ -49,6 +49,7 @@ func groupListCommand(cfg *Config) *cobra.Command {
 	cmd := extAPICommand(
 		"list",
 		"List Groups",
+		cfg,
 		func(cmd *cobra.Command, args []string, extAPI extapiclientv1.Client) (any, error) {
 			var (
 				s   svc.Group
@@ -85,6 +86,7 @@ func groupGetCommand(cfg *Config) *cobra.Command {
 	cmd := extAPICommand(
 		"get [id]",
 		"Get a Group",
+		cfg,
 		func(cmd *cobra.Command, args []string, extAPI extapiclientv1.Client) (any, error) {
 			var (
 				s   svc.Group

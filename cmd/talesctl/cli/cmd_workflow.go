@@ -50,6 +50,7 @@ func workflowCreateCommand(cfg *Config) *cobra.Command {
 	cmd := extAPICommand(
 		"create [eventID] [workflowDefinitionID]",
 		"Create a Workflow",
+		cfg,
 		func(cmd *cobra.Command, args []string, extAPI extapiclientv1.Client) (any, error) {
 			var (
 				s   svc.Workflow
@@ -82,6 +83,7 @@ func workflowGetCommand(cfg *Config) *cobra.Command {
 	cmd := extAPICommand(
 		"get [id]",
 		"Get a Workflow",
+		cfg,
 		func(cmd *cobra.Command, args []string, extAPI extapiclientv1.Client) (any, error) {
 			var (
 				s   svc.Workflow
@@ -107,6 +109,7 @@ func workflowUpdateCommand(cfg *Config) *cobra.Command {
 	cmd := extAPICommand(
 		"update [id]",
 		"Update a Workflow",
+		cfg,
 		func(cmd *cobra.Command, args []string, extAPI extapiclientv1.Client) (any, error) {
 			var (
 				s   svc.Workflow
@@ -149,6 +152,7 @@ func workflowDeleteCommand(cfg *Config) *cobra.Command {
 	cmd := extAPICommand(
 		"delete [id]",
 		"Delete a Workflow",
+		cfg,
 		func(cmd *cobra.Command, args []string, extAPI extapiclientv1.Client) (any, error) {
 			var (
 				s   svc.Workflow

@@ -45,6 +45,7 @@ func infoApiCommand(cfg *Config) *cobra.Command {
 			OpencastAlias: "Print Opencast API information",
 			TalesAlias:    "Print tales.media API information",
 		}),
+		cfg,
 		func(cmd *cobra.Command, args []string, extAPI extapiclientv1.Client) (any, error) {
 			var s svc.Info
 			mustSelect(cfg.AliasType, map[AliasType]func(){
@@ -63,6 +64,7 @@ func infoMeCommand(cfg *Config) *cobra.Command {
 			OpencastAlias: "Print Opencast user information",
 			TalesAlias:    "Print tales.media user information",
 		}),
+		cfg,
 		func(cmd *cobra.Command, args []string, extAPI extapiclientv1.Client) (any, error) {
 			var s svc.Info
 			mustSelect(cfg.AliasType, map[AliasType]func(){
@@ -81,6 +83,7 @@ func infoOrganizationCommand(cfg *Config) *cobra.Command {
 			OpencastAlias: "Print Opencast organization information",
 			TalesAlias:    "Print tales.media organization information",
 		}),
+		cfg,
 		func(cmd *cobra.Command, args []string, extAPI extapiclientv1.Client) (any, error) {
 			var s svc.Info
 			mustSelect(cfg.AliasType, map[AliasType]func(){

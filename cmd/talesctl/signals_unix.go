@@ -1,3 +1,5 @@
+//go:build unix
+
 /*
 Copyright 2025 shio solutions GmbH
 
@@ -14,29 +16,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package cli
+package main
 
 import (
-	"time"
-
-	oc "shio.solutions/tales.media/cli/pkg/opencast/client"
+	"os"
+	"syscall"
 )
 
-// TODO: implement configuration
-
-func GetOpencastClient() (oc.Client, error) {
-	smStatic := &oc.StaticServiceMapper{
-		Default: "https://stable.opencast.org",
-	}
-	cStatic, err := oc.New(smStatic, oc.WithRequestOptions(
-		oc.WithBasicAuth("admin", "opencast"),
-	))
-	if err != nil {
-		return nil, err
-	}
-
-	smDyn := oc.NewDynamicServiceMapper(cStatic, 10*time.Minute)
-	return oc.New(smDyn, oc.WithRequestOptions(
-		oc.WithBasicAuth("admin", "opencast"),
-	))
-}
+var shutdownSignals = []os.Signal{os.Interrupt, syscall.SIGTERM}

@@ -45,6 +45,7 @@ func eventPublicationListCommand(cfg *Config) *cobra.Command {
 	cmd := extAPICommand(
 		"list [event id]",
 		"List Event Publications",
+		cfg,
 		func(cmd *cobra.Command, args []string, extAPI extapiclientv1.Client) (any, error) {
 			var (
 				s   svc.EventPublication
@@ -70,6 +71,7 @@ func eventPublicationGetCommand(cfg *Config) *cobra.Command {
 	cmd := extAPICommand(
 		"get [event id] [publication id | publication channel]",
 		"Get an Event Publication",
+		cfg,
 		func(cmd *cobra.Command, args []string, extAPI extapiclientv1.Client) (any, error) {
 			var (
 				s   svc.EventPublication

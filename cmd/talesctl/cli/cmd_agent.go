@@ -45,6 +45,7 @@ func agentListCommand(cfg *Config) *cobra.Command {
 	cmd := extAPICommand(
 		"list",
 		"List Capture Agents",
+		cfg,
 		func(cmd *cobra.Command, args []string, extAPI extapiclientv1.Client) (any, error) {
 			var (
 				s   svc.Agent
@@ -67,6 +68,7 @@ func agentGetCommand(cfg *Config) *cobra.Command {
 	cmd := extAPICommand(
 		"get [name]",
 		"Get a Capture Agent",
+		cfg,
 		func(cmd *cobra.Command, args []string, extAPI extapiclientv1.Client) (any, error) {
 			var (
 				s   svc.Agent

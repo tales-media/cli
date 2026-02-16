@@ -1,3 +1,5 @@
+//go:build windows
+
 /*
 Copyright 2025 shio solutions GmbH
 
@@ -14,37 +16,25 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package main
+package svc
 
 import (
-	"context"
 	"os"
-	"os/signal"
-
-	"shio.solutions/tales.media/cli/cmd/talesctl/cli"
-	"shio.solutions/tales.media/cli/internal/pkg/version"
+	"path/filepath"
 )
 
-func main() {
-	ctx, cancel := context.WithCancel(context.Background())
+var configRoot string
 
-	// handle termination signals
-	sig := make(chan os.Signal, 2)
-	signal.Notify(sig, shutdownSignals...)
-	go func() {
-		<-sig
-		cancel()
-		<-sig
-		os.Exit(1)
-	}()
-
-	// initialize
-	cfg := cli.Init(os.Args)
-	version.CLI.Name = cfg.Alias
-
-	// execute
-	cmd := cli.New(cfg)
-	if err := cmd.ExecuteContext(ctx); err != nil {
-		os.Exit(1)
+func init() {
+	configRoot = os.Getenv("AppData")
+	if configRoot == "" {
+		homeDir, err := os.UserHomeDir()
+		if err != nil {
+			panic(err)
+		}
+		configRoot = filepath.Join(homeDir, "AppData", "Roaming")
+	}
+	if !filepath.IsAbs(configRoot) {
+		panic("config directory is relative")
 	}
 }

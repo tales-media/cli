@@ -46,6 +46,7 @@ func eventACLListCommand(cfg *Config) *cobra.Command {
 	cmd := extAPICommand(
 		"list [event id]",
 		"List Event ACL",
+		cfg,
 		func(cmd *cobra.Command, args []string, extAPI extapiclientv1.Client) (any, error) {
 			var (
 				s   svc.EventACL

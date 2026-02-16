@@ -1,4 +1,4 @@
-//go:build !windows
+//go:build unix
 
 /*
 Copyright 2025 shio solutions GmbH
@@ -16,11 +16,25 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package main
+package svc
 
 import (
 	"os"
-	"syscall"
+	"path/filepath"
 )
 
-var shutdownSignals = []os.Signal{os.Interrupt, syscall.SIGTERM}
+var configRoot string
+
+func init() {
+	configRoot = os.Getenv("XDG_CONFIG_HOME")
+	if configRoot == "" {
+		homeDir, err := os.UserHomeDir()
+		if err != nil {
+			panic(err)
+		}
+		configRoot = filepath.Join(homeDir, ".config")
+	}
+	if !filepath.IsAbs(configRoot) {
+		panic("config directory is relative")
+	}
+}

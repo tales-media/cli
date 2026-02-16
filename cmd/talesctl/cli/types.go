@@ -24,17 +24,21 @@ import (
 	"strings"
 
 	"github.com/spf13/pflag"
+
+	"shio.solutions/tales.media/cli/internal/talesctl/svc/api"
 )
 
 const TalesctlPrefix = "talesctl"
 
 type Config struct {
+	api.Config
+
 	Alias     string
 	AliasType AliasType
 	Args      []string
 }
 
-func Configure(args []string) *Config {
+func Init(args []string) *Config {
 	alias, args := path.Base(args[0]), args[1:]
 	return &Config{
 		Alias:     alias,

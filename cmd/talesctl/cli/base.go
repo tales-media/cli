@@ -23,6 +23,9 @@ import (
 	"github.com/spf13/cobra"
 
 	"shio.solutions/tales.media/cli/internal/pkg/formatter"
+	"shio.solutions/tales.media/cli/internal/talesctl/svc"
+	"shio.solutions/tales.media/cli/internal/talesctl/svc/api"
+	"shio.solutions/tales.media/cli/internal/talesctl/svc/client"
 	extapiclientv1 "shio.solutions/tales.media/cli/pkg/opencast/apis/external-api/v1.11/client"
 	oc "shio.solutions/tales.media/cli/pkg/opencast/client"
 )
@@ -65,18 +68,53 @@ func baseCommand(use, short string, valueFunc func(*cobra.Command, []string) (an
 	return cmd
 }
 
-func occCommand(use, short string, occValueFunc func(*cobra.Command, []string, oc.Client) (any, error)) *cobra.Command {
+func configCommand(use, short string, cfg *Config, configValueFunc func(*cobra.Command, []string) (any, error)) *cobra.Command {
 	return baseCommand(use, short, func(cmd *cobra.Command, args []string) (any, error) {
-		c, err := GetOpencastClient()
+		var (
+			s   svc.Config
+			req svc.ConfigGetRequest
+		)
+
+		// TODO: allow setting configuration file path
+		mustSelect(cfg.AliasType, map[AliasType]func(){
+			OpencastAlias: func() { s = svc.NewOpencastConfig() },
+			TalesAlias:    func() { s = svc.NewTalesConfig() },
+		})()
+
+		config, err := s.Get(cmd.Context(), req)
 		if err != nil {
 			return nil, err
 		}
+		cfg.Config = config
+
+		return configValueFunc(cmd, args)
+	})
+}
+
+func occCommand(use, short string, cfg *Config, occValueFunc func(*cobra.Command, []string, oc.Client) (any, error)) *cobra.Command {
+	return configCommand(use, short, cfg, func(cmd *cobra.Command, args []string) (any, error) {
+		var ctx *api.Context
+		for _, c := range cfg.Contexts {
+			if cfg.CurrentContext == c.Name {
+				ctx = &c
+				break
+			}
+		}
+		if ctx == nil {
+			return nil, fmt.Errorf("cli: current Opencast context '%s' not found", cfg.CurrentContext)
+		}
+
+		c, err := client.New(*ctx)
+		if err != nil {
+			return nil, err
+		}
+
 		return occValueFunc(cmd, args, c)
 	})
 }
 
-func extAPICommand(use, short string, extAPIClientValueFunc func(*cobra.Command, []string, extapiclientv1.Client) (any, error)) *cobra.Command {
-	return occCommand(use, short, func(cmd *cobra.Command, args []string, occ oc.Client) (any, error) {
+func extAPICommand(use, short string, cfg *Config, extAPIClientValueFunc func(*cobra.Command, []string, extapiclientv1.Client) (any, error)) *cobra.Command {
+	return occCommand(use, short, cfg, func(cmd *cobra.Command, args []string, occ oc.Client) (any, error) {
 		extAPI := extapiclientv1.New(occ)
 		return extAPIClientValueFunc(cmd, args, extAPI)
 	})
