@@ -19,7 +19,7 @@ package formatter
 import (
 	"io"
 
-	yaml "sigs.k8s.io/yaml/goyaml.v3"
+	"go.yaml.in/yaml/v4"
 )
 
 type YAML struct{}

@@ -22,7 +22,7 @@ import (
 	"io"
 	"reflect"
 
-	yaml "sigs.k8s.io/yaml/goyaml.v3"
+	"go.yaml.in/yaml/v4"
 
 	"github.com/jedib0t/go-pretty/v6/table"
 )
