@@ -56,10 +56,14 @@ func New(cfg *Config) *cobra.Command {
 	)
 
 	cmd.AddCommand(
+		// resources
 		agentCommand(cfg),
 		eventCommand(cfg),
+		groupCommand(cfg),
 		workflowCommand(cfg),
 		workflowDefinitionCommand(cfg),
+
+		// additional
 		infoCommand(cfg),
 		versionCommand(cfg),
 	)
