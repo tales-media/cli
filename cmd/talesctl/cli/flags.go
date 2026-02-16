@@ -34,6 +34,11 @@ func addContextFlag(flags *pflag.FlagSet) {
 	flags.String("context", "", "the name of the Opencast context to use")
 }
 
+func getContextFlag(flags *pflag.FlagSet) string {
+	flag := mustGetFlag("context", flags)
+	return flag.Value.String()
+}
+
 //
 // --filter-by-{key} [value]
 //

@@ -68,7 +68,7 @@ func baseCommand(use, short string, valueFunc func(*cobra.Command, []string) (an
 	return cmd
 }
 
-func configCommand(use, short string, cfg *Config, configValueFunc func(*cobra.Command, []string) (any, error)) *cobra.Command {
+func cfgCommand(use, short string, cfg *Config, configValueFunc func(*cobra.Command, []string) (any, error)) *cobra.Command {
 	return baseCommand(use, short, func(cmd *cobra.Command, args []string) (any, error) {
 		var (
 			s   svc.Config
@@ -92,16 +92,21 @@ func configCommand(use, short string, cfg *Config, configValueFunc func(*cobra.C
 }
 
 func occCommand(use, short string, cfg *Config, occValueFunc func(*cobra.Command, []string, oc.Client) (any, error)) *cobra.Command {
-	return configCommand(use, short, cfg, func(cmd *cobra.Command, args []string) (any, error) {
+	return cfgCommand(use, short, cfg, func(cmd *cobra.Command, args []string) (any, error) {
+		ctxName := getContextFlag(cmd.Flags())
+		if ctxName == "" {
+			ctxName = cfg.CurrentContext
+		}
+
 		var ctx *api.Context
 		for _, c := range cfg.Contexts {
-			if cfg.CurrentContext == c.Name {
+			if ctxName == c.Name {
 				ctx = &c
 				break
 			}
 		}
 		if ctx == nil {
-			return nil, fmt.Errorf("cli: current Opencast context '%s' not found", cfg.CurrentContext)
+			return nil, fmt.Errorf("cli: current Opencast context '%s' not found", ctxName)
 		}
 
 		c, err := client.New(*ctx)
