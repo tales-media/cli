@@ -20,6 +20,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/spf13/pflag"
 
@@ -36,6 +37,120 @@ func addContextFlag(flags *pflag.FlagSet) {
 
 func getContextFlag(flags *pflag.FlagSet) string {
 	flag := mustGetFlag("context", flags)
+	return flag.Value.String()
+}
+
+//
+// --context-use
+//
+
+func addContextUseFlag(flags *pflag.FlagSet) {
+	flags.Bool("context-use", false, "make new context the current context")
+}
+
+func getContextUseFlag(flags *pflag.FlagSet) bool {
+	return mustGetValue("context-use", flags.GetBool)
+}
+
+//
+// --context-service-mapper [static | dynamic]
+//
+
+func addContextServiceMapperFlag(flags *pflag.FlagSet) {
+	ContextServiceMapperValue := &mapValue[ContextServiceMapper]{
+		Default: "static",
+		Map: map[string]ContextServiceMapper{
+			"static":  StaticContextServiceMapper,
+			"dynamic": DynamicContextServiceMapper,
+		},
+	}
+	flags.Var(ContextServiceMapperValue, "context-service-mapper", ContextServiceMapperValue.Usage("set service mapper type"))
+}
+
+func getContextServiceMapperFlag(flags *pflag.FlagSet) ContextServiceMapper {
+	flag := mustGetFlag("context-service-mapper", flags)
+	val, ok := flag.Value.(*mapValue[ContextServiceMapper])
+	if !ok {
+		panic("BUG: flag 'context-service-mapper' has incorrect type")
+	}
+	return val.Value()
+}
+
+type ContextServiceMapper int
+
+const (
+	StaticContextServiceMapper ContextServiceMapper = iota
+	DynamicContextServiceMapper
+)
+
+//
+// --context-static-service-mapping [host=url]
+//
+
+func addContextStaticServiceMappingFlag(flags *pflag.FlagSet) {
+	flags.StringSlice("context-static-service-mapping", nil, "set static service mapping form \"host=url\" (can be specified multiple times or a comma separated list)")
+}
+
+func getContextStaticServiceMappingFlag(flags *pflag.FlagSet) (map[string]string, error) {
+	valList, err := flags.GetStringSlice("context-static-service-mapping")
+	if err != nil {
+		panicBugUndefinedFlag("context-static-service-mapping")
+	}
+	val := make(map[string]string)
+	for _, c := range valList {
+		k, v, ok := strings.Cut(c, "=")
+		if !ok {
+			return nil, errors.New("invalid config flag: use host=url syntax")
+		}
+		val[k] = v
+	}
+	return val, nil
+}
+
+//
+// --context-dynamic-service-mapper-ttl [time.Duration]
+//
+
+func addContextDynamicServiceMapperTTLFlag(flags *pflag.FlagSet) {
+	// TODO: use default from api package
+	flags.Duration("context-dynamic-service-mapper-ttl", 10*time.Minute, "set TTL for dynamic service mapper")
+}
+
+func getContextDynamicServiceMapperTTLFlag(flags *pflag.FlagSet) time.Duration {
+	return mustGetValue("context-dynamic-service-mapper-ttl", flags.GetDuration)
+}
+
+//
+// --context-basic-auth [username:password]
+//
+
+func addContextBasicAuthFlag(flags *pflag.FlagSet) {
+	flags.String("context-basic-auth", "", "username and passwort for HTTP Basic Auth in the form \"username:password\"")
+}
+
+func getContextBasicAuthFlag(flags *pflag.FlagSet) (username, password string, err error) {
+	flag := mustGetFlag("context-basic-auth", flags)
+	usernamePassword := flag.Value.String()
+	if usernamePassword == "" {
+		return
+	}
+	var ok bool
+	if username, password, ok = strings.Cut(usernamePassword, ":"); !ok {
+		err = errors.New("incorrect format")
+	}
+	return
+}
+
+//
+// --context-jwt-auth [token]
+//
+
+func addContextJWTAuthFlag(flags *pflag.FlagSet) {
+	flags.String("context-jwt-auth", "", "JWT token for JWT Auth")
+}
+
+func getContextJWTAuthFlag(flags *pflag.FlagSet) string {
+	flag := mustGetFlag("context-jwt-auth", flags)
 	return flag.Value.String()
 }
 
@@ -219,6 +334,14 @@ func mustGetFlag(name string, flags *pflag.FlagSet) *pflag.Flag {
 		panicBugUndefinedFlag(name)
 	}
 	return flag
+}
+
+func mustGetValue[T any](name string, f func(string) (T, error)) T {
+	val, err := f(name)
+	if err != nil {
+		panicBugUndefinedFlag(name)
+	}
+	return val
 }
 
 func panicBugUndefinedFlag(name string) {

@@ -20,16 +20,24 @@ import "time"
 
 // TODO: add validation and defaulting
 
+const RedactedValue = "REDACTED"
+
 type Meta struct {
 	APIVersion string `human:"API Version,wideonly" json:"apiVersion" yaml:"apiVersion"`
 	Kind       string `human:"Kind,wideonly" json:"kind" yaml:"kind"`
 }
 
 type Config struct {
-	Meta
+	Meta `human:"Meta,wideonly" json:",inline" yaml:",inline"`
 
 	CurrentContext string    `human:"Current Context" json:"currentContext" yaml:"currentContext"`
 	Contexts       []Context `human:"Contexts,wideonly" json:"contexts" yaml:"contexts"`
+}
+
+func (cfg *Config) RedactCredentials() {
+	for i := range cfg.Contexts {
+		cfg.Contexts[i].RedactCredentials()
+	}
 }
 
 type Context struct {
@@ -38,14 +46,23 @@ type Context struct {
 	Authentication Authentication `human:"Authentication,wideonly" json:"authentication" yaml:"authentication"`
 }
 
+func (ctx *Context) RedactCredentials() {
+	if ctx.Authentication.Basic != nil {
+		ctx.Authentication.Basic.Password = RedactedValue
+	}
+	if ctx.Authentication.JWT != nil {
+		ctx.Authentication.JWT.Token = RedactedValue
+	}
+}
+
 type ServiceMapper struct {
 	Static  *StaticServiceMapper  `human:"Static" json:"static,omitempty" yaml:"static,omitempty"`
 	Dynamic *DynamicServiceMapper `human:"Dynamic" json:"dynamic,omitempty" yaml:"dynamic,omitempty"`
 }
 
 type StaticServiceMapper struct {
-	Default     string            `human:"Default" json:"default" yaml:"default"`
-	ServiceHost map[string]string `human:"Service Host,wideonly" json:"serviceHost" yaml:"serviceHost"`
+	Default      string            `human:"Default" json:"default" yaml:"default"`
+	ServiceHosts map[string]string `human:"Service Hosts,wideonly" json:"serviceHosts" yaml:"serviceHosts"`
 }
 
 type DynamicServiceMapper struct {

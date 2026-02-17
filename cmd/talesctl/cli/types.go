@@ -33,6 +33,9 @@ const TalesctlPrefix = "talesctl"
 type Config struct {
 	api.Config
 
+	ContextName string
+	Context     *api.Context
+
 	Alias     string
 	AliasType AliasType
 	Args      []string

@@ -53,6 +53,7 @@ func New(cfg *Config) *cobra.Command {
 
 	cmd.AddGroup(
 		ResourcesGroup,
+		AdminGroup,
 	)
 
 	cmd.AddCommand(
@@ -62,6 +63,9 @@ func New(cfg *Config) *cobra.Command {
 		groupCommand(cfg),
 		workflowCommand(cfg),
 		workflowDefinitionCommand(cfg),
+
+		// admin
+		configCommand(cfg),
 
 		// additional
 		infoCommand(cfg),

@@ -48,7 +48,7 @@ func New(ctx api.Context) (oc.Client, error) {
 	case ctx.ServiceMapper.Static != nil:
 		sm = &oc.StaticServiceMapper{
 			Default:     ctx.ServiceMapper.Static.Default,
-			ServiceHost: ctx.ServiceMapper.Static.ServiceHost,
+			ServiceHost: ctx.ServiceMapper.Static.ServiceHosts,
 		}
 
 	case ctx.ServiceMapper.Dynamic != nil:

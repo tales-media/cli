@@ -57,7 +57,7 @@ func NewOpencastConfig() Config {
 func (svc *opencastConfig) Get(ctx context.Context, req ConfigGetRequest) (api.Config, error) {
 	cfg := api.Config{}
 
-	f, err := svc.openConfigFile()
+	f, err := svc.openConfigFile(os.O_RDONLY | os.O_CREATE)
 	if err != nil {
 		return cfg, err
 	}
@@ -75,7 +75,7 @@ func (svc *opencastConfig) Get(ctx context.Context, req ConfigGetRequest) (api.C
 }
 
 func (svc *opencastConfig) Update(ctx context.Context, req ConfigUpdateRequest) error {
-	f, err := svc.openConfigFile()
+	f, err := svc.openConfigFile(os.O_RDWR | os.O_CREATE | os.O_TRUNC)
 	if err != nil {
 		return err
 	}
@@ -85,7 +85,7 @@ func (svc *opencastConfig) Update(ctx context.Context, req ConfigUpdateRequest) 
 	return enc.Encode(req.Config)
 }
 
-func (svc *opencastConfig) openConfigFile() (*os.File, error) {
+func (svc *opencastConfig) openConfigFile(flag int) (*os.File, error) {
 	// create config root if necessary
 	if err := os.MkdirAll(configRoot, 0o755); err != nil {
 		return nil, err
@@ -112,7 +112,7 @@ func (svc *opencastConfig) openConfigFile() (*os.File, error) {
 
 	// open config file
 	configFile := filepath.Join(configDir, configFile)
-	return os.OpenFile(configFile, os.O_RDWR|os.O_CREATE, 0o666)
+	return os.OpenFile(configFile, flag, 0o666)
 }
 
 type talesConfig = opencastConfig

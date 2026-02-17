@@ -19,6 +19,7 @@ package cli
 import (
 	"fmt"
 	"reflect"
+	"slices"
 
 	"github.com/spf13/cobra"
 
@@ -87,29 +88,25 @@ func cfgCommand(use, short string, cfg *Config, configValueFunc func(*cobra.Comm
 		}
 		cfg.Config = config
 
+		// determine context
+		cfg.ContextName = getContextFlag(cmd.Flags())
+		if cfg.ContextName == "" {
+			cfg.ContextName = cfg.CurrentContext
+		}
+
 		return configValueFunc(cmd, args)
 	})
 }
 
 func occCommand(use, short string, cfg *Config, occValueFunc func(*cobra.Command, []string, oc.Client) (any, error)) *cobra.Command {
 	return cfgCommand(use, short, cfg, func(cmd *cobra.Command, args []string) (any, error) {
-		ctxName := getContextFlag(cmd.Flags())
-		if ctxName == "" {
-			ctxName = cfg.CurrentContext
+		i := slices.IndexFunc(cfg.Contexts, func(c api.Context) bool { return c.Name == cfg.ContextName })
+		if i < 0 {
+			return nil, fmt.Errorf("cli: current Opencast context '%s' not found", cfg.ContextName)
 		}
+		cfg.Context = &cfg.Contexts[i]
 
-		var ctx *api.Context
-		for _, c := range cfg.Contexts {
-			if ctxName == c.Name {
-				ctx = &c
-				break
-			}
-		}
-		if ctx == nil {
-			return nil, fmt.Errorf("cli: current Opencast context '%s' not found", ctxName)
-		}
-
-		c, err := client.New(*ctx)
+		c, err := client.New(*cfg.Context)
 		if err != nil {
 			return nil, err
 		}
