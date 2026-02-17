@@ -19,6 +19,7 @@ package svc
 import (
 	"context"
 	"errors"
+	"slices"
 
 	"shio.solutions/tales.media/cli/internal/talesctl/svc/api"
 	"shio.solutions/tales.media/cli/internal/talesctl/svc/api/conv"
@@ -73,17 +74,12 @@ func (svc *opencastEventCatalog) Get(ctx context.Context, req EventCatalogGetReq
 		return api.Catalog{}, err
 	}
 
-	var ocCatalog *extapiv1.Catalog
 	flavor := conv.FlavorToOCFlavor(req.Flavor)
-	for _, c := range ocMetadata {
-		if c.Flavor == flavor {
-			ocCatalog = &c
-			break
-		}
-	}
-	if ocCatalog == nil {
+	i := slices.IndexFunc(ocMetadata, func(c extapiv1.Catalog) bool { return c.Flavor == flavor })
+	if i < 0 {
 		return api.Catalog{}, errors.New("Not Found")
 	}
+	ocCatalog := &ocMetadata[i]
 
 	return conv.OCCatalogToCatalog(*ocCatalog), nil
 }

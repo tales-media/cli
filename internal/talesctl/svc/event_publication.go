@@ -19,6 +19,7 @@ package svc
 import (
 	"context"
 	"errors"
+	"slices"
 
 	"shio.solutions/tales.media/cli/internal/talesctl/svc/api"
 	"shio.solutions/tales.media/cli/internal/talesctl/svc/api/conv"
@@ -79,16 +80,13 @@ func (svc *opencastEventPublication) Get(ctx context.Context, req EventPublicati
 		return api.Publication{}, err
 	}
 
-	var ocPublication *extapiv1.Publication
-	for _, pub := range ocPublications {
-		if pub.ID == req.PublicationID || pub.Channel == req.PublicationID {
-			ocPublication = &pub
-			break
-		}
-	}
-	if ocPublication == nil {
+	i := slices.IndexFunc(ocPublications, func(pub extapiv1.Publication) bool {
+		return pub.ID == req.PublicationID || pub.Channel == req.PublicationID
+	})
+	if i < 0 {
 		return api.Publication{}, errors.New("Not Found")
 	}
+	ocPublication := &ocPublications[i]
 
 	return conv.OCPublicationToPublication(*ocPublication), nil
 }
