@@ -294,7 +294,15 @@ func getWorkflowPropertiesFlag(flags *pflag.FlagSet) (map[string]string, error) 
 //
 
 func addWorkflowStatusFlag(flags *pflag.FlagSet) {
-	workflowStatusValue := WorkflowStatusValue()
+	workflowStatusValue := &mapValue[WorkflowStatus]{
+		Default: "none",
+		Map: map[string]WorkflowStatus{
+			"none":    NoneWorkflowStatus,
+			"running": RunningWorkflowStatus,
+			"paused":  PausedWorkflowStatus,
+			"stopped": StoppedWorkflowStatus,
+		},
+	}
 	flags.Var(workflowStatusValue, "workflow-status", workflowStatusValue.Usage("set a new workflow status"))
 }
 
@@ -310,23 +318,11 @@ func getWorkflowStatusFlag(flags *pflag.FlagSet) WorkflowStatus {
 type WorkflowStatus int
 
 const (
-	NoneWorkflowState WorkflowStatus = iota
+	NoneWorkflowStatus WorkflowStatus = iota
 	RunningWorkflowStatus
 	PausedWorkflowStatus
 	StoppedWorkflowStatus
 )
-
-func WorkflowStatusValue() *mapValue[WorkflowStatus] {
-	return &mapValue[WorkflowStatus]{
-		Default: "none",
-		Map: map[string]WorkflowStatus{
-			"none":    NoneWorkflowState,
-			"running": RunningWorkflowStatus,
-			"paused":  PausedWorkflowStatus,
-			"stopped": StoppedWorkflowStatus,
-		},
-	}
-}
 
 func mustGetFlag(name string, flags *pflag.FlagSet) *pflag.Flag {
 	flag := flags.Lookup(name)
