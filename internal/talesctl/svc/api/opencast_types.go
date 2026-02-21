@@ -33,6 +33,11 @@ const (
 	Descending
 )
 
+type Property struct {
+	Key   string `human:"Key" json:"key" yaml:"key"`
+	Value string `human:"Value" json:"value" yaml:"value"`
+}
+
 type Flavor string
 
 const (
@@ -385,6 +390,26 @@ type AttachmentElement struct {
 
 	// attachment
 	Ref string `human:"Ref" json:"ref" yaml:"ref"`
+}
+
+type Series struct {
+	// General
+
+	ID string `human:"ID" json:"id" yaml:"id"`
+
+	// Metadata
+
+	Title        *string    `human:"Title" json:"title" yaml:"title"`
+	Description  *string    `human:"Description,wideonly" json:"description" yaml:"description"`
+	CreationDate *time.Time `human:"CreationDate" json:"creationDate" yaml:"creationDate"`
+	Creator      *string    `human:"Creator" json:"creator" yaml:"creator"`
+	Contributors []string   `human:"Contributors,wideonly" json:"contributors" yaml:"contributors"`
+	Organizers   []string   `human:"Organizers,wideonly" json:"organizers" yaml:"organizers"`
+	Publishers   []string   `human:"Publishers,wideonly" json:"publishers" yaml:"publishers"`
+	Language     *Language  `human:"Language,wideonly" json:"language" yaml:"language"`
+	RightsHolder *string    `human:"RightsHolder,wideonly" json:"rightsHolder" yaml:"rightsHolder"`
+	License      *string    `human:"License,wideonly" json:"license" yaml:"license"`
+	Subjects     []string   `human:"Subjects,wideonly" json:"subjects" yaml:"subjects"`
 }
 
 type Workflow struct {

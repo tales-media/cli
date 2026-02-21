@@ -56,6 +56,21 @@ func SortDirectionToOCSortDirection(sortDirection api.SortDirection) extapiclien
 	panic(fmt.Sprintf("BUG: unknown SortDirection '%d'", sortDirection))
 }
 
+func OCPropertiesToMap(ocProperties base.Properties) map[string]string {
+	return map[string]string(ocProperties)
+}
+
+func OCPropertiesToProperties(ocProperties base.Properties) []api.Property {
+	properties := make([]api.Property, 0, len(ocProperties))
+	for k, v := range ocProperties {
+		properties = append(properties, api.Property{
+			Key:   k,
+			Value: v,
+		})
+	}
+	return properties
+}
+
 func FlavorToOCFlavor(flavor api.Flavor) base.Flavor {
 	// We are not strictly enforcing the Flavor name as this can be configured in Opencast.
 	return base.Flavor(flavor)
@@ -620,6 +635,51 @@ func OCAttachmentElementToAttachmentElement(ocAttachmentElement extapiv1.Attachm
 		Tags:      ocAttachmentElement.Tags,
 		Ref:       ocAttachmentElement.Ref,
 	}
+}
+
+func OCSeriesToSeries(ocSeries extapiv1.Series) api.Series {
+	s := api.Series{
+		ID: ocSeries.Identifier,
+	}
+	if ocSeries.Title != "" {
+		s.Title = new(ocSeries.Title)
+	}
+	if ocSeries.Description != "" {
+		s.Description = new(ocSeries.Description)
+	}
+	if !ocSeries.Created.IsZero() {
+		s.CreationDate = new(ocSeries.Created.Time)
+	}
+	if ocSeries.Creator != "" {
+		s.Creator = new(ocSeries.Creator)
+	}
+	if len(ocSeries.Contributors) > 0 {
+		s.Contributors = ocSeries.Contributors
+	}
+	if len(ocSeries.Organizers) > 0 {
+		s.Organizers = ocSeries.Organizers
+	}
+	if len(ocSeries.Publishers) > 0 {
+		s.Publishers = ocSeries.Publishers
+	}
+	if ocSeries.Language != "" {
+		var l api.Language
+		err := l.UnmarshalTextString(ocSeries.Language)
+		// TODO: should we handle the error?
+		if err == nil {
+			s.Language = &l
+		}
+	}
+	if ocSeries.RightsHolder != "" {
+		s.RightsHolder = new(ocSeries.RightsHolder)
+	}
+	if ocSeries.License != "" {
+		s.License = new(ocSeries.License)
+	}
+	if len(ocSeries.Subjects) > 0 {
+		s.Subjects = ocSeries.Subjects
+	}
+	return s
 }
 
 func OCWorkflowInstanceToWorkflow(ocWorkflowInstance extapiv1.WorkflowInstance) api.Workflow {
