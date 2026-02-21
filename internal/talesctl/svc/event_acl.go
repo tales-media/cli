@@ -25,10 +25,10 @@ import (
 )
 
 type EventACL interface {
-	List(context.Context, EventACLListRequest) ([]api.ACE, error)
+	Get(context.Context, EventACLGetRequest) ([]api.ACE, error)
 }
 
-type EventACLListRequest struct {
+type EventACLGetRequest struct {
 	EventID string
 }
 
@@ -44,7 +44,7 @@ func NewOpencastEventACL(extAPI extapiclientv1.Client) EventACL {
 	}
 }
 
-func (svc *opencastEventACL) List(ctx context.Context, req EventACLListRequest) ([]api.ACE, error) {
+func (svc *opencastEventACL) Get(ctx context.Context, req EventACLGetRequest) ([]api.ACE, error) {
 	ocACL, _, err := svc.extAPI.GetEventACL(
 		ctx,
 		req.EventID,

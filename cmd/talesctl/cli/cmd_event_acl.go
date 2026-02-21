@@ -37,20 +37,20 @@ func eventACLCommand(cfg *Config) *cobra.Command {
 		ManagementGroup,
 	)
 	cmd.AddCommand(
-		eventACLListCommand(cfg),
+		eventACLGetCommand(cfg),
 	)
 	return cmd
 }
 
-func eventACLListCommand(cfg *Config) *cobra.Command {
+func eventACLGetCommand(cfg *Config) *cobra.Command {
 	cmd := extAPICommand(
-		"list [event id]",
-		"List Event ACL",
+		"get [event id]",
+		"get Event ACL",
 		cfg,
 		func(cmd *cobra.Command, args []string, extAPI extapiclientv1.Client) (any, error) {
 			var (
 				s   svc.EventACL
-				req svc.EventACLListRequest
+				req svc.EventACLGetRequest
 			)
 
 			mustSelect(cfg.AliasType, map[AliasType]func(){
@@ -60,7 +60,7 @@ func eventACLListCommand(cfg *Config) *cobra.Command {
 
 			req.EventID = args[0]
 
-			return s.List(cmd.Context(), req)
+			return s.Get(cmd.Context(), req)
 		},
 	)
 	cmd.Args = cobra.ExactArgs(1)
