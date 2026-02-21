@@ -81,5 +81,7 @@ type BasicAuthentication struct {
 }
 
 type JWTAuthentication struct {
-	Token string `human:"Token,wideonly" json:"token" yaml:"token"`
+	Token  string `human:"Token,wideonly" json:"token" yaml:"token"`
+	Header string `human:"Header,wideonly" json:"header" yaml:"header"`
+	Prefix string `human:"Prefix,wideonly" json:"prefix" yaml:"prefix"`
 }

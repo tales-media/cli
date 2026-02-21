@@ -157,8 +157,8 @@ func WithBasicAuth(username, password string) RequestOpts {
 	return WithHeader("Authorization", "Basic "+basicAuth)
 }
 
-func WithJWTHeader(token string) RequestOpts {
-	return WithHeader("Authorization", "Bearer "+token)
+func WithJWTHeader(header, prefix, token string) RequestOpts {
+	return WithHeader(header, prefix+token)
 }
 
 func WithJWTQuery(token string) RequestOpts {

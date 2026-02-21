@@ -35,6 +35,8 @@ func New(ctx api.Context) (oc.Client, error) {
 
 	case ctx.Authentication.JWT != nil:
 		authRequestOpts = append(authRequestOpts, oc.WithJWTHeader(
+			ctx.Authentication.JWT.Header,
+			ctx.Authentication.JWT.Prefix,
 			ctx.Authentication.JWT.Token,
 		))
 

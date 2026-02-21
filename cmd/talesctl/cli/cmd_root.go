@@ -72,5 +72,13 @@ func New(cfg *Config) *cobra.Command {
 		versionCommand(cfg),
 	)
 
+	// tales.media specific commands
+	if cfg.AliasType == TalesAlias {
+		cmd.AddCommand(
+			// admin
+			authCommand(cfg),
+		)
+	}
+
 	return cmd
 }

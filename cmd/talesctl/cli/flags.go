@@ -28,6 +28,30 @@ import (
 )
 
 //
+// --auth-open-browser
+//
+
+func addAuthOpenBrowserFlag(flags *pflag.FlagSet) {
+	flags.Bool("auth-open-browser", true, "automatically open auth code URL in browser")
+}
+
+func getAuthOpenBrowserFlag(flags *pflag.FlagSet) bool {
+	return mustGetValue("auth-open-browser", flags.GetBool)
+}
+
+//
+// --auth-out-of-band
+//
+
+func addAuthOutOfBandFlag(flags *pflag.FlagSet) {
+	flags.Bool("auth-out-of-band", false, "authenticate using OIDC out-of-band")
+}
+
+func getAuthOutOfBandFlag(flags *pflag.FlagSet) bool {
+	return mustGetValue("auth-out-of-band", flags.GetBool)
+}
+
+//
 // --context [name]
 //
 
