@@ -17,6 +17,7 @@ limitations under the License.
 package cli
 
 import (
+	"errors"
 	"fmt"
 	"reflect"
 	"slices"
@@ -100,6 +101,9 @@ func cfgCommand(use, short string, cfg *Config, configValueFunc func(*cobra.Comm
 
 func occCommand(use, short string, cfg *Config, occValueFunc func(*cobra.Command, []string, oc.Client) (any, error)) *cobra.Command {
 	return cfgCommand(use, short, cfg, func(cmd *cobra.Command, args []string) (any, error) {
+		if cfg.ContextName == "" {
+			return nil, errors.New("cli: no Opencast context selected")
+		}
 		i := slices.IndexFunc(cfg.Contexts, func(c api.Context) bool { return c.Name == cfg.ContextName })
 		if i < 0 {
 			return nil, fmt.Errorf("cli: current Opencast context '%s' not found", cfg.ContextName)
