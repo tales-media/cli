@@ -179,6 +179,32 @@ func getContextJWTAuthFlag(flags *pflag.FlagSet) string {
 }
 
 //
+// --context-jwt-auth-header [header]
+//
+
+func addContextJWTAuthHeaderFlag(flags *pflag.FlagSet) {
+	flags.String("context-jwt-auth-header", "Authorization", "Header for JWT Auth")
+}
+
+func getContextJWTAuthHeaderFlag(flags *pflag.FlagSet) string {
+	flag := mustGetFlag("context-jwt-auth-header", flags)
+	return flag.Value.String()
+}
+
+//
+// --context-jwt-auth-prefix [prefix]
+//
+
+func addContextJWTAuthPrefixFlag(flags *pflag.FlagSet) {
+	flags.String("context-jwt-auth-prefix", "Bearer ", "Header value prefix for JWT Auth")
+}
+
+func getContextJWTAuthPrefixFlag(flags *pflag.FlagSet) string {
+	flag := mustGetFlag("context-jwt-auth-prefix", flags)
+	return flag.Value.String()
+}
+
+//
 // --filter-by-{key} [value]
 //
 

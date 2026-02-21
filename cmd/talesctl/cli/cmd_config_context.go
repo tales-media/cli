@@ -111,7 +111,9 @@ func configContextCreateCommand(cfg *Config) *cobra.Command {
 			token := getContextJWTAuthFlag(cmd.Flags())
 			if token != "" {
 				ctx.Authentication.JWT = &api.JWTAuthentication{
-					Token: token,
+					Token:  token,
+					Header: getContextJWTAuthHeaderFlag(cmd.Flags()),
+					Prefix: getContextJWTAuthPrefixFlag(cmd.Flags()),
 				}
 			}
 
@@ -132,6 +134,8 @@ func configContextCreateCommand(cfg *Config) *cobra.Command {
 	addContextDynamicServiceMapperTTLFlag(cmd.Flags())
 	addContextBasicAuthFlag(cmd.Flags())
 	addContextJWTAuthFlag(cmd.Flags())
+	addContextJWTAuthHeaderFlag(cmd.Flags())
+	addContextJWTAuthPrefixFlag(cmd.Flags())
 	cmd.GroupID = ManagementGroup.ID
 	return cmd
 }
