@@ -23,7 +23,7 @@ import (
 )
 
 func versionCommand(cfg *Config) *cobra.Command {
-	return baseCommand("version", "Print version information", func(cmd *cobra.Command, args []string) (any, error) {
+	return baseCommand("version", "Print Version Information", func(cmd *cobra.Command, args []string) (any, error) {
 		return version.CLI, nil
 	})
 }

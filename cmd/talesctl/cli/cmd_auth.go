@@ -39,7 +39,7 @@ import (
 func authCommand(cfg *Config) *cobra.Command {
 	cmd := cfgCommand(
 		"auth [org name]",
-		"Authenticate with tales.media",
+		"Authenticate to tales.media",
 		cfg,
 		func(cmd *cobra.Command, args []string) (any, error) {
 			s := svc.NewTalesConfig()

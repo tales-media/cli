@@ -26,7 +26,7 @@ import (
 func infoCommand(cfg *Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                   "info",
-		Short:                 "Print information",
+		Short:                 "Print Information",
 		TraverseChildren:      true,
 		DisableFlagsInUseLine: true,
 	}
@@ -42,8 +42,8 @@ func infoApiCommand(cfg *Config) *cobra.Command {
 	return extAPICommand(
 		"api",
 		mustSelect(cfg.AliasType, map[AliasType]string{
-			OpencastAlias: "Print Opencast API information",
-			TalesAlias:    "Print tales.media API information",
+			OpencastAlias: "Print Opencast API Information",
+			TalesAlias:    "Print tales.media API Information",
 		}),
 		cfg,
 		func(cmd *cobra.Command, args []string, extAPI extapiclientv1.Client) (any, error) {
@@ -61,8 +61,8 @@ func infoMeCommand(cfg *Config) *cobra.Command {
 	return extAPICommand(
 		"me",
 		mustSelect(cfg.AliasType, map[AliasType]string{
-			OpencastAlias: "Print Opencast user information",
-			TalesAlias:    "Print tales.media user information",
+			OpencastAlias: "Print Opencast User Information",
+			TalesAlias:    "Print tales.media User Information",
 		}),
 		cfg,
 		func(cmd *cobra.Command, args []string, extAPI extapiclientv1.Client) (any, error) {
@@ -80,8 +80,8 @@ func infoOrganizationCommand(cfg *Config) *cobra.Command {
 	return extAPICommand(
 		"organization",
 		mustSelect(cfg.AliasType, map[AliasType]string{
-			OpencastAlias: "Print Opencast organization information",
-			TalesAlias:    "Print tales.media organization information",
+			OpencastAlias: "Print Opencast Organization Information",
+			TalesAlias:    "Print tales.media Organization Information",
 		}),
 		cfg,
 		func(cmd *cobra.Command, args []string, extAPI extapiclientv1.Client) (any, error) {

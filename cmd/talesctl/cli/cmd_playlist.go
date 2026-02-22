@@ -86,7 +86,7 @@ func playlistListCommand(cfg *Config) *cobra.Command {
 func playlistGetCommand(cfg *Config) *cobra.Command {
 	cmd := extAPICommand(
 		"get [id]",
-		"Get an Playlist",
+		"Get a Playlist",
 		cfg,
 		func(cmd *cobra.Command, args []string, extAPI extapiclientv1.Client) (any, error) {
 			var (

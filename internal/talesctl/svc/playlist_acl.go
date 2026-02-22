@@ -25,10 +25,10 @@ import (
 )
 
 type PlaylistACL interface {
-	Get(context.Context, PlaylistACLGetRequest) ([]api.ACE, error)
+	List(context.Context, PlaylistACLListRequest) ([]api.ACE, error)
 }
 
-type PlaylistACLGetRequest struct {
+type PlaylistACLListRequest struct {
 	PlaylistID string
 }
 
@@ -44,7 +44,7 @@ func NewOpencastPlaylistACL(extAPI extapiclientv1.Client) PlaylistACL {
 	}
 }
 
-func (svc *opencastPlaylistACL) Get(ctx context.Context, req PlaylistACLGetRequest) ([]api.ACE, error) {
+func (svc *opencastPlaylistACL) List(ctx context.Context, req PlaylistACLListRequest) ([]api.ACE, error) {
 	ocPlaylist, _, err := svc.extAPI.GetPlaylist(
 		ctx,
 		req.PlaylistID,

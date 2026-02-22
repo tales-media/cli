@@ -73,7 +73,7 @@ func seriesCatalogListCommand(cfg *Config) *cobra.Command {
 func seriesCatalogGetCommand(cfg *Config) *cobra.Command {
 	cmd := extAPICommand(
 		"get [series id] [catalog flavor]",
-		"Get an Series Catalog",
+		"Get a Series Catalog",
 		cfg,
 		func(cmd *cobra.Command, args []string, extAPI extapiclientv1.Client) (any, error) {
 			var (

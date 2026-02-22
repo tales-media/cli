@@ -36,15 +36,15 @@ func seriesACLCommand(cfg *Config) *cobra.Command {
 		ManagementGroup,
 	)
 	cmd.AddCommand(
-		seriesACLGetCommand(cfg),
+		seriesACLListCommand(cfg),
 	)
 	return cmd
 }
 
-func seriesACLGetCommand(cfg *Config) *cobra.Command {
+func seriesACLListCommand(cfg *Config) *cobra.Command {
 	cmd := extAPICommand(
-		"get [series id]",
-		"get Series ACL",
+		"list [series id]",
+		"List Series ACL",
 		cfg,
 		func(cmd *cobra.Command, args []string, extAPI extapiclientv1.Client) (any, error) {
 			var (

@@ -37,20 +37,20 @@ func playlistACLCommand(cfg *Config) *cobra.Command {
 		ManagementGroup,
 	)
 	cmd.AddCommand(
-		playlistACLGetCommand(cfg),
+		playlistACLListCommand(cfg),
 	)
 	return cmd
 }
 
-func playlistACLGetCommand(cfg *Config) *cobra.Command {
+func playlistACLListCommand(cfg *Config) *cobra.Command {
 	cmd := extAPICommand(
-		"get [playlist id]",
-		"get Playlist ACL",
+		"list [playlist id]",
+		"List Playlist ACL",
 		cfg,
 		func(cmd *cobra.Command, args []string, extAPI extapiclientv1.Client) (any, error) {
 			var (
 				s   svc.PlaylistACL
-				req svc.PlaylistACLGetRequest
+				req svc.PlaylistACLListRequest
 			)
 
 			mustSelect(cfg.AliasType, map[AliasType]func(){
@@ -60,7 +60,7 @@ func playlistACLGetCommand(cfg *Config) *cobra.Command {
 
 			req.PlaylistID = args[0]
 
-			return s.Get(cmd.Context(), req)
+			return s.List(cmd.Context(), req)
 		},
 	)
 	cmd.Args = cobra.ExactArgs(1)

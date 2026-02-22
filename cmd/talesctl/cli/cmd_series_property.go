@@ -36,20 +36,20 @@ func seriesPropertyCommand(cfg *Config) *cobra.Command {
 		ManagementGroup,
 	)
 	cmd.AddCommand(
-		seriesPropertyGetCommand(cfg),
+		seriesPropertyListCommand(cfg),
 	)
 	return cmd
 }
 
-func seriesPropertyGetCommand(cfg *Config) *cobra.Command {
+func seriesPropertyListCommand(cfg *Config) *cobra.Command {
 	cmd := extAPICommand(
-		"get [series id]",
-		"get Series Properties",
+		"list [series id]",
+		"List Series Properties",
 		cfg,
 		func(cmd *cobra.Command, args []string, extAPI extapiclientv1.Client) (any, error) {
 			var (
 				s   svc.SeriesProperty
-				req svc.SeriesPropertyGetRequest
+				req svc.SeriesPropertyListRequest
 			)
 
 			mustSelect(cfg.AliasType, map[AliasType]func(){
@@ -59,7 +59,7 @@ func seriesPropertyGetCommand(cfg *Config) *cobra.Command {
 
 			req.SeriesID = args[0]
 
-			return s.Get(cmd.Context(), req)
+			return s.List(cmd.Context(), req)
 		},
 	)
 	cmd.Args = cobra.ExactArgs(1)

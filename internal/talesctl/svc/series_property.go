@@ -25,10 +25,10 @@ import (
 )
 
 type SeriesProperty interface {
-	Get(context.Context, SeriesPropertyGetRequest) ([]api.Property, error)
+	List(context.Context, SeriesPropertyListRequest) ([]api.Property, error)
 }
 
-type SeriesPropertyGetRequest struct {
+type SeriesPropertyListRequest struct {
 	SeriesID string
 }
 
@@ -44,7 +44,7 @@ func NewOpencastSeriesProperty(extAPI extapiclientv1.Client) SeriesProperty {
 	}
 }
 
-func (svc *opencastSeriesProperty) Get(ctx context.Context, req SeriesPropertyGetRequest) ([]api.Property, error) {
+func (svc *opencastSeriesProperty) List(ctx context.Context, req SeriesPropertyListRequest) ([]api.Property, error) {
 	ocProperties, _, err := svc.extAPI.GetSeriesProperties(
 		ctx,
 		req.SeriesID,
