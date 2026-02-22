@@ -19,6 +19,7 @@ package multipart
 import (
 	"bytes"
 	"crypto/rand"
+	"errors"
 	"fmt"
 	"io"
 	"maps"
@@ -27,6 +28,7 @@ import (
 	"path"
 	"slices"
 	"strings"
+	"sync"
 )
 
 type Multipart struct {
@@ -248,6 +250,43 @@ func (p *FilePart) Len() int64 {
 		2 + // `\r\n`
 		fi.Size() + // body
 		2 // `\r\n`
+}
+
+type StreamPart struct {
+	Header textproto.MIMEHeader
+	Reader io.ReadCloser
+	once   sync.Once
+}
+
+var _ Part = &StreamPart{}
+
+func Stream(fieldname, filename string, r io.ReadCloser) *StreamPart {
+	h := make(textproto.MIMEHeader)
+	h.Set("Content-Disposition",
+		fmt.Sprintf(`form-data; name="%s"; filename="%s"`, EscapeQuotes(fieldname), EscapeQuotes(filename)))
+	h.Set("Content-Type", "application/octet-stream")
+	return &StreamPart{
+		Header: h,
+		Reader: r,
+		once:   sync.Once{},
+	}
+}
+
+func (p *StreamPart) GetHeader() textproto.MIMEHeader {
+	return p.Header
+}
+
+func (p *StreamPart) GetBody() (io.ReadCloser, error) {
+	var r io.ReadCloser
+	p.once.Do(func() { r = p.Reader })
+	if r == nil {
+		return nil, errors.New("multipart: body of stream part can only be accessed once")
+	}
+	return r, nil
+}
+
+func (p *StreamPart) Len() int64 {
+	return -1
 }
 
 func HeaderLen(h textproto.MIMEHeader) int64 {

@@ -19,6 +19,7 @@ package client
 import (
 	"context"
 	"encoding/json"
+	"io"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -32,13 +33,19 @@ import (
 )
 
 type CreateEventRequestBody struct {
-	ACL              extapiv1.ACL
-	Metadata         []extapiv1.Catalog
-	Scheduling       *extapiv1.SchedulingRequest
-	Processing       *extapiv1.Processing
-	PresenterFile    string // TODO: allow option to use io.Reader
-	PresentationFile string // TODO: allow option to use io.Reader
-	AudioFile        string // TODO: allow option to use io.Reader
+	ACL                        extapiv1.ACL
+	Metadata                   []extapiv1.Catalog
+	Scheduling                 *extapiv1.SchedulingRequest
+	Processing                 *extapiv1.Processing
+	PresenterFile              string
+	PresenterStream            io.ReadCloser
+	PresenterStreamFilename    string
+	PresentationFile           string
+	PresentationStream         io.ReadCloser
+	PresentationStreamFilename string
+	AudioFile                  string
+	AudioStream                io.ReadCloser
+	AudioStreamFilename        string
 }
 
 type UpdateEventRequestBody struct {
@@ -53,10 +60,12 @@ type UpdateEventACLRequestBody struct {
 }
 
 type CreateEventTrackRequestBody struct {
-	Flavor            base.Flavor
-	OverwriteExisting bool
-	Tags              []string
-	TrackFile         string // TODO: allow option to use io.Reader
+	Flavor              base.Flavor
+	OverwriteExisting   bool
+	Tags                []string
+	TrackFile           string // TODO: allow option to use io.Reader
+	TrackStream         io.ReadCloser
+	TrackStreamFilename string
 }
 
 type UpdateEventMetadataRequestBody struct {
@@ -191,14 +200,20 @@ func (c *client) CreateEventRequest(ctx context.Context, body *CreateEventReques
 
 	if body.PresenterFile != "" {
 		mp.AddPart(multipart.File("presenter", body.PresenterFile))
+	} else if body.PresenterStream != nil {
+		mp.AddPart(multipart.Stream("presenter", body.PresenterStreamFilename, body.PresenterStream))
 	}
 
 	if body.PresentationFile != "" {
 		mp.AddPart(multipart.File("presentation", body.PresentationFile))
+	} else if body.PresentationStream != nil {
+		mp.AddPart(multipart.Stream("presentation", body.PresentationStreamFilename, body.PresentationStream))
 	}
 
 	if body.AudioFile != "" {
 		mp.AddPart(multipart.File("audio", body.AudioFile))
+	} else if body.AudioStream != nil {
+		mp.AddPart(multipart.Stream("audio", body.AudioStreamFilename, body.AudioStream))
 	}
 
 	return oc.NewRequest(
@@ -410,8 +425,12 @@ func (c *client) CreateEventTrackRequest(ctx context.Context, id string, body *C
 		multipart.FormFieldString("flavor", string(body.Flavor)),
 		multipart.FormFieldString("tags", strings.Join(body.Tags, ",")),
 		multipart.FormFieldString("overwriteExisting", strconv.FormatBool(body.OverwriteExisting)),
-		multipart.File("track", body.TrackFile),
 	)
+	if body.TrackFile != "" {
+		mp.AddPart(multipart.File("track", body.TrackFile))
+	} else if body.TrackStream != nil {
+		mp.AddPart(multipart.Stream("track", body.TrackStreamFilename, body.TrackStream))
+	}
 	return oc.NewRequest(
 		ctx,
 		http.MethodPost,
