@@ -21,10 +21,11 @@ import (
 	"errors"
 	"slices"
 
+	extapiv1 "shio.solutions/tales.media/opencast-client-go/apis/external-api/v1.11"
+	extapiclientv1 "shio.solutions/tales.media/opencast-client-go/apis/external-api/v1.11/client"
+
 	"shio.solutions/tales.media/cli/internal/talesctl/svc/api"
 	"shio.solutions/tales.media/cli/internal/talesctl/svc/api/conv"
-	extapiv1 "shio.solutions/tales.media/cli/pkg/opencast/apis/external-api/v1.11"
-	extapiclientv1 "shio.solutions/tales.media/cli/pkg/opencast/apis/external-api/v1.11/client"
 )
 
 type SeriesCatalog interface {

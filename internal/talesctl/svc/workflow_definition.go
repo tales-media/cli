@@ -19,11 +19,12 @@ package svc
 import (
 	"context"
 
+	extapiv1 "shio.solutions/tales.media/opencast-client-go/apis/external-api/v1.11"
+	extapiclientv1 "shio.solutions/tales.media/opencast-client-go/apis/external-api/v1.11/client"
+	oc "shio.solutions/tales.media/opencast-client-go/client"
+
 	"shio.solutions/tales.media/cli/internal/talesctl/svc/api"
 	"shio.solutions/tales.media/cli/internal/talesctl/svc/api/conv"
-	extapiv1 "shio.solutions/tales.media/cli/pkg/opencast/apis/external-api/v1.11"
-	extapiclientv1 "shio.solutions/tales.media/cli/pkg/opencast/apis/external-api/v1.11/client"
-	oc "shio.solutions/tales.media/cli/pkg/opencast/client"
 )
 
 type WorkflowDefinition interface {

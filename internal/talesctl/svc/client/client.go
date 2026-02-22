@@ -19,8 +19,9 @@ package client
 import (
 	"errors"
 
+	oc "shio.solutions/tales.media/opencast-client-go/client"
+
 	"shio.solutions/tales.media/cli/internal/talesctl/svc/api"
-	oc "shio.solutions/tales.media/cli/pkg/opencast/client"
 )
 
 func New(ctx api.Context) (oc.Client, error) {

@@ -19,8 +19,9 @@ package cli
 import (
 	"github.com/spf13/cobra"
 
+	extapiclientv1 "shio.solutions/tales.media/opencast-client-go/apis/external-api/v1.11/client"
+
 	"shio.solutions/tales.media/cli/internal/talesctl/svc"
-	extapiclientv1 "shio.solutions/tales.media/cli/pkg/opencast/apis/external-api/v1.11/client"
 )
 
 func infoCommand(cfg *Config) *cobra.Command {

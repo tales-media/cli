@@ -22,8 +22,7 @@ import (
 	"time"
 
 	iso639_3 "github.com/barbashov/iso639-3"
-
-	"shio.solutions/tales.media/cli/pkg/opencast/apis/meta/base"
+	"shio.solutions/tales.media/opencast-client-go/apis/meta/base"
 )
 
 type SortDirection int

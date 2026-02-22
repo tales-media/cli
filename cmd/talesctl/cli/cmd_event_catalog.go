@@ -19,9 +19,10 @@ package cli
 import (
 	"github.com/spf13/cobra"
 
+	extapiclientv1 "shio.solutions/tales.media/opencast-client-go/apis/external-api/v1.11/client"
+
 	"shio.solutions/tales.media/cli/internal/talesctl/svc"
 	"shio.solutions/tales.media/cli/internal/talesctl/svc/api"
-	extapiclientv1 "shio.solutions/tales.media/cli/pkg/opencast/apis/external-api/v1.11/client"
 )
 
 // TODO: update
