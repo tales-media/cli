@@ -61,6 +61,7 @@ func New(cfg *Config) *cobra.Command {
 		agentCommand(cfg),
 		eventCommand(cfg),
 		groupCommand(cfg),
+		playlistCommand(cfg),
 		seriesCommand(cfg),
 		workflowCommand(cfg),
 		workflowDefinitionCommand(cfg),

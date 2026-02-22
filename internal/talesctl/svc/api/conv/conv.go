@@ -85,6 +85,7 @@ func OCACEToACE(ocACE extapiv1.ACE) api.ACE {
 	return api.ACE{
 		Role:   ocACE.Role,
 		Action: OCActionToAction(ocACE.Action),
+		Allow:  ocACE.Allow,
 	}
 }
 
@@ -680,6 +681,54 @@ func OCSeriesToSeries(ocSeries extapiv1.Series) api.Series {
 		s.Subjects = ocSeries.Subjects
 	}
 	return s
+}
+
+func OCPlaylistToPlaylist(ocPlaylist extapiv1.Playlist) api.Playlist {
+	p := api.Playlist{
+		ID: ocPlaylist.ID,
+	}
+	if ocPlaylist.Title != "" {
+		p.Title = new(ocPlaylist.Title)
+	}
+	if ocPlaylist.Description != "" {
+		p.Description = new(ocPlaylist.Description)
+	}
+	if ocPlaylist.Creator != "" {
+		p.Creator = new(ocPlaylist.Creator)
+	}
+	if !ocPlaylist.Updated.IsZero() {
+		p.UpdateDate = new(ocPlaylist.Updated.Time)
+	}
+	return p
+}
+
+func OCPlaylistEntryToPlaylistEntry(ocPlaylistEntry extapiv1.PlaylistEntry) api.PlaylistEntry {
+	return api.PlaylistEntry{
+		ID:        ocPlaylistEntry.ID,
+		Type:      OCPlaylistEntryTypeToPlaylistEntryType(ocPlaylistEntry.Type),
+		ContentID: ocPlaylistEntry.ContentID,
+	}
+}
+
+func OCPlaylistEntryTypeToPlaylistEntryType(ocPlaylistEntryType extapiv1.PlaylistEntryType) api.PlaylistEntryType {
+	if ocPlaylistEntryType == "" {
+		return ""
+	}
+	switch ocPlaylistEntryType {
+	case extapiv1.EventPlaylistEntryType:
+		return api.EventPlaylistEntryType
+	case extapiv1.InaccessiblePlaylistEntryType:
+		return api.InaccessiblePlaylistEntryType
+	}
+	panic(fmt.Sprintf("BUG: unknown Opencast PlaylistEntryType '%s'", ocPlaylistEntryType))
+}
+
+func OCPlaylistACEToACE(ocPlaylistACE extapiv1.PlaylistACE) api.ACE {
+	return api.ACE{
+		Role:   ocPlaylistACE.Role,
+		Action: OCActionToAction(ocPlaylistACE.Action),
+		Allow:  ocPlaylistACE.Allow,
+	}
 }
 
 func OCWorkflowInstanceToWorkflow(ocWorkflowInstance extapiv1.WorkflowInstance) api.Workflow {

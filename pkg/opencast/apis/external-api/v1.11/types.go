@@ -644,14 +644,14 @@ type Playlist struct {
 	Title                string          `json:"title,omitempty"`
 	Description          string          `json:"description,omitempty"`
 	Creator              string          `json:"creator,omitempty"`
-	Updated              string          `json:"updated,omitempty"`
+	Updated              base.DateTime   `json:"updated,omitempty"`
 	AccessControlEntries []PlaylistACE   `json:"accessControlEntries,omitempty"`
 }
 
 type PlaylistEntry struct {
-	ID        string `json:"id,omitempty"`
-	ContentID string `json:"contentId,omitempty"`
-	Type      string `json:"type,omitempty"`
+	ID        int64             `json:"id,omitempty"`
+	ContentID string            `json:"contentId,omitempty"`
+	Type      PlaylistEntryType `json:"type,omitempty"`
 }
 
 type PlaylistEntryType string
@@ -662,7 +662,7 @@ const (
 )
 
 type PlaylistACE struct {
-	ID     string      `json:"id,omitempty"`
+	ID     int64       `json:"id,omitempty"`
 	Allow  bool        `json:"allow,omitempty"`
 	Action base.Action `json:"action,omitempty"`
 	Role   string      `json:"role,omitempty"`

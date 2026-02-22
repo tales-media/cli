@@ -53,6 +53,7 @@ const (
 type ACE struct {
 	Role   string `human:"Role" json:"role" yaml:"role"`
 	Action Action `human:"Action" json:"action" yaml:"action"`
+	Allow  bool   `human:"Allow,wideonly" json:"allow" yaml:"allow"`
 }
 
 type Action string
@@ -411,6 +412,32 @@ type Series struct {
 	License      *string    `human:"License,wideonly" json:"license" yaml:"license"`
 	Subjects     []string   `human:"Subjects,wideonly" json:"subjects" yaml:"subjects"`
 }
+
+type Playlist struct {
+	// General
+
+	ID string `human:"ID" json:"id" yaml:"id"`
+
+	// Metadata
+
+	Title       *string    `human:"Title" json:"title" yaml:"title"`
+	Description *string    `human:"Description,wideonly" json:"description" yaml:"description"`
+	Creator     *string    `human:"Creator" json:"creator" yaml:"creator"`
+	UpdateDate  *time.Time `human:"UpdateDate,wideonly" json:"updateDate" yaml:"updateDate"`
+}
+
+type PlaylistEntry struct {
+	ID        int64             `human:"ID" json:"id" yaml:"id"`
+	Type      PlaylistEntryType `human:"Type" json:"type" yaml:"type"`
+	ContentID string            `human:"ContentID" json:"contentId" yaml:"contentId"`
+}
+
+type PlaylistEntryType string
+
+const (
+	EventPlaylistEntryType        = PlaylistEntryType("event")
+	InaccessiblePlaylistEntryType = PlaylistEntryType("inaccessible")
+)
 
 type Workflow struct {
 	ID                   int64             `human:"ID" json:"id" yaml:"id"`
