@@ -183,7 +183,7 @@ func getContextJWTAuthFlag(flags *pflag.FlagSet) string {
 //
 
 func addContextJWTAuthHeaderFlag(flags *pflag.FlagSet) {
-	flags.String("context-jwt-auth-header", "Authorization", "Header for JWT Auth")
+	flags.String("context-jwt-auth-header", "Authorization", "the header name for JWT Auth")
 }
 
 func getContextJWTAuthHeaderFlag(flags *pflag.FlagSet) string {
@@ -196,7 +196,7 @@ func getContextJWTAuthHeaderFlag(flags *pflag.FlagSet) string {
 //
 
 func addContextJWTAuthPrefixFlag(flags *pflag.FlagSet) {
-	flags.String("context-jwt-auth-prefix", "Bearer ", "Header value prefix for JWT Auth")
+	flags.String("context-jwt-auth-prefix", "Bearer ", "the header value prefix for JWT Auth")
 }
 
 func getContextJWTAuthPrefixFlag(flags *pflag.FlagSet) string {
