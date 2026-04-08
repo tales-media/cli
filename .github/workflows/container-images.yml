@@ -10,9 +10,12 @@ on:
     branches:
       - main
 
+env:
+  IMAGE_PLATFORMS: linux/amd64,linux/arm64,linux/ppc64le,linux/s390x
+
 jobs:
   build-and-push-images:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
 
     permissions:
       contents: read
@@ -22,9 +25,6 @@ jobs:
       matrix:
         image:
           - talesctl
-
-    env:
-      IMAGE_PLATFORMS: linux/amd64,linux/arm64,linux/ppc64le,linux/s390x
 
     steps:
       - uses: actions/checkout@v6
@@ -53,7 +53,12 @@ jobs:
           platforms: ${{ env.IMAGE_PLATFORMS }}
 
       - name: info
-        id: info
+        run: |
+          docker version
+          docker info
+
+      - name: set tag version
+        id: version
         run: |
           VERSION=dev
           if [ "${{ github.ref_type }}" = 'tag' ]; then
@@ -69,6 +74,6 @@ jobs:
           esac
 
           make image-${{ matrix.image }} \
-            VERSION=${{ steps.info.outputs.VERSION }} \
+            VERSION=${{ steps.version.outputs.VERSION }} \
             IMAGE_PLATFORMS=${{ env.IMAGE_PLATFORMS }} \
             BUILDX_OUTPUT="${BUILDX_OUTPUT}"
