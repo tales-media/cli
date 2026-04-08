@@ -17,6 +17,8 @@ limitations under the License.
 package cli
 
 import (
+	"io"
+
 	"github.com/spf13/cobra"
 
 	extapiclientv1 "shio.solutions/tales.media/opencast-client-go/apis/external-api/v1.11/client"
@@ -25,7 +27,6 @@ import (
 	"shio.solutions/tales.media/cli/internal/talesctl/svc/api"
 )
 
-// TODO: create
 // TODO: delete
 // TODO: update
 
@@ -49,9 +50,187 @@ func eventCommand(cfg *Config) *cobra.Command {
 		eventPublicationCommand(cfg),
 
 		// management
+		eventCreateCommand(cfg),
 		eventListCommand(cfg),
 		eventGetCommand(cfg),
 	)
+	return cmd
+}
+
+func eventCreateCommand(cfg *Config) *cobra.Command {
+	cmd := extAPICommand(
+		"create",
+		"Create an Event",
+		cfg,
+		func(cmd *cobra.Command, args []string, extAPI extapiclientv1.Client) (any, error) {
+			var (
+				s   svc.Event
+				req svc.EventCreateRequest
+			)
+
+			mustSelect(cfg.AliasType, map[AliasType]func(){
+				OpencastAlias: func() { s = svc.NewOpencastEvent(extAPI) },
+				TalesAlias:    func() { s = svc.NewTalesEvent(extAPI) },
+			})()
+
+			// common configuration
+
+			// Metadata
+
+			req.MetadataTitle = getMetadataTitleFlag(cmd.Flags())
+			req.MetadataDescription = getMetadataDescriptionFlag(cmd.Flags())
+			req.MetadataSeriesID = getMetadataSeriesIDFlag(cmd.Flags())
+			req.MetadataStartDate = getMetadataStartDateFlag(cmd.Flags())
+			req.MetadataDuration = getMetadataDurationFlag(cmd.Flags())
+			req.MetadataLocation = getMetadataLocationFlag(cmd.Flags())
+			req.MetadataRightsHolder = getMetadataRightsHolderFlag(cmd.Flags())
+			req.MetadataSubjects = getMetadataSubjectFlag(cmd.Flags())
+			req.MetadataSource = getMetadataSourceFlag(cmd.Flags())
+
+			// TODO: Scheduling
+
+			// specific configuration
+
+			err := mustSelect(cfg.AliasType, map[AliasType]func() error{
+				OpencastAlias: func() error {
+					// ACL
+
+					acl, err := getACEFlag(cmd.Flags())
+					if err != nil {
+						return err
+					}
+					req.ACL = acl
+
+					// Metadata
+
+					req.MetadataID = getMetadataIDFlag(cmd.Flags())
+
+					// Workflow
+
+					req.WorkflowDefinition = getWorkflowDefinitionFlag(cmd.Flags())
+					req.WorkflowProperties, err = getWorkflowPropertiesFlag(cmd.Flags())
+					if err != nil {
+						return err
+					}
+
+					// Upload
+
+					var (
+						fn string
+						r  io.ReadCloser
+					)
+
+					fn, r, err = getTrackXFlag("presenter", cmd)
+					if err != nil {
+						return err
+					}
+					if fn != "" {
+						req.PresenterStreamFilename = new(fn)
+						req.PresenterStream = r
+					}
+
+					fn, r, err = getTrackXFlag("presentation", cmd)
+					if err != nil {
+						return err
+					}
+					if fn != "" {
+						req.PresentationStreamFilename = new(fn)
+						req.PresentationStream = r
+					}
+
+					fn, r, err = getTrackXFlag("audio", cmd)
+					if err != nil {
+						return err
+					}
+					if fn != "" {
+						req.AudioStreamFilename = new(fn)
+						req.AudioStream = r
+					}
+
+					return nil
+				},
+				TalesAlias: func() error {
+					// ACL
+
+					req.TalesACLPreset = getACLPresetFlag(cmd.Flags())
+					req.TalesACLUsersRead = getACLUsersReadFlag(cmd.Flags())
+					req.TalesACLUsersWrite = getACLUsersWriteFlag(cmd.Flags())
+
+					// Workflow
+
+					req.WorkflowDefinition = "tales-media-main-ingest-generic"
+
+					// Upload
+
+					var (
+						fn  string
+						r   io.ReadCloser
+						err error
+					)
+
+					fn, r, err = getTrackXFlag("main", cmd)
+					if err != nil {
+						return err
+					}
+					if fn != "" {
+						req.PresenterStreamFilename = new(fn)
+						req.PresenterStream = r
+					}
+
+					fn, r, err = getTrackXFlag("secondary", cmd)
+					if err != nil {
+						return err
+					}
+					if fn != "" {
+						req.PresentationStreamFilename = new(fn)
+						req.PresentationStream = r
+					}
+
+					return nil
+				},
+			})()
+			if err != nil {
+				return nil, err
+			}
+
+			return s.Create(cmd.Context(), req)
+		},
+	)
+	cmd.GroupID = ManagementGroup.ID
+
+	// common flags
+
+	addMetadataTitleFlag(cmd.Flags())
+	addMetadataDescriptionFlag(cmd.Flags())
+	addMetadataSeriesIDFlag(cmd.Flags())
+	addMetadataStartDateFlag(cmd.Flags())
+	addMetadataDurationFlag(cmd.Flags())
+	addMetadataLocationFlag(cmd.Flags())
+	addMetadataRightsHolderFlag(cmd.Flags())
+	addMetadataSubjectFlag(cmd.Flags())
+	addMetadataSourceFlag(cmd.Flags())
+
+	// specific flags
+
+	mustSelect(cfg.AliasType, map[AliasType]func(){
+		OpencastAlias: func() {
+			addACEFlag(cmd.Flags())
+			addMetadataIDFlag(cmd.Flags())
+			addWorkflowDefinitionFlag(cmd.Flags())
+			addWorkflowPropertiesFlag(cmd.Flags())
+			addTrackXFlag("presenter", cmd.Flags())
+			addTrackXFlag("presentation", cmd.Flags())
+			addTrackXFlag("audio", cmd.Flags())
+		},
+		TalesAlias: func() {
+			addACLPresetFlag(cmd.Flags())
+			addACLUsersReadFlag(cmd.Flags())
+			addACLUsersWriteFlag(cmd.Flags())
+			addTrackXFlag("main", cmd.Flags())
+			addTrackXFlag("secondary", cmd.Flags())
+		},
+	})()
+
 	return cmd
 }
 

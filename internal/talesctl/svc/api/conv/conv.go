@@ -90,9 +90,72 @@ func OCACEToACE(ocACE extapiv1.ACE) api.ACE {
 	}
 }
 
+func ACEToOCACE(ace api.ACE) extapiv1.ACE {
+	return extapiv1.ACE{
+		Role:   ace.Role,
+		Action: ActionToOCAction(ace.Action),
+		Allow:  ace.Allow,
+	}
+}
+
+func TalesACLPresetToACL(talesACLPreset api.TalesACLPreset, tenant string) []api.ACE {
+	acl := []api.ACE{
+		{Role: "ROLE_TALES_MEDIA_GLOBAL_ADMIN", Action: api.ReadAction, Allow: true},
+		{Role: "ROLE_TALES_MEDIA_GLOBAL_ADMIN", Action: api.WriteAction, Allow: true},
+		{Role: "ROLE_TALES_MEDIA_GLOBAL_ADMIN", Action: api.AnnotateAction, Allow: true},
+		{Role: "ROLE_TALES_MEDIA_GLOBAL_ADMIN", Action: api.AnnotateAdminAction, Allow: true},
+
+		{Role: "ROLE_TALES_MEDIA_ORG_ADMIN", Action: api.ReadAction, Allow: true},
+		{Role: "ROLE_TALES_MEDIA_ORG_ADMIN", Action: api.WriteAction, Allow: true},
+		{Role: "ROLE_TALES_MEDIA_ORG_ADMIN", Action: api.AnnotateAction, Allow: true},
+		{Role: "ROLE_TALES_MEDIA_ORG_ADMIN", Action: api.AnnotateAdminAction, Allow: true},
+
+		{Role: "ROLE_TALES_MEDIA_GENERIC_ALL_ACTIONS", Action: api.ReadAction, Allow: true},
+		{Role: "ROLE_TALES_MEDIA_GENERIC_ALL_ACTIONS", Action: api.ReadMetadataAction, Allow: true},
+		{Role: "ROLE_TALES_MEDIA_GENERIC_ALL_ACTIONS", Action: api.WriteAction, Allow: true},
+		{Role: "ROLE_TALES_MEDIA_GENERIC_ALL_ACTIONS", Action: api.AnnotateAction, Allow: true},
+		{Role: "ROLE_TALES_MEDIA_GENERIC_ALL_ACTIONS", Action: api.AnnotateAdminAction, Allow: true},
+		{Role: "ROLE_TALES_MEDIA_GENERIC_READ_ACTION", Action: api.ReadAction, Allow: true},
+		{Role: "ROLE_TALES_MEDIA_GENERIC_READ_METADATA_ACTION", Action: api.ReadMetadataAction, Allow: true},
+		{Role: "ROLE_TALES_MEDIA_GENERIC_WRITE_ACTION", Action: api.WriteAction, Allow: true},
+		{Role: "ROLE_TALES_MEDIA_GENERIC_ANNOTATE_ACTION", Action: api.AnnotateAction, Allow: true},
+		{Role: "ROLE_TALES_MEDIA_GENERIC_ANNOTATE_ADMIN_ACTION", Action: api.AnnotateAdminAction, Allow: true},
+	}
+
+	switch talesACLPreset {
+	case api.PublicTalesACLPreset:
+		acl = append(acl,
+			api.ACE{Role: "ROLE_ANONYMOUS", Action: api.ReadAction, Allow: true},
+			api.ACE{Role: "ROLE_USER", Action: api.ReadAction, Allow: true},
+			api.ACE{Role: "ROLE_USER", Action: api.AnnotateAction, Allow: true},
+		)
+
+	case api.OrganizationTalesACLPreset:
+		acl = append(acl,
+			api.ACE{Role: fmt.Sprintf("ROLE_GROUP_TALES_MEDIA_%s_USERS", strings.ToUpper(tenant)), Action: api.ReadAction, Allow: true},
+			api.ACE{Role: fmt.Sprintf("ROLE_GROUP_TALES_MEDIA_%s_USERS", strings.ToUpper(tenant)), Action: api.AnnotateAction, Allow: true},
+		)
+
+	case api.PrivateTalesACLPreset:
+		acl = append(acl,
+			api.ACE{Role: "ROLE_TALES_MEDIA_PRIVATE", Action: api.ReadMetadataAction, Allow: true},
+		)
+
+	default:
+		panic(fmt.Sprintf("BUG: unknown tales.media ACL preset '%s'", talesACLPreset))
+	}
+
+	return acl
+}
+
 func OCActionToAction(ocAction base.Action) api.Action {
 	// We are not strictly enforcing the action name as this can be configured in Opencast.
 	return api.Action(ocAction)
+}
+
+func ActionToOCAction(action api.Action) base.Action {
+	// We are not strictly enforcing the action name as this can be configured in Opencast.
+	return base.Action(action)
 }
 
 func OCCatalogToCatalog(ocCatalog extapiv1.Catalog) api.Catalog {

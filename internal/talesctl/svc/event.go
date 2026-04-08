@@ -18,9 +18,15 @@ package svc
 
 import (
 	"context"
+	"errors"
+	"io"
+	"slices"
+	"time"
 
 	extapiv1 "shio.solutions/tales.media/opencast-client-go/apis/external-api/v1.11"
 	extapiclientv1 "shio.solutions/tales.media/opencast-client-go/apis/external-api/v1.11/client"
+	"shio.solutions/tales.media/opencast-client-go/apis/meta/base"
+	"shio.solutions/tales.media/opencast-client-go/apis/meta/objlist"
 	oc "shio.solutions/tales.media/opencast-client-go/client"
 
 	"shio.solutions/tales.media/cli/internal/talesctl/svc/api"
@@ -28,8 +34,62 @@ import (
 )
 
 type Event interface {
+	Create(context.Context, EventCreateRequest) ([]api.Event, error)
 	List(context.Context, EventListRequest) ([]api.Event, error)
 	Get(context.Context, EventGetRequest) (api.Event, error)
+}
+
+type EventCreateRequest struct {
+	// ACL (Opencast)
+
+	ACL []api.ACE
+
+	// ACL (tales.media)
+
+	TalesACLPreset     api.TalesACLPreset
+	TalesACLUsersRead  []string
+	TalesACLUsersWrite []string
+
+	// Metadata
+
+	MetadataID          string
+	MetadataTitle       string
+	MetadataDescription string
+	MetadataSeriesID    string
+	// TODO: CreationDate
+	MetadataStartDate time.Time
+	MetadataDuration  time.Duration
+	// TODO: Creator
+	// TODO: Contributors
+	// TODO: Presenters
+	MetadataLocation string
+	// TODO: Language
+	MetadataRightsHolder string
+	// TODO: License
+	MetadataSubjects []string
+	MetadataSource   string
+
+	// Workflow
+
+	WorkflowDefinition string
+	WorkflowProperties map[string]string
+
+	// Scheduling
+
+	SchedulingAgentName   *string
+	SchedulingAgentInputs []string
+	SchedulingStartDate   *time.Time
+	SchedulingDuration    *time.Duration
+	SchedulingRRule       *string
+
+	// Upload
+
+	PresenterStream            io.ReadCloser
+	PresenterStreamFilename    *string
+	PresentationStream         io.ReadCloser
+	PresentationStreamFilename *string
+	AudioStream                io.ReadCloser
+	AudioStreamFilename        *string
 }
 
 type EventListRequest struct {
@@ -70,6 +130,147 @@ func NewOpencastEvent(extAPI extapiclientv1.Client) Event {
 	return &opencastEvent{
 		extAPI: extAPI,
 	}
+}
+
+func (svc *opencastEvent) Create(ctx context.Context, req EventCreateRequest) ([]api.Event, error) {
+	// ACL
+
+	ocACL := extapiv1.ACL(conv.Map(req.ACL, conv.ACEToOCACE))
+
+	// Metadata
+
+	ocDublinCoreEpisodeCatalog := extapiv1.Catalog{
+		Flavor: base.DublinCoreEpisodeFlavor,
+		Fields: []extapiv1.Field{},
+	}
+	if req.MetadataID != "" {
+		ocDublinCoreEpisodeCatalog.Fields = append(ocDublinCoreEpisodeCatalog.Fields, extapiv1.Field{
+			ID:    extapiv1.IdentifierFieldID,
+			Value: extapiv1.TextFieldValue(req.MetadataID),
+		})
+	}
+	if req.MetadataTitle != "" {
+		ocDublinCoreEpisodeCatalog.Fields = append(ocDublinCoreEpisodeCatalog.Fields, extapiv1.Field{
+			ID:    extapiv1.TitleFieldID,
+			Value: extapiv1.TextFieldValue(req.MetadataTitle),
+		})
+	}
+	if req.MetadataDescription != "" {
+		ocDublinCoreEpisodeCatalog.Fields = append(ocDublinCoreEpisodeCatalog.Fields, extapiv1.Field{
+			ID:    extapiv1.DescriptionFieldID,
+			Value: extapiv1.TextFieldValue(req.MetadataDescription),
+		})
+	}
+	if req.MetadataSeriesID != "" {
+		ocDublinCoreEpisodeCatalog.Fields = append(ocDublinCoreEpisodeCatalog.Fields, extapiv1.Field{
+			ID:    extapiv1.IsPartOfFieldID,
+			Value: extapiv1.TextFieldValue(req.MetadataSeriesID),
+		})
+	}
+	if !req.MetadataStartDate.IsZero() {
+		ocDublinCoreEpisodeCatalog.Fields = append(ocDublinCoreEpisodeCatalog.Fields, extapiv1.Field{
+			ID:    extapiv1.StartDateFieldID,
+			Value: extapiv1.DateTimeFieldValue(base.DateTime{Time: req.MetadataStartDate}),
+		})
+	}
+	// TODO: MetadataDuration
+	// if req.MetadataDuration != 0 {
+	// 	ocDublinCoreEpisodeCatalog.Fields = append(ocDublinCoreEpisodeCatalog.Fields, extapiv1.Field{
+	// 		ID:    extapiv1.DurationFieldID,
+	// 		Value: extapiv1.DateTimeFieldValue(base.DateTime{Time: req.MetadataDuration}),
+	// 	})
+	// }
+	if req.MetadataLocation != "" {
+		ocDublinCoreEpisodeCatalog.Fields = append(ocDublinCoreEpisodeCatalog.Fields, extapiv1.Field{
+			ID:    extapiv1.LocationFieldID,
+			Value: extapiv1.TextFieldValue(req.MetadataLocation),
+		})
+	}
+	if req.MetadataRightsHolder != "" {
+		ocDublinCoreEpisodeCatalog.Fields = append(ocDublinCoreEpisodeCatalog.Fields, extapiv1.Field{
+			ID:    extapiv1.RightsHolderFieldID,
+			Value: extapiv1.TextFieldValue(req.MetadataRightsHolder),
+		})
+	}
+	if len(req.MetadataSubjects) > 0 {
+		ocDublinCoreEpisodeCatalog.Fields = append(ocDublinCoreEpisodeCatalog.Fields, extapiv1.Field{
+			ID:    extapiv1.SubjectsFieldID,
+			Value: extapiv1.MixedTextFieldValue(req.MetadataSubjects), // TODO: is this correct?
+		})
+	}
+	if req.MetadataSource != "" {
+		ocDublinCoreEpisodeCatalog.Fields = append(ocDublinCoreEpisodeCatalog.Fields, extapiv1.Field{
+			ID:    extapiv1.SourceFieldID,
+			Value: extapiv1.TextFieldValue(req.MetadataSource),
+		})
+	}
+
+	// Workflow
+
+	ocProcessing := &extapiv1.Processing{
+		Workflow:      req.WorkflowDefinition,
+		Configuration: req.WorkflowProperties,
+	}
+
+	// Scheduling
+
+	var ocScheduling *extapiv1.SchedulingRequest
+	// TODO: implement
+
+	// Event
+
+	ocEvent := &extapiclientv1.CreateEventRequestBody{
+		ACL:        ocACL,
+		Metadata:   []extapiv1.Catalog{ocDublinCoreEpisodeCatalog},
+		Scheduling: ocScheduling,
+		Processing: ocProcessing,
+	}
+
+	// Upload
+
+	if req.PresenterStreamFilename != nil {
+		ocEvent.Scheduling = nil
+		ocEvent.PresenterStreamFilename = *req.PresenterStreamFilename
+		ocEvent.PresenterStream = req.PresenterStream
+	}
+	if req.PresentationStreamFilename != nil {
+		ocEvent.Scheduling = nil
+		ocEvent.PresentationStreamFilename = *req.PresentationStreamFilename
+		ocEvent.PresentationStream = req.PresentationStream
+	}
+	if req.AudioStreamFilename != nil {
+		ocEvent.Scheduling = nil
+		ocEvent.AudioStreamFilename = *req.AudioStreamFilename
+		ocEvent.AudioStream = req.AudioStream
+	}
+
+	// create
+
+	resp, _, err := svc.extAPI.CreateEvent(ctx, ocEvent)
+	if err != nil {
+		return nil, err
+	}
+
+	// retrieve created events
+
+	var ids []extapiv1.Identifier
+	switch resp.Type {
+	case objlist.Object:
+		ids = []extapiv1.Identifier{resp.ObjectVal}
+	case objlist.List:
+		ids = resp.ListVal
+	}
+
+	events := make([]api.Event, 0, len(ids))
+	for _, id := range ids {
+		event, err := svc.Get(ctx, EventGetRequest{ID: id.Identifier})
+		if err != nil {
+			return nil, err
+		}
+		events = append(events, event)
+	}
+
+	return events, nil
 }
 
 func (svc *opencastEvent) List(ctx context.Context, req EventListRequest) ([]api.Event, error) {
@@ -234,8 +435,84 @@ func (svc *opencastEvent) Get(ctx context.Context, req EventGetRequest) (api.Eve
 	return conv.OCEventToEvent(*ocEvent), nil
 }
 
-type talesEvent = opencastEvent
+type talesEvent struct {
+	opencastEvent
+
+	infoSvc Info
+}
 
 var _ Event = &talesEvent{}
 
-var NewTalesEvent = NewOpencastEvent
+func NewTalesEvent(extAPI extapiclientv1.Client) Event {
+	return &talesEvent{
+		opencastEvent: opencastEvent{
+			extAPI: extAPI,
+		},
+		infoSvc: NewTalesInfo(extAPI),
+	}
+}
+
+func (svc *talesEvent) Create(ctx context.Context, req EventCreateRequest) ([]api.Event, error) {
+	org, err := svc.infoSvc.Organization(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	me, err := svc.infoSvc.Me(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// ACL
+
+	acl := conv.TalesACLPresetToACL(req.TalesACLPreset, org.ID)
+	acl = slices.Grow(acl, 4+ // owner roles
+		4+ // user roles
+		len(req.TalesACLUsersRead)*2+ // extra read users
+		len(req.TalesACLUsersRead)*4, // extra write users
+	)
+
+	ownerRolePrefix := "ROLE_OWNER_"
+	userRolePrefix := "ROLE_USER_"
+
+	acl = append(acl,
+		api.ACE{Role: ownerRolePrefix + me.Username, Action: api.ReadAction, Allow: true},
+		api.ACE{Role: ownerRolePrefix + me.Username, Action: api.WriteAction, Allow: true},
+		api.ACE{Role: ownerRolePrefix + me.Username, Action: api.AnnotateAction, Allow: true},
+		api.ACE{Role: ownerRolePrefix + me.Username, Action: api.AnnotateAdminAction, Allow: true},
+
+		api.ACE{Role: userRolePrefix + me.Username, Action: api.ReadAction, Allow: true},
+		api.ACE{Role: userRolePrefix + me.Username, Action: api.WriteAction, Allow: true},
+		api.ACE{Role: userRolePrefix + me.Username, Action: api.AnnotateAction, Allow: true},
+		api.ACE{Role: userRolePrefix + me.Username, Action: api.AnnotateAdminAction, Allow: true},
+	)
+
+	for _, username := range req.TalesACLUsersRead {
+		acl = append(acl,
+			api.ACE{Role: userRolePrefix + username, Action: api.ReadAction, Allow: true},
+			api.ACE{Role: userRolePrefix + username, Action: api.AnnotateAction, Allow: true},
+		)
+	}
+
+	for _, username := range req.TalesACLUsersWrite {
+		acl = append(acl,
+			api.ACE{Role: userRolePrefix + username, Action: api.ReadAction, Allow: true},
+			api.ACE{Role: userRolePrefix + username, Action: api.WriteAction, Allow: true},
+			api.ACE{Role: userRolePrefix + username, Action: api.AnnotateAction, Allow: true},
+			api.ACE{Role: userRolePrefix + username, Action: api.AnnotateAdminAction, Allow: true},
+		)
+	}
+
+	req.ACL = acl
+
+	// Metadata
+
+	if req.MetadataID != "" {
+		return nil, errors.New("setting event ID is not allowed in tales.media")
+	}
+	if req.MetadataSeriesID == "" {
+		return nil, errors.New("series ID is required in tales.media")
+	}
+
+	return svc.opencastEvent.Create(ctx, req)
+}

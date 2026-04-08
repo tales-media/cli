@@ -19,13 +19,91 @@ package cli
 import (
 	"errors"
 	"fmt"
+	"io"
+	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
+	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
 	"shio.solutions/tales.media/cli/internal/talesctl/svc/api"
 )
+
+//
+// --ace [role:action]
+//
+
+func addACEFlag(flags *pflag.FlagSet) {
+	flags.StringSlice("ace", nil, "add access control entry form \"role:action\" (can be specified multiple times or a comma separated list)")
+}
+
+func getACEFlag(flags *pflag.FlagSet) ([]api.ACE, error) {
+	valList := mustGetValue("ace", flags.GetStringSlice)
+	val := make([]api.ACE, 0, len(valList))
+	for _, c := range valList {
+		role, action, ok := strings.Cut(c, ":")
+		if !ok {
+			return nil, errors.New("invalid config flag: use role:action syntax")
+		}
+		val = append(val, api.ACE{
+			Role:   role,
+			Action: api.Action(action),
+			Allow:  true,
+		})
+	}
+	return val, nil
+}
+
+//
+// --acl-preset [public | organization | private]
+//
+
+func addACLPresetFlag(flags *pflag.FlagSet) {
+	aclPresetValue := &mapValue[api.TalesACLPreset]{
+		Default: string(api.PrivateTalesACLPreset),
+		Map: map[string]api.TalesACLPreset{
+			string(api.PublicTalesACLPreset):       api.PublicTalesACLPreset,
+			string(api.OrganizationTalesACLPreset): api.OrganizationTalesACLPreset,
+			string(api.PrivateTalesACLPreset):      api.PrivateTalesACLPreset,
+		},
+	}
+	flags.Var(aclPresetValue, "acl-preset", aclPresetValue.Usage("ACL preset"))
+}
+
+func getACLPresetFlag(flags *pflag.FlagSet) api.TalesACLPreset {
+	flag := mustGetFlag("acl-preset", flags)
+	val, ok := flag.Value.(*mapValue[api.TalesACLPreset])
+	if !ok {
+		panic("BUG: flag 'acl-preset' has incorrect type")
+	}
+	return val.Value()
+}
+
+//
+// --acl-users-read [username]
+//
+
+func addACLUsersReadFlag(flags *pflag.FlagSet) {
+	flags.StringSlice("acl-users-read", nil, "add additional user with read access (can be specified multiple times or a comma separated list)")
+}
+
+func getACLUsersReadFlag(flags *pflag.FlagSet) []string {
+	return mustGetValue("acl-users-read", flags.GetStringSlice)
+}
+
+//
+// --acl-users-write [username]
+//
+
+func addACLUsersWriteFlag(flags *pflag.FlagSet) {
+	flags.StringSlice("acl-users-write", nil, "add additional user with write access (can be specified multiple times or a comma separated list)")
+}
+
+func getACLUsersWriteFlag(flags *pflag.FlagSet) []string {
+	return mustGetValue("acl-users-write", flags.GetStringSlice)
+}
 
 //
 // --auth-open-browser
@@ -229,6 +307,161 @@ func getFilterByXMapValueFlag[T any](key string, flags *pflag.FlagSet) T {
 }
 
 //
+// TODO: --metadata-contributor [contributor] ***
+//
+
+//
+// TODO: --metadata-created [time.Date]
+//
+
+//
+// TODO: --metadata-creator [creator] ***
+//
+
+//
+// --metadata-description [description]
+//
+
+func addMetadataDescriptionFlag(flags *pflag.FlagSet) {
+	flags.String("metadata-description", "", "the description in the standard metadata catalog")
+}
+
+func getMetadataDescriptionFlag(flags *pflag.FlagSet) string {
+	flag := mustGetFlag("metadata-description", flags)
+	return flag.Value.String()
+}
+
+//
+// --metadata-duration [time.Duration]
+//
+
+func addMetadataDurationFlag(flags *pflag.FlagSet) {
+	flags.Duration("metadata-duration", 0, "the duration in the standard metadata catalog")
+}
+
+func getMetadataDurationFlag(flags *pflag.FlagSet) time.Duration {
+	return mustGetValue("metadata-duration", flags.GetDuration)
+}
+
+//
+// --metadata-id [id]
+//
+
+func addMetadataIDFlag(flags *pflag.FlagSet) {
+	flags.String("metadata-id", "", "the identifier in the standard metadata catalog")
+}
+
+func getMetadataIDFlag(flags *pflag.FlagSet) string {
+	flag := mustGetFlag("metadata-id", flags)
+	return flag.Value.String()
+}
+
+//
+// TODO: --metadata-language [language]
+//
+
+//
+// TODO: --metadata-license [license]
+//
+
+//
+// --metadata-location [location]
+//
+
+func addMetadataLocationFlag(flags *pflag.FlagSet) {
+	flags.String("metadata-location", "", "the location in the standard metadata catalog")
+}
+
+func getMetadataLocationFlag(flags *pflag.FlagSet) string {
+	flag := mustGetFlag("metadata-location", flags)
+	return flag.Value.String()
+}
+
+//
+// TODO: --metadata-presenter [presenter] ***
+//
+
+//
+// TODO: --metadata-publisher [publisher] ????
+//
+
+//
+// --metadata-rights-holder [rights-holder]
+//
+
+func addMetadataRightsHolderFlag(flags *pflag.FlagSet) {
+	flags.String("metadata-rights-holder", "", "the rights-holder in the standard metadata catalog")
+}
+
+func getMetadataRightsHolderFlag(flags *pflag.FlagSet) string {
+	flag := mustGetFlag("metadata-rights-holder", flags)
+	return flag.Value.String()
+}
+
+//
+// --metadata-series-id [series-id]
+//
+
+func addMetadataSeriesIDFlag(flags *pflag.FlagSet) {
+	flags.String("metadata-series-id", "", "the series-id in the standard metadata catalog")
+}
+
+func getMetadataSeriesIDFlag(flags *pflag.FlagSet) string {
+	flag := mustGetFlag("metadata-series-id", flags)
+	return flag.Value.String()
+}
+
+//
+// --metadata-source [source]
+//
+
+func addMetadataSourceFlag(flags *pflag.FlagSet) {
+	flags.String("metadata-source", "", "the source in the standard metadata catalog")
+}
+
+func getMetadataSourceFlag(flags *pflag.FlagSet) string {
+	flag := mustGetFlag("metadata-source", flags)
+	return flag.Value.String()
+}
+
+//
+// --metadata-start-date [time.Time]
+//
+
+func addMetadataStartDateFlag(flags *pflag.FlagSet) {
+	flags.Time("metadata-start-date", time.Time{}, []string{time.RFC3339}, "the start-date in the standard metadata catalog in RFC3339 format (e.g. '"+time.RFC3339+"')")
+}
+
+func getMetadataStartDateFlag(flags *pflag.FlagSet) time.Time {
+	return mustGetValue("metadata-start-date", flags.GetTime)
+}
+
+//
+// --metadata-subject [subject]
+//
+
+func addMetadataSubjectFlag(flags *pflag.FlagSet) {
+	flags.StringSlice("metadata-subject", nil, "the subject in the standard metadata catalog (can be specified multiple times or a comma separated list)")
+}
+
+func getMetadataSubjectFlag(flags *pflag.FlagSet) []string {
+	return mustGetValue("metadata-subject", flags.GetStringSlice)
+}
+
+//
+// --metadata-title [title]
+//
+
+func addMetadataTitleFlag(flags *pflag.FlagSet) {
+	flags.String("metadata-title", "", "the title in the standard metadata catalog")
+}
+
+func getMetadataTitleFlag(flags *pflag.FlagSet) string {
+	flag := mustGetFlag("metadata-title", flags)
+	return flag.Value.String()
+}
+
+//
 // -o, --output [Output]
 //
 
@@ -309,6 +542,56 @@ func getSortDirectionFlag(flags *pflag.FlagSet) api.SortDirection {
 }
 
 //
+// --track{-name} [file | filename:-]
+//
+
+func addTrackXFlag(name string, flags *pflag.FlagSet) {
+	flagName := "track"
+	flagDescription := "upload file as track"
+	if name != "" {
+		flagName += "-" + name
+		flagDescription += " (" + name + ")"
+	}
+	flags.String(flagName, "", flagDescription)
+}
+
+func getTrackXFlag(name string, cmd *cobra.Command) (filename string, r io.ReadCloser, err error) {
+	flagName := "track"
+	if name != "" {
+		flagName += "-" + name
+	}
+	val := mustGetValue(flagName, cmd.Flags().GetString)
+
+	if val == "" {
+		return
+	}
+
+	file, isStdin := strings.CutSuffix(val, ":-")
+	if isStdin {
+		filename = file
+		r = io.NopCloser(cmd.InOrStdin())
+		return
+	}
+
+	filename = filepath.Base(file)
+	r, err = os.Open(file)
+	return
+}
+
+//
+// --workflow-definition [name]
+//
+
+func addWorkflowDefinitionFlag(flags *pflag.FlagSet) {
+	flags.String("workflow-definition", "schedule-and-upload", "the name of the workflow definition")
+}
+
+func getWorkflowDefinitionFlag(flags *pflag.FlagSet) string {
+	flag := mustGetFlag("workflow-definition", flags)
+	return flag.Value.String()
+}
+
+//
 // --workflow-property [key=value]
 //
 
@@ -363,6 +646,19 @@ const (
 	PausedWorkflowStatus
 	StoppedWorkflowStatus
 )
+
+// TODO: workflow-normalization-skip-remux
+// TODO: workflow-normalization-skip-audio
+// TODO: workflow-normalization-skip-audio-sample-rate
+// TODO: workflow-normalization-skip-audio-channels
+// TODO: workflow-normalization-skip-audio-loudnorm
+// TODO: workflow-normalization-skip-video
+// TODO: workflow-normalization-skip-video-resolution
+// TODO: workflow-normalization-skip-video-frame-rate
+// TODO: workflow-normalization-skip-video-colorspace
+// TODO: workflow-normalization-skip-video-deinterlace
+// TODO: workflow-normalization-skip-video-rotation
+// TODO: workflow-edit-required
 
 func mustGetFlag(name string, flags *pflag.FlagSet) *pflag.Flag {
 	flag := flags.Lookup(name)
