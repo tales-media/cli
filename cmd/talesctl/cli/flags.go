@@ -116,11 +116,8 @@ func addContextStaticServiceMappingFlag(flags *pflag.FlagSet) {
 }
 
 func getContextStaticServiceMappingFlag(flags *pflag.FlagSet) (map[string]string, error) {
-	valList, err := flags.GetStringSlice("context-static-service-mapping")
-	if err != nil {
-		panicBugUndefinedFlag("context-static-service-mapping")
-	}
-	val := make(map[string]string)
+	valList := mustGetValue("context-static-service-mapping", flags.GetStringSlice)
+	val := make(map[string]string, len(valList))
 	for _, c := range valList {
 		k, v, ok := strings.Cut(c, "=")
 		if !ok {
@@ -214,11 +211,7 @@ func addFilterByXStringFlag(key string, flags *pflag.FlagSet) {
 
 func getFilterByXStringFlag(key string, flags *pflag.FlagSet) string {
 	flagName := "filter-by-" + key
-	val, err := flags.GetString(flagName)
-	if err != nil {
-		panicBugUndefinedFlag(flagName)
-	}
-	return val
+	return mustGetValue(flagName, flags.GetString)
 }
 
 func addFilterByXMapValueFlag[T any](key string, filterValue *mapValue[T], flags *pflag.FlagSet) {
@@ -324,11 +317,8 @@ func addWorkflowPropertiesFlag(flags *pflag.FlagSet) {
 }
 
 func getWorkflowPropertiesFlag(flags *pflag.FlagSet) (map[string]string, error) {
-	valList, err := flags.GetStringSlice("workflow-property")
-	if err != nil {
-		panicBugUndefinedFlag("workflow-property")
-	}
-	val := make(map[string]string)
+	valList := mustGetValue("workflow-property", flags.GetStringSlice)
+	val := make(map[string]string, len(valList))
 	for _, c := range valList {
 		k, v, ok := strings.Cut(c, "=")
 		if !ok {
