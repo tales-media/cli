@@ -1,0 +1,51 @@
+name: release
+
+on:
+  push:
+    tags:
+      - '**'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    if: github.repository == 'tales-media/cli'
+
+    permissions:
+      contents: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        binary:
+          - talesctl
+        target:
+          - { OS: 'darwin',  ARCH: 'amd64'   }
+          - { OS: 'darwin',  ARCH: 'arm64'   }
+          - { OS: 'linux',   ARCH: 'amd64'   }
+          - { OS: 'linux',   ARCH: 'arm64'   }
+          - { OS: 'linux',   ARCH: 'ppc64le' }
+          - { OS: 'linux',   ARCH: 'riscv64' }
+          - { OS: 'linux',   ARCH: 's390x'   }
+          - { OS: 'windows', ARCH: 'amd64'   }
+          - { OS: 'windows', ARCH: 'arm64'   }
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+
+      - name: build
+        run: |
+          make build-${{ matrix.binary }} \
+            VERSION=${{ github.ref_name }} \
+            OS=${{ matrix.target.OS }} \
+            ARCH=${{ matrix.target.ARCH }}
+
+      - name: release
+        uses: softprops/action-gh-release@v3
+        with:
+          body: Release ${{ github.ref_name }}.
+          files: bin/*
