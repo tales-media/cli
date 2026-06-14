@@ -52,9 +52,15 @@ fi
 
 mkdir -p bin
 
+binary="${CMD}-${VERSION}-${OS}-${ARCH}"
+
 CGO_ENABLED=0 go build -v \
   -tags "${TAGS}" \
   -ldflags "${LDFLAGS}" \
   -gcflags "${SKAFFOLD_GO_GCFLAGS}" \
-  -o "bin/${CMD}-${VERSION}-${OS}-${ARCH}" \
+  -o "bin/${binary}" \
   "./cmd/${CMD}"
+
+cd bin
+sha256sum "${binary}" > "${binary}.sha256"
+sha512sum "${binary}" > "${binary}.sha512"
