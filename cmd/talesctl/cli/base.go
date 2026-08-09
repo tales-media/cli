@@ -34,7 +34,7 @@ import (
 )
 
 func baseCommand(use, short string, valueFunc func(*cobra.Command, []string) (any, error)) *cobra.Command {
-	cmd := &cobra.Command{
+	return &cobra.Command{
 		Use:                   use,
 		Short:                 short,
 		TraverseChildren:      true,
@@ -68,7 +68,6 @@ func baseCommand(use, short string, valueFunc func(*cobra.Command, []string) (an
 			}
 		},
 	}
-	return cmd
 }
 
 func cfgCommand(use, short string, cfg *Config, configValueFunc func(*cobra.Command, []string) (any, error)) *cobra.Command {
@@ -121,10 +120,24 @@ func occCommand(use, short string, cfg *Config, occValueFunc func(*cobra.Command
 }
 
 func extAPICommand(use, short string, cfg *Config, extAPIClientValueFunc func(*cobra.Command, []string, extapiclientv1.Client) (any, error)) *cobra.Command {
-	return occCommand(use, short, cfg, func(cmd *cobra.Command, args []string, occ oc.Client) (any, error) {
+	cmd := occCommand(use, short, cfg, func(cmd *cobra.Command, args []string, occ oc.Client) (any, error) {
+		extAPIVersion := getOverrideExternalAPIVersionFlag(cmd.Flags())
+		if extAPIVersion != "" {
+			if err := occ.ApplyOptions(oc.WithRequestOptions(
+				oc.WithHeader("Accept", fmt.Sprintf("application/%s+json", extAPIVersion)),
+			)); err != nil {
+				return nil, err
+			}
+		}
+
 		extAPI := extapiclientv1.New(occ)
 		return extAPIClientValueFunc(cmd, args, extAPI)
 	})
+
+	// common flags
+	addOverrideExternalAPIVersionFlag(cmd.Flags())
+
+	return cmd
 }
 
 func detectFormatter(cmd *cobra.Command) formatter.Formatter {

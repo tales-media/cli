@@ -28,6 +28,8 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
+	extapiv1 "shio.solutions/tales.media/opencast-client-go/apis/external-api/v1.11"
+
 	"shio.solutions/tales.media/cli/internal/talesctl/svc/api"
 )
 
@@ -497,6 +499,19 @@ const (
 	YAMLOutput
 	NoneOutput
 )
+
+//
+// --override-external-api-version [version]
+//
+
+func addOverrideExternalAPIVersionFlag(flags *pflag.FlagSet) {
+	flags.String("override-external-api-version", extapiv1.Version, fmt.Sprintf("(unsupported) manually set the External API version accepted by the client"))
+}
+
+func getOverrideExternalAPIVersionFlag(flags *pflag.FlagSet) string {
+	flag := mustGetFlag("override-external-api-version", flags)
+	return flag.Value.String()
+}
 
 //
 // --sort-by [key]
