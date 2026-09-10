@@ -1,16 +1,16 @@
 module shio.solutions/tales.media/cli
 
-go 1.26
+go 1.26.0
 
 require (
 	github.com/barbashov/iso639-3 v1.0.0
-	github.com/coreos/go-oidc/v3 v3.20.0
+	github.com/coreos/go-oidc/v3 v3.21.0
 	github.com/jedib0t/go-pretty/v6 v6.8.3
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/pflag v1.0.10
 	go.yaml.in/yaml/v4 v4.0.0-rc.6
-	golang.org/x/oauth2 v0.36.0
+	golang.org/x/oauth2 v0.37.0
 	shio.solutions/tales.media/opencast-client-go v0.4.0
 )
 
